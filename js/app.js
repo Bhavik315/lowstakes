@@ -5,7 +5,9 @@
     physics: { name: "Physics", code: "0625", color: "var(--physics)", sub: "Forces, energy and waves: how the universe moves.",
       units: [[1, "Motion, forces and energy"], [2, "Thermal physics"], [3, "Waves"], [4, "Electricity and magnetism"], [5, "Nuclear physics"], [6, "Space physics"]] },
     chemistry: { name: "Chemistry", code: "0620", color: "var(--chem)", sub: "Atoms, bonds and reactions: what everything is made of.",
-      units: [[1, "States of matter"], [2, "Atoms, elements and compounds"], [3, "Stoichiometry"], [4, "Electrochemistry"], [5, "Chemical energetics"], [6, "Chemical reactions"], [7, "Acids, bases and salts"], [8, "The Periodic Table"], [9, "Metals"], [10, "Chemistry of the environment"], [11, "Organic chemistry"], [12, "Experimental techniques and chemical analysis"]] }
+      units: [[1, "States of matter"], [2, "Atoms, elements and compounds"], [3, "Stoichiometry"], [4, "Electrochemistry"], [5, "Chemical energetics"], [6, "Chemical reactions"], [7, "Acids, bases and salts"], [8, "The Periodic Table"], [9, "Metals"], [10, "Chemistry of the environment"], [11, "Organic chemistry"], [12, "Experimental techniques and chemical analysis"]] },
+    french: { name: "French", code: "0520", color: "var(--french)", sub: "Vocabulary, grammar and everyday conversation: a language you can actually use.",
+      units: [[1, "Greetings, numbers & introductions"], [2, "Family, home & descriptions"], [3, "Daily life, school & hobbies"], [4, "Food, shopping & town"], [5, "Travel, holidays & weather"], [6, "Grammar essentials: verbs & tenses"]] }
   };
   // keep topics in syllabus order: subject, then unit, then load order
   { const ord = Object.keys(SUBJECTS); TOPICS.forEach((t, i) => t._i = i); TOPICS.sort((a, b) => ord.indexOf(a.subject) - ord.indexOf(b.subject) || (a.unit || 99) - (b.unit || 99) || a._i - b._i); }
@@ -67,8 +69,8 @@
     const cv = document.createElement("canvas"); cv.className = "confetti"; document.body.appendChild(cv);
     const dpr = Math.min(devicePixelRatio || 1, 2); cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
     const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
-    const cols = [color, getComputedStyle(document.documentElement).getPropertyValue("--maths"), getComputedStyle(document.documentElement).getPropertyValue("--physics"), getComputedStyle(document.documentElement).getPropertyValue("--chem")];
-    const bits = Array.from({ length: 70 }, () => ({ x, y, vx: (Math.random() - .5) * 9, vy: -Math.random() * 9 - 3, r: Math.random() * 6, s: 4 + Math.random() * 5, c: cols[Math.floor(Math.random() * 4)] }));
+    const cols = [color, getComputedStyle(document.documentElement).getPropertyValue("--maths"), getComputedStyle(document.documentElement).getPropertyValue("--physics"), getComputedStyle(document.documentElement).getPropertyValue("--chem"), getComputedStyle(document.documentElement).getPropertyValue("--french")];
+    const bits = Array.from({ length: 70 }, () => ({ x, y, vx: (Math.random() - .5) * 9, vy: -Math.random() * 9 - 3, r: Math.random() * 6, s: 4 + Math.random() * 5, c: cols[Math.floor(Math.random() * cols.length)] }));
     let f = 0;
     (function step() {
       ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -81,7 +83,7 @@
   function heroCanvas(host) {
     const cv = document.createElement("canvas"); cv.className = "hero-canvas"; host.prepend(cv);
     const ctx = cv.getContext("2d");
-    const glyphs = ["F = ma", "v = fλ", "x = −b ± √Δ / 2a", "n = m / Mr", "V = IR", "sin θ", "E = mc²", "p = mv", "a² + b² = c²", "6.02×10²³", "y = mx + c", "ΔH", "λ", "π", "∫", "Σ"];
+    const glyphs = ["F = ma", "v = fλ", "x = −b ± √Δ / 2a", "n = m / Mr", "V = IR", "sin θ", "E = mc²", "p = mv", "a² + b² = c²", "6.02×10²³", "y = mx + c", "ΔH", "λ", "π", "∫", "Σ", "bonjour", "je suis", "il/elle", "passé composé"];
     let W, H, items, mouse = { x: .5, y: .5 }, id;
     const fit = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2); W = host.clientWidth; H = host.clientHeight;
@@ -93,7 +95,7 @@
     const cs = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
     const draw = (ms) => {
       const t = ms / 1000; ctx.clearRect(0, 0, W, H);
-      const ink = cs("--muted"), cols = [cs("--maths"), cs("--physics"), cs("--chem")];
+      const ink = cs("--muted"), cols = [cs("--maths"), cs("--physics"), cs("--chem"), cs("--french")];
       // drifting formulas with parallax
       items.forEach((it, i) => {
         const y = ((it.y - t * it.sp * it.z) % (H + 40) + H + 40) % (H + 40) - 20;
@@ -228,7 +230,7 @@
       const hid = b.parentElement.querySelector(".step[hidden]"); if (hid) { hid.hidden = false; hid.classList.add("pop"); }
       if (!b.parentElement.querySelector(".step[hidden]")) b.remove();
     });
-    if (t.demo && DEMOS[t.demo]) cleanup.push(DEMOS[t.demo](v.querySelector("#demo-root"), getComputedStyle(document.documentElement).getPropertyValue(t.subject === "maths" ? "--maths" : t.subject === "physics" ? "--physics" : "--chem").trim()));
+    if (t.demo && DEMOS[t.demo]) cleanup.push(DEMOS[t.demo](v.querySelector("#demo-root"), getComputedStyle(document.documentElement).getPropertyValue("--" + (SUBJECTS[t.subject] ? t.subject === "chemistry" ? "chem" : t.subject : "chem")).trim()));
     v.querySelectorAll(".viz[data-viz]").forEach(h => VIZ[h.dataset.viz] && cleanup.push(VIZ[h.dataset.viz](h)));
     quiz(v.querySelector("#quiz"), { qs: t.quiz, id: t.id, title: t.title });
     if (t.syllabus) {

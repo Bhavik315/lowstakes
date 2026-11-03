@@ -1,7 +1,7 @@
 /* ============ Tokens ============ */
 :root{
   --bg:#f5f1e8; --bg-2:#ede7d9; --surface:#fffcf5; --ink:#17160f; --muted:#6d685b; --line:#e2dccc;
-  --maths:#2c55e0; --physics:#d9531f; --chem:#0f7f59;
+  --maths:#2c55e0; --physics:#d9531f; --chem:#0f7f59; --french:#8a3fd9;
   --accent:#17160f; --accent-ink:#fffcf5;
   --good:#0f7f59; --bad:#c3352a;
   --shadow:0 1px 1px rgba(40,30,10,.04),0 2px 6px rgba(40,30,10,.05),0 18px 40px -18px rgba(40,30,10,.18);
@@ -13,14 +13,14 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#11110d; --bg-2:#18170f; --surface:#1b1a14; --ink:#f2eee2; --muted:#a39e8e; --line:#2d2b22;
-    --maths:#86a2ff; --physics:#ff8d5e; --chem:#43d39f; --accent:#f2eee2; --accent-ink:#11110d;
+    --maths:#86a2ff; --physics:#ff8d5e; --chem:#43d39f; --french:#c08bff; --accent:#f2eee2; --accent-ink:#11110d;
     --good:#43d39f; --bad:#ff6b5e;
     --shadow:0 1px 1px rgba(0,0,0,.3),0 18px 40px -18px rgba(0,0,0,.6); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#11110d; --bg-2:#18170f; --surface:#1b1a14; --ink:#f2eee2; --muted:#a39e8e; --line:#2d2b22;
-  --maths:#86a2ff; --physics:#ff8d5e; --chem:#43d39f; --accent:#f2eee2; --accent-ink:#11110d;
+  --maths:#86a2ff; --physics:#ff8d5e; --chem:#43d39f; --french:#c08bff; --accent:#f2eee2; --accent-ink:#11110d;
   --good:#43d39f; --bad:#ff6b5e;
   --shadow:0 1px 1px rgba(0,0,0,.3),0 18px 40px -18px rgba(0,0,0,.6); color-scheme:dark;
 }
