@@ -36,26 +36,20 @@ export function cleanCode(s) {
 function peerOptions() {
   const q = new URLSearchParams(location.search);
   const sig = q.get('signal');
-<<<<<<< HEAD
   // Don't set `config` to undefined: PeerJS spreads our options over its defaults,
   // so that would wipe out its STUN/TURN servers and only same-network players could join.
-=======
   // STUN finds each browser's public address; TURN relays traffic when two
   // networks can't connect directly (strict routers, school Wi-Fi, VPNs).
->>>>>>> 0f8e613 (Make joining a table more reliable and say why it fails)
   const opts = {
     debug: 0,
     config: {
       iceServers: [
         { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
         { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
-<<<<<<< HEAD
-=======
         {
           urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp', 'turns:openrelay.metered.ca:443'],
           username: 'openrelayproject', credential: 'openrelayproject',
         },
->>>>>>> 0f8e613 (Make joining a table more reliable and say why it fails)
       ],
       sdpSemantics: 'unified-plan',
     },
