@@ -1,9 +1,9 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=2';
-import { Blackjack } from '../games/blackjack.js?v=2';
-import { Roulette } from '../games/roulette.js?v=2';
+import { Holdem } from '../games/holdem.js?v=3';
+import { Blackjack } from '../games/blackjack.js?v=3';
+import { Roulette } from '../games/roulette.js?v=3';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette };
 const PREFIX = 'lowstakes-v1-';
@@ -455,7 +455,7 @@ export class Guest extends Emitter {
       this.closed = true;
       try { this.peer && this.peer.destroy(); } catch {}
       this.setStatus(this.stage === 'server' ? 'noserver' : 'unreachable');
-    }, 22000);
+    }, 15000);
     this.watchdog = setInterval(() => {
       if (this.status === 'open' && Date.now() - this.lastMsg > 12000) this.lost();
     }, 2000);

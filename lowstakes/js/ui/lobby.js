@@ -1,5 +1,5 @@
-import { esc, fmt, signed, avatar, card } from './parts.js?v=2';
-import { GAME_NAMES, MAX_PLAYERS } from '../net/room.js?v=2';
+import { esc, fmt, signed, avatar, card } from './parts.js?v=3';
+import { GAME_NAMES, MAX_PLAYERS } from '../net/room.js?v=3';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
