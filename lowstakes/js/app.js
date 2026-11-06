@@ -57,6 +57,10 @@ function route() {
     if (S.client) leave(false);
     const snap = hostSnapshot(code);
     if (snap) return startHost({ code, snapshot: snap });
+    // Reloaded this tab while sitting at this table: go straight back in.
+    let last = null;
+    try { last = sessionStorage.getItem('ls.room'); } catch {}
+    if (last === code && S.me.name) { joinTable(code); return showGate(code, { status: 'connecting' }); }
     return showGate(code);
   }
   if (S.client) leave(false);
@@ -141,6 +145,7 @@ function startHost({ code, snapshot, bots } = {}) {
 }
 
 function joinTable(code) {
+  try { sessionStorage.setItem('ls.room', code); } catch {}
   const guest = new Guest({ name: S.me.name, color: S.me.color, code });
   wire(guest);
 }
@@ -176,6 +181,7 @@ function onStatus(st) {
 
 function leave(navigate = true) {
   if (S.client) S.client.close();
+  try { sessionStorage.removeItem('ls.room'); } catch {}
   S.client = null;
   S.state = null;
   S.screen = null;
@@ -450,8 +456,7 @@ document.addEventListener('click', (e) => {
     case 'show': c.act({ type: 'show' }); return;
     // blackjack
     case 'bj-add': {
-      const seat = game.seats.find((s) => s.pid === S.state.you);
-      c.act({ type: 'bet', amount: (seat ? seat.bet : 0) + Number(el.dataset.v) });
+      c.act({ type: 'add', amount: Number(el.dataset.v) });
       sound.play('chip');
       return;
     }

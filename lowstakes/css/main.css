@@ -190,15 +190,15 @@ kbd {
   border-radius: 230px 0 0 230px;
 }
 .hero-print {
-  position: absolute; left: 70px; bottom: 54px;
+  position: absolute; left: 90px; bottom: 44px;
   font-weight: 800; font-variation-settings: 'wdth' 75; font-size: 30px; letter-spacing: .02em;
   color: rgba(242, 226, 190, .22);
 }
-.hero-hand { position: absolute; left: 50%; top: 44%; --cw: clamp(70px, 9vw, 116px); }
+.hero-hand { position: absolute; left: 50%; top: 40%; --cw: clamp(70px, 9vw, 116px); }
 .hero-hand .hero-card {
   position: absolute; left: 0; top: 0;
-  transform-origin: 50% 160%;
-  transform: translate(-50%, -50%) rotate(calc((var(--i) - 2) * 9deg));
+  transform-origin: 50% 210%;
+  transform: translate(-50%, -50%) rotate(calc((var(--i) - 2) * 11deg));
   animation: hero-deal .7s var(--ease) backwards;
   animation-delay: calc(250ms + var(--i) * 110ms);
 }
@@ -207,7 +207,7 @@ kbd {
 }
 .hero-hand .hero-card:hover .card-in { transform: translateY(-14px); }
 .hero-card .card-in { transition: transform .25s var(--ease); }
-.hero-chips { position: absolute; left: 22%; right: 8%; bottom: 20%; display: flex; justify-content: space-between; align-items: flex-end; }
+.hero-chips { position: absolute; left: 22%; right: 8%; bottom: 25%; display: flex; justify-content: space-between; align-items: flex-end; }
 .hero-stack .stack { --chip: 30px; }
 .hero-stack { animation: rise .5s var(--ease) backwards; animation-delay: calc(900ms + var(--d) * 90ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
@@ -659,15 +659,15 @@ input[type=range]::-moz-range-thumb {
   box-shadow: 0 0 0 1.5px rgba(245, 235, 221, .25); white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .dealer-total { position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
-.blackjack .center-msg { top: 47%; }
+.blackjack .center-msg { top: 31%; }
 .spot {
   position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
   display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 2;
-  --cw: clamp(34px, 5.2vmin, 60px);
+  --cw: clamp(34px, 6.4vmin, 72px);
 }
 .spot.me { z-index: 3; }
 .hands { display: flex; gap: 10px; align-items: flex-end; position: absolute; bottom: calc(100% - 2px); }
-.hands.h2, .hands.h3, .hands.h4 { --cw: clamp(28px, 4vmin, 46px); }
+.hands.h2, .hands.h3, .hands.h4 { --cw: clamp(28px, 4.6vmin, 54px); }
 .hand { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px; border-radius: 10px; transition: background .2s; }
 .hand.on { background: rgba(242, 190, 69, .18); box-shadow: 0 0 0 2px var(--mustard); }
 .hand-cards { display: flex; }
@@ -913,7 +913,7 @@ input[type=range]::-moz-range-thumb {
   .hero { padding: 0 18px 40px; }
   .hero h1 { font-size: clamp(50px, 15vw, 76px); }
   .lede { font-size: 17px; }
-  .hero-table { margin-right: -18px; min-height: 250px; }
+  .hero-table { margin: 6px -18px 0 0; min-height: 250px; }
   .games, .how { padding: 30px 18px 50px; }
   .r-top { gap: 8px; padding: 0 8px 0 12px; }
   .wordmark.sm span { display: none; }

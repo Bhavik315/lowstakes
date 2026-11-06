@@ -26,3 +26,7 @@ Add an entry to `data/maths.js`, `data/physics.js` or `data/chemistry.js` follow
 into any section to embed an animated figure from `js/viz.js`; interactive labs live in `js/demos.js`.
 
 KaTeX is vendored in `vendor/katex` (MIT) so maths renders offline.
+
+## Also in this repo
+
+[`lowstakes/`](lowstakes/) is **Low Stakes**, a separate play-money card room: hold'em, blackjack and roulette with friends in the browser. See its [README](lowstakes/README.md).

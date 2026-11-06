@@ -103,9 +103,9 @@ export class Blackjack extends Engine {
     const seat = this.seats.find((s) => s.pid === pid);
     if (!seat) return false;
     if (this.phase === 'betting') {
-      if (a.type === 'bet') {
+      if (a.type === 'bet' || a.type === 'add') {
         if (seat.ready) return false;
-        this.setBet(seat, a.amount);
+        this.setBet(seat, a.type === 'add' ? seat.bet + Number(a.amount || 0) : a.amount);
         this.emit('chip', { pid });
         return true;
       }
