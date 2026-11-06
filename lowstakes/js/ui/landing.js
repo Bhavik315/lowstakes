@@ -1,5 +1,5 @@
-import { esc, card, chipStack } from './parts.js?v=3';
-import { COLORS } from '../net/room.js?v=3';
+import { esc, card, chipStack } from './parts.js?v=4';
+import { COLORS } from '../net/room.js?v=4';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -20,7 +20,7 @@ export function landing(me, { error = '' } = {}) {
   <section class="hero">
     <div class="hero-copy">
       <h1>Game night, minus the&nbsp;cash.</h1>
-      <p class="lede">Hold'em, blackjack and roulette with your friends, right in the browser. Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.</p>
+      <p class="lede">Hold'em, blackjack, roulette, baccarat and craps with your friends, right in the browser. Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.</p>
 
       <form class="sit" id="start-form" autocomplete="off" novalidate>
         <label class="field">
@@ -57,7 +57,7 @@ export function landing(me, { error = '' } = {}) {
   </section>
 
   <section class="games" id="games">
-    <h2>Three tables, one link</h2>
+    <h2>Five tables, one link</h2>
     <div class="game-row">
       <article class="placard p-holdem">
         <div class="placard-art">${['As', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
@@ -73,6 +73,16 @@ export function landing(me, { error = '' } = {}) {
         <div class="placard-art"><div class="mini-wheel"></div></div>
         <h3>Roulette</h3>
         <p>Single zero. Everyone stacks chips on the same layout, then watches the ball go round together.</p>
+      </article>
+      <article class="placard p-baccarat">
+        <div class="placard-art">${['8h', '8d'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
+        <h3>Baccarat</h3>
+        <p>Player, Banker or Tie. The cards draw themselves by fixed rule — nothing to decide, just a fast, elegant bet.</p>
+      </article>
+      <article class="placard p-craps">
+        <div class="placard-art"><div class="mini-dice"><i></i><i></i></div></div>
+        <h3>Craps</h3>
+        <p>One of you throws, everyone bets on what happens. Pass line, field, place numbers and hardways, the loud way.</p>
       </article>
     </div>
   </section>

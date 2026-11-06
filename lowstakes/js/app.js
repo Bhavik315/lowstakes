@@ -1,15 +1,18 @@
-import morphdom from '../vendor/morphdom-esm.js?v=3';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=3';
-import { landing, gate } from './ui/landing.js?v=3';
-import { lobby, inviteLink } from './ui/lobby.js?v=3';
-import * as HU from './ui/holdem-ui.js?v=3';
-import * as BU from './ui/blackjack-ui.js?v=3';
-import * as RU from './ui/roulette-ui.js?v=3';
-import { sound } from './ui/sound.js?v=3';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=3';
-import { WHEEL } from './games/roulette.js?v=3';
+import morphdom from '../vendor/morphdom-esm.js?v=4';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=4';
+import { landing, gate } from './ui/landing.js?v=4';
+import { lobby, inviteLink } from './ui/lobby.js?v=4';
+import * as HU from './ui/holdem-ui.js?v=4';
+import * as BU from './ui/blackjack-ui.js?v=4';
+import * as RU from './ui/roulette-ui.js?v=4';
+import * as CU from './ui/baccarat-ui.js?v=4';
+import * as KU from './ui/craps-ui.js?v=4';
+import { sound } from './ui/sound.js?v=4';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=4';
+import { WHEEL } from './games/roulette.js?v=4';
+import { DIE_ROT } from './ui/craps-ui.js?v=4';
 
-const UIS = { holdem: HU, blackjack: BU, roulette: RU };
+const UIS = { holdem: HU, blackjack: BU, roulette: RU, baccarat: CU, craps: KU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
 const app = document.getElementById('app');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -494,6 +497,20 @@ document.addEventListener('click', (e) => {
       return;
     case 'rl-undo': case 'rl-clear': case 'rl-rebet': case 'rl-double': case 'rl-ready': case 'rl-unready':
       c.act({ type: act.slice(3) }); return;
+    // baccarat
+    case 'bc-chip': S.ui.chip = Number(el.dataset.v); S.dockSig = null; renderTable(); return;
+    case 'bc-bet':
+      if (game && game.phase === 'betting' && you && !you.ready) { c.act({ type: 'bet', spot: el.dataset.spot, amount: S.ui.chip }); sound.play('chip'); }
+      return;
+    case 'bc-undo': case 'bc-clear': case 'bc-rebet': case 'bc-double': case 'bc-ready': case 'bc-unready':
+      c.act({ type: act.slice(3) }); return;
+    // craps
+    case 'cr-chip': S.ui.chip = Number(el.dataset.v); S.dockSig = null; renderTable(); return;
+    case 'cr-bet':
+      if (game && game.phase === 'betting') { c.act({ type: 'bet', spot: el.dataset.spot, amount: S.ui.chip }); sound.play('chip'); }
+      return;
+    case 'cr-undo': case 'cr-clear': c.act({ type: act.slice(3) }); return;
+    case 'cr-roll': c.act({ type: 'roll' }); return;
     default:
   }
 });
@@ -526,6 +543,8 @@ document.addEventListener('keydown', (e) => {
     holdem: { f: 'fold', c: ['check', 'call'], r: 'raise' },
     blackjack: { h: 'bj-hit', s: 'bj-stand', d: 'bj-double', p: 'bj-split', enter: 'bj-ready' },
     roulette: { enter: 'rl-ready' },
+    baccarat: { enter: 'bc-ready' },
+    craps: { enter: 'cr-roll' },
   }[S.state.game.game];
   let target = map && map[k];
   if (!target) return;
@@ -606,10 +625,15 @@ function postEffects(events) {
   for (const ev of events) {
     switch (ev.type) {
       case 'deal': {
-        if (game.game !== 'holdem') { for (let i = 0; i < 2; i++) setTimeout(() => sound.play('card'), i * 110); break; }
-        const n = game.seats.filter((s) => s.inHand).length * 2;
-        for (let i = 0; i < n; i++) setTimeout(() => sound.play('card'), 80 + i * HU.DEAL_GAP);
-        setTimeout(() => sound.play('flip'), n * HU.DEAL_GAP + 900);
+        if (game.game === 'holdem') {
+          const n = game.seats.filter((s) => s.inHand).length * 2;
+          for (let i = 0; i < n; i++) setTimeout(() => sound.play('card'), 80 + i * HU.DEAL_GAP);
+          setTimeout(() => sound.play('flip'), n * HU.DEAL_GAP + 900);
+        } else if (game.game === 'baccarat') {
+          for (let i = 0; i < 4; i++) setTimeout(() => sound.play('card'), i * 420);
+        } else {
+          for (let i = 0; i < 2; i++) setTimeout(() => sound.play('card'), i * 110);
+        }
         break;
       }
       case 'board': {
@@ -662,14 +686,19 @@ function postEffects(events) {
       case 'settle':
         if (ev.pids.includes(you)) sound.play('win');
         break;
-      case 'spin': if (game) startSpin(game); break;
+      case 'spin': if (game && game.game === 'roulette') startSpin(game); break;
       case 'land': {
-        const bet = game.bets.some((b) => b.pid === you);
-        const r = { n: ev.n, net: (game.net || {})[you] || 0, bet };
-        // Wait for the ball to actually stop on this screen before revealing.
-        if (W.spin) W.pending = r; else revealSpin(r);
+        if (game.game === 'roulette') {
+          const bet = game.bets.some((b) => b.pid === you);
+          const r = { n: ev.n, net: (game.net || {})[you] || 0, bet };
+          // Wait for the ball to actually stop on this screen before revealing.
+          if (W.spin) W.pending = r; else revealSpin(r);
+        } else if (game.game === 'craps') {
+          landDice(game);
+        }
         break;
       }
+      case 'roll-start': if (game && game.game === 'craps') startDiceRoll(game); break;
       default:
     }
   }
@@ -888,6 +917,63 @@ function closeSpinView(instant = false) {
   el.querySelector('.spin-tilt').animate([{ transform: 'rotateX(0deg)' }], { duration: 500, fill: 'forwards' });
   cam.animate([{ transform: getComputedStyle(cam).transform }, { transform: back }], { duration: 650, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
   setTimeout(() => el.remove(), 680);
+}
+
+// ---------------------------------------------------------------- craps dice
+const DICE_MS = 1650; // matches the engine's land() delay in js/games/craps.js
+const DIE_EULER = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+const dieT = (x, y) => `rotateX(${x}deg) rotateY(${y}deg)`;
+
+function tumbleDie(el, value, seed) {
+  if (!el) return;
+  const inner = el.querySelector('.die-in');
+  if (!inner) return;
+  inner.getAnimations().forEach((a) => a.cancel());
+  const [fx, fy] = DIE_EULER[value] || DIE_EULER[1];
+  if (reduceMotion) { inner.style.transform = dieT(fx, fy); return; }
+  const turns = 2 + (seed % 2);
+  const dir1 = seed % 2 ? 1 : -1;
+  const dir2 = seed % 3 === 0 ? 1 : -1;
+  const steps = 6;
+  const frames = [];
+  for (let i = 0; i <= steps; i++) {
+    const p = i / steps;
+    if (i === steps) frames.push({ transform: dieT(fx, fy), offset: 1 });
+    else frames.push({ transform: dieT(fx + dir1 * 360 * turns * (1 - p), fy + dir2 * 360 * turns * (1 - p) * 0.8), offset: p * 0.92 });
+  }
+  inner.animate(frames, { duration: DICE_MS, easing: 'cubic-bezier(.22,.6,.3,1)', fill: 'forwards' });
+  const box = el;
+  box.animate([
+    { transform: 'translateY(0) scale(1)' },
+    { transform: `translateY(${-14 - seed * 3}px) scale(1.05)`, offset: 0.3 },
+    { transform: 'translateY(2px) scale(.97)', offset: 0.88 },
+    { transform: 'translateY(0) scale(1)' },
+  ], { duration: DICE_MS, easing: 'cubic-bezier(.3,.6,.3,1)', fill: 'forwards' });
+}
+
+function startDiceRoll(view) {
+  if (!view.dice) return;
+  sound.play('diceroll', { ms: DICE_MS });
+  tumbleDie(document.getElementById('die1'), view.dice[0], 1);
+  tumbleDie(document.getElementById('die2'), view.dice[1], 2);
+  const sumEl = document.getElementById('dice-sum');
+  if (sumEl) sumEl.textContent = '';
+}
+
+function landDice(view) {
+  sound.play('diceland');
+  const sumEl = document.getElementById('dice-sum');
+  if (sumEl && view.lastRoll) sumEl.textContent = view.lastRoll.sum;
+  const box = document.getElementById('dice-box');
+  if (box) { box.classList.add('landed'); setTimeout(() => box.classList.remove('landed'), 400); }
+  if (!view.lastRoll) return;
+  const youNet = (view.net || {})[S.state.you] || 0;
+  setTimeout(() => {
+    if (view.lastRoll.shooterChanges) sound.play('sevenout');
+    else if (view.lastRoll.notes.some((n) => n.includes('Point is'))) sound.play('point');
+    if (youNet > 0) setTimeout(() => sound.play('win'), 200);
+    else if (youNet < 0) setTimeout(() => sound.play('lose'), 150);
+  }, 120);
 }
 
 // ---------------------------------------------------------------- countdowns

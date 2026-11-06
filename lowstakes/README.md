@@ -1,6 +1,6 @@
 # Low Stakes
 
-Hold'em, blackjack and roulette with your friends, in the browser. Play money only.
+Hold'em, blackjack, roulette, baccarat and craps with your friends, in the browser. Play money only.
 
 Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.
 

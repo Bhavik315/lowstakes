@@ -139,4 +139,21 @@ const SOUNDS = {
   },
   message(c, t) { tone(c, t, { freq: 1046.5, dur: 0.12, gain: 0.05 }); },
   react(c, t) { tone(c, t, { freq: 740, dur: 0.1, gain: 0.06, type: 'triangle' }); },
+  // Two dice tumbling across felt: a rattly, decaying burst train.
+  diceroll(c, t, { ms = 1500 } = {}) {
+    let dt = 0;
+    const end = ms / 1000 - 0.1;
+    while (dt < end) {
+      const p = dt / end;
+      burst(c, t + dt, { freq: 1400 + Math.random() * 2600, q: 2.5, dur: 0.025, gain: 0.22 * (1 - p * 0.6) });
+      dt += 0.045 + p * 0.05 + Math.random() * 0.025;
+    }
+  },
+  diceland(c, t) {
+    burst(c, t, { freq: 700, q: 1, dur: 0.07, gain: 0.5, type: 'lowpass' });
+    burst(c, t + 0.015, { freq: 2600, q: 2, dur: 0.04, gain: 0.3 });
+    burst(c, t + 0.09, { freq: 2200, q: 2, dur: 0.03, gain: 0.16 });
+  },
+  point(c, t) { tone(c, t, { freq: 523.25, dur: 0.14, gain: 0.1, type: 'triangle' }); tone(c, t + 0.08, { freq: 659.25, dur: 0.22, gain: 0.09, type: 'triangle' }); },
+  sevenout(c, t) { tone(c, t, { freq: 180, end: 90, dur: 0.5, gain: 0.3, type: 'sawtooth' }); burst(c, t, { freq: 300, q: 0.6, dur: 0.3, gain: 0.2, type: 'lowpass' }); },
 };

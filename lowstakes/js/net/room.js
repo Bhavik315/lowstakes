@@ -1,11 +1,13 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=3';
-import { Blackjack } from '../games/blackjack.js?v=3';
-import { Roulette } from '../games/roulette.js?v=3';
+import { Holdem } from '../games/holdem.js?v=4';
+import { Blackjack } from '../games/blackjack.js?v=4';
+import { Roulette } from '../games/roulette.js?v=4';
+import { Baccarat } from '../games/baccarat.js?v=4';
+import { Craps } from '../games/craps.js?v=4';
 
-const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette };
+const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, baccarat: Baccarat, craps: Craps };
 const PREFIX = 'lowstakes-v1-';
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 export const MAX_PLAYERS = 12;
@@ -21,6 +23,8 @@ export const DEFAULT_SETTINGS = {
   holdem: { sb: 10, bb: 20, timer: 30 },
   blackjack: { min: 10, timer: 20 },
   roulette: { min: 5, betTime: 20 },
+  baccarat: { min: 5, betTime: 18 },
+  craps: { min: 5, betTime: 13 },
 };
 
 export function newCode() {
@@ -429,6 +433,14 @@ export function held(engine, pid) {
     if (engine.phase === 'result') return 0;
     return engine.total(pid);
   }
+  if (engine instanceof Baccarat) {
+    if (engine.phase === 'result') return 0;
+    return engine.total(pid);
+  }
+  if (engine instanceof Craps) {
+    if (engine.phase === 'result') return 0;
+    return engine.total(pid);
+  }
   return 0;
 }
 
@@ -540,7 +552,7 @@ export class Guest extends Emitter {
 }
 
 export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
-export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette' };
+export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette', baccarat: 'Baccarat', craps: 'Craps' };
 
 function cleanName(n) {
   return String(n || '').replace(/\s+/g, ' ').trim().slice(0, 16);
