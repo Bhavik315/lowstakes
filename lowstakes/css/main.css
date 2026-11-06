@@ -1141,3 +1141,4 @@ input[type=range]::-moz-range-thumb {
 .sr-line b { color: var(--cream); font-variant-numeric: tabular-nums; }
 .sr-line.up b { color: var(--mustard); font-size: 1.3em; }
 .chip.rain { position: fixed; --chip: 34px; z-index: 4; pointer-events: none; }
+.form-error.gate-wait { color: var(--ink-soft); font-weight: 600; }

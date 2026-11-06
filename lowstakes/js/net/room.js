@@ -36,14 +36,26 @@ export function cleanCode(s) {
 function peerOptions() {
   const q = new URLSearchParams(location.search);
   const sig = q.get('signal');
+<<<<<<< HEAD
   // Don't set `config` to undefined: PeerJS spreads our options over its defaults,
   // so that would wipe out its STUN/TURN servers and only same-network players could join.
+=======
+  // STUN finds each browser's public address; TURN relays traffic when two
+  // networks can't connect directly (strict routers, school Wi-Fi, VPNs).
+>>>>>>> 0f8e613 (Make joining a table more reliable and say why it fails)
   const opts = {
     debug: 0,
     config: {
       iceServers: [
         { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
         { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
+<<<<<<< HEAD
+=======
+        {
+          urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp', 'turns:openrelay.metered.ca:443'],
+          username: 'openrelayproject', credential: 'openrelayproject',
+        },
+>>>>>>> 0f8e613 (Make joining a table more reliable and say why it fails)
       ],
       sdpSemantics: 'unified-plan',
     },
@@ -109,6 +121,7 @@ export class Host extends Emitter {
     const peer = new Peer(PREFIX + this.code, peerOptions());
     this.peer = peer;
     peer.on('open', () => { this.setStatus('open'); });
+    setTimeout(() => { if (!this.closed && this.peer === peer && !peer.open && this.status !== 'taken') this.setStatus('offline'); }, 12000);
     peer.on('connection', (conn) => this.accept(conn));
     peer.on('disconnected', () => {
       if (this.closed) return;
@@ -435,8 +448,11 @@ export class Guest extends Emitter {
     this.name = name;
     this.color = color;
     this.status = 'connecting';
+    this.stage = 'server';
     this.tries = 0;
     this.connect();
+    // If the first join is taking a while, say what we're stuck on.
+    this.slowTimer = setTimeout(() => { if (!this.everOpen && !this.closed) this.fire('stage', { stage: this.stage, slow: true }); }, 12000);
     this.watchdog = setInterval(() => {
       if (this.status === 'open' && Date.now() - this.lastMsg > 12000) this.lost();
     }, 2000);
@@ -446,7 +462,9 @@ export class Guest extends Emitter {
     if (typeof Peer === 'undefined') { this.setStatus('offline'); return; }
     if (!this.peer || this.peer.destroyed) {
       this.peer = new Peer(undefined, peerOptions());
-      this.peer.on('open', () => this.dial());
+      const peer = this.peer;
+      setTimeout(() => { if (!this.closed && this.peer === peer && !peer.open) { peer.destroy(); this.retry(); } }, 9000);
+      this.peer.on('open', () => { this.stage = 'host'; this.fire('stage', { stage: 'host' }); this.dial(); });
       this.peer.on('error', (err) => {
         if (this.closed) return;
         if (err.type === 'peer-unavailable') {
@@ -474,7 +492,7 @@ export class Guest extends Emitter {
       this.lastMsg = Date.now();
       if (!msg || typeof msg !== 'object') return;
       if (msg.t === 'state') {
-        if (this.status !== 'open') { this.everOpen = true; this.tries = 0; this.setStatus('open'); }
+        if (this.status !== 'open') { this.everOpen = true; this.tries = 0; clearTimeout(this.slowTimer); this.setStatus('open'); }
         this.fire('state', msg);
       } else if (msg.t === 'react') this.fire('react', msg);
       else if (msg.t === 'reject') { this.closed = true; this.setStatus(msg.why === 'full' ? 'full' : 'rejected'); }
@@ -493,6 +511,7 @@ export class Guest extends Emitter {
   retry() {
     if (this.closed || this.retrying) return;
     this.tries++;
+    if (!this.everOpen && this.tries > 4) { this.closed = true; this.setStatus(this.stage === 'server' ? 'noserver' : 'unreachable'); return; }
     if (this.tries > 12) { this.setStatus(this.everOpen ? 'closed' : 'notfound'); return; }
     this.retrying = true;
     if (this.status !== 'connecting') this.setStatus('reconnecting');

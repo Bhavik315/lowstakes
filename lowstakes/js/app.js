@@ -116,6 +116,18 @@ function showGate(code, opts = {}) {
   if (!opts.status) form.querySelector('#name').focus();
 }
 
+function gateStage({ stage, slow }) {
+  const btn = document.querySelector('#gate-form button[type=submit]');
+  const note = document.getElementById('form-error');
+  if (btn) btn.textContent = stage === 'server' ? 'Contacting the matchmaking server…' : 'Connecting to the host…';
+  if (note && slow) {
+    note.classList.add('gate-wait');
+    note.textContent = stage === 'server'
+      ? 'This is taking a while. A VPN, ad blocker or school network can block the connection.'
+      : 'Found the table. Still connecting to the host’s browser. Make sure the host still has the table open.';
+  }
+}
+
 function readMe(form) {
   const name = form.querySelector('#name').value.replace(/\s+/g, ' ').trim().slice(0, 16);
   const color = (form.querySelector('input[name=color]:checked') || {}).value || S.me.color;
@@ -159,6 +171,7 @@ function wire(client) {
   client.on('state', (msg) => { if (S.client === client) onState(msg); });
   client.on('status', (st) => { if (S.client === client) onStatus(st); });
   client.on('react', (msg) => { if (S.client === client) showReaction(msg); });
+  client.on('stage', (st) => { if (S.client === client && S.screen === 'gate') gateStage(st); });
 }
 
 function onStatus(st) {
@@ -169,6 +182,16 @@ function onStatus(st) {
       const code = c.code;
       leave(false);
       showGate(code, { error: `There's no open table with code ${code}. Check the code, or ask the host to keep their tab open.` });
+      return;
+    }
+    if (st === 'noserver' && S.screen !== 'table') {
+      const code = c.code; leave(false);
+      showGate(code, { error: 'Couldn’t reach the matchmaking server. A VPN, ad blocker or school/work network may be blocking it. Turn those off or switch to mobile data, then try again.' });
+      return;
+    }
+    if (st === 'unreachable' && S.screen !== 'table') {
+      const code = c.code; leave(false);
+      showGate(code, { error: 'Found the table, but couldn’t connect to the host’s browser. Usually one of your networks is blocking it. Try turning off any VPN, or have one of you switch to mobile data, then try again.' });
       return;
     }
     if (st === 'full') { const code = c.code; leave(false); showGate(code, { error: 'That table is full. Twelve is the limit.' }); return; }
