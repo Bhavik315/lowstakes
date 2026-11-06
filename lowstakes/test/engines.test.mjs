@@ -61,7 +61,7 @@ test('hold\'em plays many hands with bots and conserves chips', () => {
     let rebuys = 0;
     const origRebuy = room.rebuy;
     room.rebuy = (id) => { rebuys++; origRebuy(id); };
-    run(g, 1000 * 60 * 6, clock);
+    run(g, 1000 * 60 * 12, clock);
     assert.ok(g.handNo > 8, `played ${g.handNo} hands with ${n}`);
     // chips conserved between hands
     while (g.phase !== 'waiting' && g.phase !== 'handover') run(g, 50, clock);

@@ -575,7 +575,13 @@ input[type=range]::-moz-range-thumb {
 .seat .card:nth-child(2) { rotate: 5deg; translate: 0 2px; }
 .seat.me .card + .card { margin-left: calc(var(--cw) * -.2); }
 .seat.me .seat-cards { margin-bottom: -4px; }
-.seat.folded .seat-cards { opacity: .28; filter: grayscale(.6); transform: translateY(6px) scale(.92); transition: all .35s var(--ease); }
+.seat-cards { transition: transform .75s var(--ease), opacity .6s ease .2s, filter .5s; }
+/* Other players' folded cards get tossed toward the middle; yours just dim. */
+.seat.folded:not(.me) .seat-cards {
+  opacity: 0;
+  transform: translate(calc(var(--mx) * 1cqw), calc(var(--my) * 1cqw / var(--ar))) rotate(28deg) scale(.7);
+}
+.seat.me.folded .seat-cards { opacity: .35; filter: grayscale(.6); transform: translateY(8px) scale(.94); }
 .seat.out .seat-cards { visibility: hidden; }
 .plate {
   position: relative; z-index: 2;
@@ -614,7 +620,13 @@ input[type=range]::-moz-range-thumb {
 
 .bet {
   position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); z-index: 1;
-  display: flex; align-items: center; gap: 5px; animation: rise .25s var(--ease);
+  display: flex; align-items: center; gap: 5px;
+  animation: bet-in .6s var(--ease) backwards;
+}
+/* Chips slide out from the player's seat to where the bet sits. */
+@keyframes bet-in {
+  from { transform: translate(calc(-50% + var(--bx, 0) * 1cqw), calc(-50% + var(--by, 0) * 1cqw / var(--ar))) scale(.85); opacity: 0; }
+  25% { opacity: 1; }
 }
 .bet b { font-size: 12.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: rgba(0, 0, 0, .55); font-variant-numeric: tabular-nums; }
 .dealer-btn {
@@ -622,20 +634,67 @@ input[type=range]::-moz-range-thumb {
   width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
   background: var(--paper); color: var(--ink); font-weight: 800; font-size: 13px;
   box-shadow: 0 2px 0 #bdb3a3, 0 4px 8px rgba(0, 0, 0, .45);
-  transition: left .5s var(--ease), top .5s var(--ease);
+  transition: left 1s var(--ease), top 1s var(--ease);
 }
 
 /* hold'em */
-.tbl.holdem { width: min(100%, calc((100dvh - var(--header) - 84px - 150px) * 2.1)); aspect-ratio: 2.1 / 1; }
+.tbl.holdem { container-type: inline-size; --ar: 2.1; width: min(100%, calc((100dvh - var(--header) - 84px - 150px) * 2.1)); aspect-ratio: 2.1 / 1; }
 .board {
   position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
-  display: flex; gap: calc(var(--cw) * .14); --cw: clamp(40px, 6.4vmin, 74px);
+  --cw: clamp(40px, 6.4vmin, 74px); --gap: calc(var(--cw) * .14);
+  display: flex; gap: var(--gap);
 }
 .slot { width: var(--cw); aspect-ratio: 5 / 7; border-radius: calc(var(--cw) * .085); border: 2px dashed rgba(242, 226, 190, .14); }
 .slot .card { margin: -2px; }
 .pot { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; }
 .pot span { font-size: 14px; padding: 3px 11px; border-radius: 999px; background: rgba(0, 0, 0, .4); }
 .pot b { color: var(--mustard); font-variant-numeric: tabular-nums; }
+
+/* ---- hold'em motion ---- */
+/* Hole cards leave the dealer one at a time and spin onto each seat. */
+.tbl.holdem .seat .card {
+  animation: deal-seat .7s cubic-bezier(.16, .8, .3, 1) backwards;
+  animation-delay: var(--dd, 0ms);
+}
+@keyframes deal-seat {
+  from { transform: translate(calc(var(--ox) * 1cqw), calc(var(--oy) * 1cqw / var(--ar))) rotate(-200deg) scale(.5); opacity: 0; }
+  12% { opacity: 1; }
+}
+/* Your cards land face down, then you peek. */
+.tbl.holdem .seat.me .card-in {
+  animation: turnover .55s var(--ease) backwards;
+  animation-delay: calc(var(--dd, 0ms) + 1000ms);
+}
+@keyframes turnover { from { transform: rotateY(180deg); } }
+/* Showdown: hands turn over one seat at a time. */
+.tbl.holdem .seat:not(.me) .card-in { transition: transform .6s var(--ease) var(--fd, 0ms); }
+.tbl.holdem .seat .tag-hand { animation: tag-in .35s var(--ease) backwards; animation-delay: calc(var(--fd, 0ms) + 650ms); }
+.tbl.holdem .card.lo .card-face { transition: filter .6s ease 1.4s; }
+
+/* The flop lands as a face-down stack, spreads, then turns over card by card. */
+.slot .card { animation: none; }
+.slot .card.flop { animation: flop-spread 1.1s var(--ease) backwards; }
+@keyframes flop-spread {
+  0% { transform: translate(calc(var(--i) * (var(--cw) + var(--gap)) * -1), -28px) rotate(-8deg); opacity: 0; }
+  28% { transform: translate(calc(var(--i) * (var(--cw) + var(--gap)) * -1), 0); opacity: 1; }
+  45% { transform: translate(calc(var(--i) * (var(--cw) + var(--gap)) * -1), 0); }
+  100% { transform: none; }
+}
+.slot .card.flop .card-in { animation: turnover .55s var(--ease) backwards; animation-delay: calc(1150ms + var(--i) * 260ms); }
+.slot .card.late { animation: drop-in .6s var(--ease) backwards; }
+@keyframes drop-in { from { transform: translateY(-46px) rotate(-8deg) scale(.9); opacity: 0; } }
+.slot .card.late .card-in { animation: turnover .55s var(--ease) backwards; animation-delay: .7s; }
+
+/* Winner's plate glows as the pot arrives. */
+.tbl.holdem .seat.won .plate { animation: won-glow 1.6s ease-out var(--wd, 1.2s) backwards; }
+.tbl.holdem .seat .tag-win { animation: tag-in .4s var(--ease) backwards; animation-delay: var(--wd, 0ms); }
+.tbl.holdem .center-msg p { animation: rise .5s var(--ease) backwards; animation-delay: calc(var(--wd, 0ms) - 500ms); }
+@keyframes won-glow {
+  0% { background: rgba(18, 11, 7, .9); color: var(--cream); box-shadow: 0 0 0 0 rgba(242, 190, 69, .8); }
+  40% { box-shadow: 0 0 0 10px rgba(242, 190, 69, 0); }
+}
+.seat.acting .plate { animation: acting 1.8s ease-in-out infinite; }
+@keyframes acting { 50% { box-shadow: 0 0 0 6px rgba(242, 190, 69, .12), 0 8px 22px rgba(0, 0, 0, .5); } }
 
 /* blackjack */
 .bj-wrap { padding-top: 24px; }
@@ -949,10 +1008,10 @@ input[type=range]::-moz-range-thumb {
   .bet-acts { justify-content: center; }
 
   .tbl-wrap { padding: 46px 30px 56px; }
-  .tbl.holdem { aspect-ratio: .78 / 1; width: min(100%, calc((100dvh - var(--header) - 190px - 100px) * .78)); }
+  .tbl.holdem { --ar: .78; aspect-ratio: .78 / 1; width: min(100%, calc((100dvh - var(--header) - 190px - 100px) * .78)); }
   .tbl.holdem .felt { border-radius: 46% / 32%; }
   .felt::after { inset: 7%; }
-  .board { top: 41%; --cw: clamp(32px, 9.4vw, 48px); gap: 3px; }
+  .board { top: 41%; --cw: clamp(32px, 9.4vw, 48px); --gap: 3px; }
   .pot { top: 57%; }
   .pot .stack { display: none; }
   .center-msg { top: 63%; font-size: 13.5px; }

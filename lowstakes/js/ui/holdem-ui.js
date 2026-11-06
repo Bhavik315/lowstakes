@@ -1,5 +1,8 @@
 import { esc, fmt, card, chipStack, avatar } from './parts.js';
 
+// Time between cards when dealing round the table (keep in step with the engine).
+export const DEAL_GAP = 200;
+
 export function lastEvent(view, type) {
   for (let i = view.events.length - 1; i >= 0; i--) if (view.events[i].type === type) return view.events[i];
   return null;
@@ -30,13 +33,25 @@ export function stage(view, state) {
   }
   const showdown = view.results && view.results.showdown;
 
+  // Deal order starts at the small blind and goes round the table, so each
+  // card can leave the dealer at its real moment.
+  const live = view.seats.filter((s) => s.inHand);
+  const sbAt = Math.max(0, live.findIndex((s) => s.sb));
+  const order = new Map(live.map((s, j) => [s.pid, (j - sbAt + live.length) % live.length]));
+
   const seatHtml = seatOrder(view.seats, you).map(({ s, k }) => {
     const p = byId[s.pid] || { name: '?', color: '#777' };
     const a = Math.PI / 2 + (k * 2 * Math.PI) / n;
     const cx = Math.cos(a);
     const cy = Math.sin(a);
-    const pos = `--x:${(50 + 50 * cx).toFixed(2)}%;--y:${(50 + 50 * cy).toFixed(2)}%`;
-    const betPos = `--x:${(50 + 31 * cx).toFixed(2)}%;--y:${(50 + 29 * cy).toFixed(2)}%`;
+    const X = 50 + 50 * cx;
+    const Y = 50 + 50 * cy;
+    const BX = 50 + 31 * cx;
+    const BY = 50 + 29 * cy;
+    const k0 = order.has(s.pid) ? order.get(s.pid) : 0;
+    // --ox/--oy: path back to the dealer; --mx/--my: where folded cards are tossed; --fd: showdown flip delay
+    const pos = `--x:${X.toFixed(2)}%;--y:${Y.toFixed(2)}%;--ox:${(50 - X).toFixed(1)};--oy:${(44 - Y).toFixed(1)};--mx:${((50 - X) * 0.55).toFixed(1)};--my:${((50 - Y) * 0.55).toFixed(1)};--fd:${k0 * 380}ms`;
+    const betPos = `--x:${BX.toFixed(2)}%;--y:${BY.toFixed(2)}%;--bx:${(X - BX).toFixed(1)};--by:${(Y - BY).toFixed(1)}`;
     const ba = a + 0.32;
     const btnPos = `--x:${(50 + 37 * Math.cos(ba)).toFixed(2)}%;--y:${(50 + 34 * Math.sin(ba)).toFixed(2)}%`;
     const me = s.pid === you;
@@ -49,7 +64,7 @@ export function stage(view, state) {
     const cards = s.cards.map((c, i) => {
       let extra = '';
       if (showdown && s.best) extra = hiCards.has(c) ? 'hi' : 'lo';
-      return card(c, { key: `h${view.handNo}-${s.pid}-${i}`, cls: extra, style: `--dx:${(-cx * 40).toFixed(1)}vmin;--dy:${(-cy * 30).toFixed(1)}vmin;--i:${i}` });
+      return card(c, { key: `h${view.handNo}-${s.pid}-${i}`, cls: extra, style: `--dd:${(i * live.length + k0) * DEAL_GAP}ms` });
     }).join('');
     const tag = s.handName ? `<span class="tag tag-hand">${esc(s.handName)}</span>`
       : won && s.won ? `<span class="tag tag-win">+${fmt(s.won)}</span>`
@@ -67,7 +82,7 @@ export function stage(view, state) {
         </div>
         ${tag}
       </div>
-      ${s.bet > 0 ? `<div class="bet" style="${betPos}" id="bet-${esc(s.pid)}" data-bet="${esc(s.pid)}">${chipStack(s.bet, 6)}<b>${fmt(s.bet)}</b></div>` : ''}
+      ${s.bet > 0 ? `<div class="bet" style="${betPos}" id="bet-${esc(s.pid)}-${s.bet}" data-bet="${esc(s.pid)}">${chipStack(s.bet, 6)}<b>${fmt(s.bet)}</b></div>` : ''}
       ${s.btn ? `<div class="dealer-btn" style="${btnPos}" id="dealer-btn" aria-label="Dealer button">D</div>` : ''}`;
   }).join('');
 
@@ -75,8 +90,12 @@ export function stage(view, state) {
     const c = view.board[i];
     if (!c) return '<div class="slot"></div>';
     const extra = showdown ? (hiCards.has(c) ? 'hi' : 'lo') : '';
-    return `<div class="slot">${card(c, { key: `b${view.handNo}-${i}`, cls: extra, style: `--dx:0;--dy:-18vmin;--i:${view.street === 'flop' || i < 3 ? i : 0}` })}</div>`;
+    return `<div class="slot">${card(c, { key: `b${view.handNo}-${i}`, cls: `${i < 3 ? 'flop' : 'late'} ${extra}`, style: `--i:${i < 3 ? i : 0}` })}</div>`;
   }).join('');
+
+  // When the pot reaches the winner (matches the chip flight in app.js).
+  const shownCount = view.seats.filter((s) => s.handName).length;
+  const winDelay = showdown ? 900 + shownCount * 380 + 700 : 900;
 
   let center = '';
   if (view.results && view.phase === 'handover') {
@@ -94,7 +113,7 @@ export function stage(view, state) {
 
   return `
 <div class="tbl-wrap">
-  <div class="tbl holdem" style="--n:${n}">
+  <div class="tbl holdem" style="--n:${n};--wd:${winDelay}ms">
     <div class="felt">
       <div class="board" aria-label="Community cards">${slots}</div>
       <div class="pot" id="pot" aria-live="polite">${view.pot > 0 ? `${chipStack(view.pot, 7)}<span>Pot <b>${fmt(view.pot)}</b></span>` : ''}</div>

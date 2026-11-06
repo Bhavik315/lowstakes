@@ -537,7 +537,7 @@ function toast(msg) {
 function rectOf(el) { return el ? el.getBoundingClientRect() : null; }
 function centre(r) { return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
 
-function fly(html, from, to, { dur = 520, delay = 0, cls = '' } = {}) {
+function fly(html, from, to, { dur = 700, delay = 0, cls = '', lift = 30 } = {}) {
   if (reduceMotion || !from || !to) return;
   const fx = document.getElementById('fx');
   if (!fx) return;
@@ -547,11 +547,16 @@ function fly(html, from, to, { dur = 520, delay = 0, cls = '' } = {}) {
   el.style.left = `${from.x}px`;
   el.style.top = `${from.y}px`;
   fx.appendChild(el);
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  // A gentle arc: the chips lift a little on the way, like they're being pushed across felt.
   const anim = el.animate([
-    { transform: 'translate(-50%,-50%)', opacity: 1 },
-    { transform: `translate(calc(-50% + ${to.x - from.x}px), calc(-50% + ${to.y - from.y}px))`, opacity: 1, offset: 0.85 },
-    { transform: `translate(calc(-50% + ${to.x - from.x}px), calc(-50% + ${to.y - from.y}px))`, opacity: 0 },
-  ], { duration: dur, delay, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'both' });
+    { transform: 'translate(-50%,-50%) scale(1)', opacity: 0 },
+    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: 0.06 },
+    { transform: `translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${dy * 0.5 - lift}px)) scale(1.08)`, opacity: 1, offset: 0.5 },
+    { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1)`, opacity: 1, offset: 0.9 },
+    { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(.9)`, opacity: 0 },
+  ], { duration: dur, delay, easing: 'cubic-bezier(.45,.05,.25,1)', fill: 'both' });
   anim.onfinish = () => el.remove();
 }
 
@@ -567,7 +572,7 @@ function preEffects(events) {
   const to = feltCentre();
   document.querySelectorAll('#stage .bet').forEach((b, i) => {
     const stack = b.querySelector('.stack');
-    if (stack) fly(stack.outerHTML, centre(rectOf(b)), to, { dur: 420, delay: i * 20 });
+    if (stack) fly(stack.outerHTML, centre(rectOf(b)), to, { dur: 750, delay: i * 70, lift: 14 });
   });
 }
 
@@ -578,13 +583,21 @@ function postEffects(events) {
   for (const ev of events) {
     switch (ev.type) {
       case 'deal': {
-        const n = game && game.seats ? game.seats.filter((s) => s.cards && s.cards.length).length * 2 : 2;
-        for (let i = 0; i < Math.min(n, 12); i++) setTimeout(() => sound.play('card'), i * 110);
+        if (game.game !== 'holdem') { for (let i = 0; i < 2; i++) setTimeout(() => sound.play('card'), i * 110); break; }
+        const n = game.seats.filter((s) => s.inHand).length * 2;
+        for (let i = 0; i < n; i++) setTimeout(() => sound.play('card'), 80 + i * HU.DEAL_GAP);
+        setTimeout(() => sound.play('flip'), n * HU.DEAL_GAP + 900);
         break;
       }
       case 'board': {
-        const n = ev.street === 'flop' ? 3 : 1;
-        for (let i = 0; i < n; i++) setTimeout(() => sound.play('card'), i * 120);
+        if (ev.street === 'flop') {
+          sound.play('card');
+          setTimeout(() => sound.play('fold'), 420);
+          for (let i = 0; i < 3; i++) setTimeout(() => sound.play('flip'), 1150 + i * 260);
+        } else {
+          sound.play('card');
+          setTimeout(() => sound.play('flip'), 700);
+        }
         break;
       }
       case 'card': if (cardSounds++ < 3) sound.play('card'); break;
@@ -592,7 +605,12 @@ function postEffects(events) {
       case 'check': sound.play('check'); break;
       case 'fold': sound.play('fold'); break;
       case 'collect': sound.play('collect'); break;
-      case 'reveal': case 'show': sound.play('flip'); break;
+      case 'reveal': {
+        const n = game.seats ? game.seats.filter((s) => s.inHand && !s.folded).length : 1;
+        for (let i = 0; i < n; i++) setTimeout(() => sound.play('flip'), i * 380);
+        break;
+      }
+      case 'show': sound.play('flip'); break;
       case 'bust': sound.play('bust'); break;
       case 'blackjack': sound.play('blackjack'); break;
       case 'shuffle': sound.play('shuffle'); break;
@@ -604,12 +622,18 @@ function postEffects(events) {
         }
         break;
       case 'win': {
-        sound.play(ev.pids.includes(you) ? 'win' : 'collect');
+        // At a showdown, wait for every hand to turn over before pushing the pot.
+        const shown = ev.showdown && game.seats ? game.seats.filter((s) => s.handName).length : 0;
+        const wait = ev.showdown ? 900 + shown * 380 : 350;
         const from = feltCentre();
-        ev.pids.forEach((pid, i) => {
-          const seat = document.querySelector(`#stage [data-seat="${CSS.escape(pid)}"] .plate`);
-          fly(chipStack(Math.max(1, Math.round(ev.amount / ev.pids.length)), 6), from, seat && centre(rectOf(seat)), { dur: 700, delay: 150 + i * 80 });
-        });
+        setTimeout(() => {
+          if (!S.state || !S.state.game || S.state.game.handNo !== game.handNo) return;
+          sound.play(ev.pids.includes(you) ? 'win' : 'collect');
+          ev.pids.forEach((pid, i) => {
+            const seat = document.querySelector(`#stage [data-seat="${CSS.escape(pid)}"] .plate`);
+            fly(chipStack(Math.max(1, Math.round(ev.amount / ev.pids.length)), 6), from, seat && centre(rectOf(seat)), { dur: 1100, delay: i * 140, lift: 40 });
+          });
+        }, wait);
         break;
       }
       case 'settle':

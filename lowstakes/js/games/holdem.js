@@ -124,8 +124,9 @@ export class Holdem extends Engine {
     this.note(`Hand #${this.handNo}. ${this.name(this.seats[this.button].pid)} has the button.`);
     this.emit('deal', { hand: this.handNo });
     this.toAct = -1;
+    // Wait for the deal animation (200ms per card) plus a beat to look at your cards.
     const dealt = this.seats.filter(inHand).length * 2;
-    this.after(450 + dealt * 110, () => this.advance(this.bbIdx));
+    this.after(1500 + dealt * 200, () => this.advance(this.bbIdx));
   }
 
   post(seat, amount) {
@@ -149,7 +150,7 @@ export class Holdem extends Engine {
     const t = this.now();
     if (this.s.timer > 0) this.deadline = t + this.s.timer * 1000;
     else this.deadline = p && !p.connected && !p.bot ? t + 15000 : 0;
-    if (p && p.bot) this.botAt = t + 650 + Math.random() * 1300;
+    if (p && p.bot) this.botAt = t + 1200 + Math.random() * 1600;
     this.emit('turn', { pid: seat.pid });
   }
 
@@ -292,7 +293,7 @@ export class Holdem extends Engine {
 
     if (this.street === 'river') {
       this.phase = 'dealing';
-      return this.after(650, () => this.showdown());
+      return this.after(1100, () => this.showdown());
     }
     const movers = live.filter((s) => !s.allIn);
     if (movers.length <= 1) {
@@ -302,14 +303,14 @@ export class Holdem extends Engine {
       this.emit('reveal');
       this.note('All in. Cards on their backs.');
       const runOut = () => {
-        if (this.street === 'river') return this.after(600, () => this.showdown());
+        if (this.street === 'river') return this.after(1400, () => this.showdown());
         this.dealStreet();
-        this.after(1500, runOut);
+        this.after(this.street === 'flop' ? 3000 : 2200, runOut);
       };
-      return this.after(1100, runOut);
+      return this.after(1600 + live.length * 380, runOut);
     }
     this.phase = 'dealing';
-    this.after(600, () => {
+    this.after(1000, () => {
       this.dealStreet();
       this.phase = 'betting';
       this.currentBet = 0;
@@ -319,7 +320,8 @@ export class Holdem extends Engine {
         s.needs = this.canMove(s);
         if (this.isLive(s) && !s.allIn) s.last = null;
       }
-      this.after(550, () => this.advance(this.button));
+      // Let the flop spread and turn over (or the turn/river flip) before anyone acts.
+      this.after(this.street === 'flop' ? 2000 : 1300, () => this.advance(this.button));
     });
   }
 
@@ -345,7 +347,7 @@ export class Holdem extends Engine {
     this.phase = 'handover';
     this.emit('win', { pids: [winner.pid], amount });
     this.note(`${this.name(winner.pid)} takes ${amount} uncontested.`);
-    this.after(3200, () => this.finishHand());
+    this.after(3800, () => this.finishHand());
   }
 
   showdown() {
@@ -395,7 +397,7 @@ export class Holdem extends Engine {
     this.phase = 'handover';
     const winPids = [...new Set(results.flatMap((r) => r.winners))];
     this.emit('win', { pids: winPids, amount: results.reduce((a, r) => a + r.amount, 0), showdown: true });
-    this.after(6000, () => this.finishHand());
+    this.after(7500 + live.length * 380, () => this.finishHand());
   }
 
   finishHand() {
