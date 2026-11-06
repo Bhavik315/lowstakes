@@ -445,8 +445,8 @@ export class Guest extends Emitter {
     this.stage = 'server';
     this.tries = 0;
     this.connect();
-    // If the first join is taking a while, say what we're stuck on.
-    this.slowTimer = setTimeout(() => { if (!this.everOpen && !this.closed) this.fire('stage', { stage: this.stage, slow: true }); }, 12000);
+    // If the first join is taking a while, say what we're stuck on well before we give up.
+    this.slowTimer = setTimeout(() => { if (!this.everOpen && !this.closed) this.fire('stage', { stage: this.stage, slow: true }); }, 6000);
     this.watchdog = setInterval(() => {
       if (this.status === 'open' && Date.now() - this.lastMsg > 12000) this.lost();
     }, 2000);
@@ -457,7 +457,7 @@ export class Guest extends Emitter {
     if (!this.peer || this.peer.destroyed) {
       this.peer = new Peer(undefined, peerOptions());
       const peer = this.peer;
-      setTimeout(() => { if (!this.closed && this.peer === peer && !peer.open) { peer.destroy(); this.retry(); } }, 9000);
+      setTimeout(() => { if (!this.closed && this.peer === peer && !peer.open) { peer.destroy(); this.retry(); } }, 6000);
       this.peer.on('open', () => { this.stage = 'host'; this.fire('stage', { stage: 'host' }); this.dial(); });
       this.peer.on('error', (err) => {
         if (this.closed) return;
@@ -476,7 +476,7 @@ export class Guest extends Emitter {
     if (this.closed) return;
     const conn = this.peer.connect(PREFIX + this.code, { reliable: true, serialization: 'json' });
     this.conn = conn;
-    const timeout = setTimeout(() => { if (!conn.open) { try { conn.close(); } catch {} this.retry(); } }, 10000);
+    const timeout = setTimeout(() => { if (!conn.open) { try { conn.close(); } catch {} this.retry(); } }, 7000);
     conn.on('open', () => {
       clearTimeout(timeout);
       this.lastMsg = Date.now();
@@ -505,11 +505,13 @@ export class Guest extends Emitter {
   retry() {
     if (this.closed || this.retrying) return;
     this.tries++;
-    if (!this.everOpen && this.tries > 4) { this.closed = true; this.setStatus(this.stage === 'server' ? 'noserver' : 'unreachable'); return; }
+    // Give up on the first join quickly (~20s total) rather than leaving someone staring
+    // at "Finding the table" for over a minute before they learn anything's wrong.
+    if (!this.everOpen && this.tries > 2) { this.closed = true; this.setStatus(this.stage === 'server' ? 'noserver' : 'unreachable'); return; }
     if (this.tries > 12) { this.setStatus(this.everOpen ? 'closed' : 'notfound'); return; }
     this.retrying = true;
     if (this.status !== 'connecting') this.setStatus('reconnecting');
-    setTimeout(() => { this.retrying = false; this.connect(); }, Math.min(1000 * this.tries, 4000));
+    setTimeout(() => { this.retrying = false; this.connect(); }, Math.min(700 * this.tries, 1500));
   }
 
   setStatus(s) { this.status = s; this.fire('status', s); }
