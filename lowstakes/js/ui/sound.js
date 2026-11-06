@@ -117,6 +117,26 @@ const SOUNDS = {
     }
   },
   land(c, t) { clack(c, t, 1.2, 0.5); clack(c, t + 0.09, 1.1, 0.3); clack(c, t + 0.16, 1.15, 0.2); },
+  bounce(c, t, { n = 0 } = {}) { clack(c, t, 1.3 - n * 0.06, 0.42 - n * 0.1); },
+  whoosh(c, t) {
+    const src = noise(c);
+    const f = c.createBiquadFilter();
+    f.type = 'bandpass'; f.Q.value = 0.8;
+    f.frequency.setValueAtTime(300, t);
+    f.frequency.exponentialRampToValueAtTime(2400, t + 0.45);
+    f.frequency.exponentialRampToValueAtTime(600, t + 0.9);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.35, t + 0.3);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.95);
+    src.loop = true;
+    src.connect(f).connect(g).connect(master);
+    src.start(t); src.stop(t + 1);
+  },
+  boom(c, t) {
+    tone(c, t, { freq: 110, end: 38, dur: 0.7, gain: 0.5 });
+    burst(c, t, { freq: 180, q: 0.7, dur: 0.25, gain: 0.4, type: 'lowpass' });
+  },
   message(c, t) { tone(c, t, { freq: 1046.5, dur: 0.12, gain: 0.05 }); },
   react(c, t) { tone(c, t, { freq: 740, dur: 0.1, gain: 0.06, type: 'triangle' }); },
 };

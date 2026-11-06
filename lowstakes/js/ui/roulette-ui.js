@@ -3,6 +3,8 @@ import { WHEEL, colorOf, spotInfo } from '../games/roulette.js';
 
 const SEG = 360 / 37;
 
+export const colorName = (n) => ({ red: 'Red', black: 'Black', green: 'Green' })[colorOf(n)];
+
 export function wheelSvg() {
   const pockets = WHEEL.map((n, i) => {
     const a0 = ((i - 0.5) * SEG - 90) * (Math.PI / 180);
@@ -28,13 +30,14 @@ export function wheelSvg() {
   </defs>
   <circle r="99" fill="url(#bowl)"/>
   <circle r="88" class="track"/>
-  <g class="rotor" id="rotor">
+  <g class="rotor">
     ${pockets}
     <circle r="60" fill="url(#cone)"/>
     ${frets}
     <circle r="14" class="turret"/><circle r="6" class="turret-top"/>
   </g>
-  <circle class="ball" id="ball" r="3.6" cx="0" cy="-92"/>
+  ${[0, 1, 2, 3, 4].map(() => '<circle class="trail" r="3.4" cx="0" cy="-92" style="opacity:0"/>').join('')}
+  <circle class="ball" r="3.6" cx="0" cy="-92"/>
 </svg>`;
 }
 

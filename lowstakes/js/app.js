@@ -640,10 +640,13 @@ function postEffects(events) {
         if (ev.pids.includes(you)) sound.play('win');
         break;
       case 'spin': if (game) startSpin(game); break;
-      case 'land':
-        sound.play('land');
-        if (ev.pids.includes(you)) setTimeout(() => sound.play('win'), 300);
+      case 'land': {
+        const bet = game.bets.some((b) => b.pid === you);
+        const r = { n: ev.n, net: (game.net || {})[you] || 0, bet };
+        // Wait for the ball to actually stop on this screen before revealing.
+        if (W.spin) W.pending = r; else revealSpin(r);
         break;
+      }
       default:
     }
   }
@@ -681,8 +684,10 @@ function flashTitle(text) {
 }
 
 // ---------------------------------------------------------------- roulette wheel
+// One wheel state drives every wheel on screen: the small one on the table
+// and the big one in the full-screen spin view.
 const SEG = 360 / 37;
-const W = { angle: 0, ball: 0, r: 92, spin: null, raf: 0, last: 0, pocket: null };
+const W = { angle: 0, ball: 0, r: 92, spin: null, raf: 0, last: 0, pocket: null, vel: 0, pending: null, timers: [] };
 
 function startSpin(view) {
   const idx = WHEEL.indexOf(view.result);
@@ -692,21 +697,27 @@ function startSpin(view) {
   const w1 = w0 + 400 + Math.random() * 120;
   const b1 = w1 + idx * SEG;
   const b0 = b1 + 360 * 6;
-  W.spin = { t0: performance.now() - (total - left), total, w0, w1, b0, b1, idx };
+  const t0 = performance.now() - (total - left);
+  W.spin = { t0, total, w0, w1, b0, b1, idx };
   W.pocket = null;
+  W.pending = null;
   sound.play('spin', { ms: left });
+  // The ball hits the frets three times as it drops (matches the bounce curve below).
+  W.timers.forEach(clearTimeout);
+  W.timers = [0.72, 0.82, 0.92].map((p, i) => setTimeout(() => sound.play('bounce', { n: i }), t0 + p * total - performance.now()));
+  if (left > 2500) openSpinView(total, left);
 }
 
 function wheelLoop() {
   if (W.raf) return;
   W.last = performance.now();
   const frame = (t) => {
-    const rotor = document.getElementById('rotor');
-    const ball = document.getElementById('ball');
-    if (!rotor || !S.state || !S.state.game || S.state.game.game !== 'roulette') { W.raf = 0; return; }
-    const dt = t - W.last;
+    const rotors = document.querySelectorAll('.rotor');
+    if (!rotors.length || !S.state || !S.state.game || S.state.game.game !== 'roulette') { W.raf = 0; closeSpinView(true); return; }
+    const dt = Math.max(1, t - W.last);
     W.last = t;
     const game = S.state.game;
+    const prevBall = W.ball;
     if (W.spin) {
       const p = Math.min(1, (t - W.spin.t0) / W.spin.total);
       const ew = 1 - (1 - p) ** 3;
@@ -714,7 +725,7 @@ function wheelLoop() {
       W.angle = W.spin.w0 + (W.spin.w1 - W.spin.w0) * ew;
       W.ball = W.spin.b0 + (W.spin.b1 - W.spin.b0) * eb;
       const drop = Math.min(1, Math.max(0, (p - 0.62) / 0.3));
-      const bounce = drop > 0 && drop < 1 ? Math.sin(drop * Math.PI * 3) * (1 - drop) * 5 : 0;
+      const bounce = drop > 0 && drop < 1 ? Math.abs(Math.sin(drop * Math.PI * 3)) * (1 - drop) * 7 : 0;
       W.r = 92 - drop * 20 + bounce;
       if (p >= 1) { W.pocket = W.spin.idx; W.spin = null; }
     } else {
@@ -722,14 +733,138 @@ function wheelLoop() {
       if (W.pocket == null && game.history && game.history.length) W.pocket = WHEEL.indexOf(game.history[0]);
       if (W.pocket != null) { W.ball = W.angle + W.pocket * SEG; W.r = 72; }
       else { W.r = 92; }
+      if (W.pending) { const r = W.pending; W.pending = null; revealSpin(r); }
     }
-    rotor.setAttribute('transform', `rotate(${W.angle.toFixed(2)})`);
-    const a = (W.ball * Math.PI) / 180;
-    ball.setAttribute('cx', (W.r * Math.sin(a)).toFixed(2));
-    ball.setAttribute('cy', (-W.r * Math.cos(a)).toFixed(2));
+    W.vel = W.spin ? (W.ball - prevBall) / dt : 0; // degrees per ms
+    const rot = `rotate(${W.angle.toFixed(2)})`;
+    rotors.forEach((r) => r.setAttribute('transform', rot));
+    const place = (el, ang, r) => {
+      const a = (ang * Math.PI) / 180;
+      el.setAttribute('cx', (r * Math.sin(a)).toFixed(2));
+      el.setAttribute('cy', (-r * Math.cos(a)).toFixed(2));
+    };
+    document.querySelectorAll('.wheel').forEach((svg) => {
+      const ball = svg.querySelector('.ball');
+      if (ball) place(ball, W.ball, W.r);
+      // Motion trail: ghost balls strung out behind the real one while it's fast.
+      const step = Math.max(-11, Math.min(11, -W.vel * 14));
+      svg.querySelectorAll('.trail').forEach((tr, i) => {
+        place(tr, W.ball + step * (i + 1), W.r);
+        tr.style.opacity = Math.abs(W.vel) > 0.04 ? String(0.42 - i * 0.07) : '0';
+      });
+    });
     W.raf = requestAnimationFrame(frame);
   };
   W.raf = requestAnimationFrame(frame);
+}
+
+// ---- the full-screen spin view
+const SV = { el: null, timers: [] };
+
+function wheelBoxRect() {
+  const box = document.querySelector('#stage .wheel-box');
+  return box ? box.getBoundingClientRect() : null;
+}
+
+function flipFrom(cam) {
+  const from = wheelBoxRect();
+  const to = cam.getBoundingClientRect();
+  if (!from || !to.width) return 'translate(0,0) scale(.3)';
+  const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+  const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+  return `translate(${dx}px, ${dy}px) scale(${from.width / to.width})`;
+}
+
+function openSpinView(total, left) {
+  if (reduceMotion) return;
+  closeSpinView(true);
+  const el = document.createElement('div');
+  el.className = 'spin-ov';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-label', 'The wheel is spinning');
+  el.innerHTML = `
+    <div class="spin-bg"></div>
+    <p class="spin-title" aria-hidden="true"><span>No more bets</span></p>
+    <div class="spin-cam"><div class="spin-tilt">${RU.wheelSvg()}</div></div>
+    <div class="spin-result" aria-live="assertive"></div>
+    <p class="spin-skip">Tap anywhere to close</p>`;
+  document.body.appendChild(el);
+  SV.el = el;
+  el.addEventListener('click', () => closeSpinView());
+  const cam = el.querySelector('.spin-cam');
+  const tilt = el.querySelector('.spin-tilt');
+  // Lift the wheel off the table and into the spotlight...
+  cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0,0) scale(1)' }], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
+  tilt.animate([{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(48deg)' }], { duration: 1100, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' });
+  // ...then push the camera in as the ball slows down.
+  const pushAt = Math.max(0, left - total * 0.5);
+  cam.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(0,4%) scale(1.16)' }], {
+    duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards', composite: 'replace',
+  });
+  sound.play('whoosh');
+}
+
+function revealSpin({ n, net, bet }) {
+  sound.play('land');
+  const won = net > 0;
+  if (won) setTimeout(() => sound.play('win'), 250);
+  const el = SV.el;
+  if (!el) return;
+  const colour = RU.colorName(n);
+  const line = !bet ? 'You sat this one out.'
+    : won ? `You win <b>${fmt(net)}</b>` : net === 0 ? 'You broke even.' : `You lose <b>${fmt(-net)}</b>`;
+  const res = el.querySelector('.spin-result');
+  res.innerHTML = `
+    <div class="sr-disc sr-${colour.toLowerCase()}"><span>${n}</span><i></i><i></i><i></i></div>
+    <p class="sr-word">${colour}${n === 0 ? '' : `, ${n % 2 ? 'odd' : 'even'}`}</p>
+    <p class="sr-line${won ? ' up' : ''}">${line}</p>`;
+  el.classList.add('landed');
+  sound.play('boom');
+  const tilt = el.querySelector('.spin-tilt');
+  tilt.animate([{ transform: 'rotateX(48deg)' }, { transform: 'rotateX(20deg)' }], { duration: 900, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' });
+  if (won) chipRain(el, Math.min(60, 18 + Math.round(net / 10)));
+  SV.timers.push(setTimeout(() => closeSpinView(), 3400));
+}
+
+function chipRain(host, count) {
+  const kinds = ['c5', 'c25', 'c100', 'c500', 'k1', 'k5'];
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('i');
+    c.className = `chip rain ${kinds[i % kinds.length]}`;
+    host.appendChild(c);
+    const x0 = w / 2 + (Math.random() - 0.5) * 80;
+    const y0 = h * 0.45;
+    const vx = (Math.random() - 0.5) * w * 0.9;
+    const up = h * (0.25 + Math.random() * 0.35);
+    const spin = (Math.random() - 0.5) * 1440;
+    const dur = 1400 + Math.random() * 900;
+    c.style.left = `${x0}px`;
+    c.style.top = `${y0}px`;
+    c.animate([
+      { transform: 'translate(-50%,-50%) rotate(0deg) scale(.4)', opacity: 0 },
+      { transform: `translate(calc(-50% + ${vx * 0.45}px), calc(-50% - ${up}px)) rotate(${spin * 0.4}deg) scale(1)`, opacity: 1, offset: 0.35 },
+      { transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${h * 0.7}px)) rotateX(${spin}deg) rotate(${spin}deg) scale(1)`, opacity: 1 },
+    ], { duration: dur, delay: Math.random() * 250, easing: 'cubic-bezier(.25,.6,.5,1)', fill: 'both' }).onfinish = () => c.remove();
+  }
+}
+
+function closeSpinView(instant = false) {
+  const el = SV.el;
+  if (!el) return;
+  SV.el = null;
+  SV.timers.forEach(clearTimeout);
+  SV.timers = [];
+  if (instant) { el.remove(); return; }
+  const cam = el.querySelector('.spin-cam');
+  cam.getAnimations().forEach((a) => a.commitStyles && a.commitStyles());
+  cam.getAnimations().forEach((a) => a.cancel());
+  const back = flipFrom(cam);
+  el.classList.add('closing');
+  el.querySelector('.spin-tilt').animate([{ transform: 'rotateX(0deg)' }], { duration: 500, fill: 'forwards' });
+  cam.animate([{ transform: getComputedStyle(cam).transform }, { transform: back }], { duration: 650, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
+  setTimeout(() => el.remove(), 680);
 }
 
 // ---------------------------------------------------------------- countdowns

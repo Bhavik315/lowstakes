@@ -1065,3 +1065,79 @@ input[type=range]::-moz-range-thumb {
 .rl-word { font-weight: 700; }
 .rl-net { margin-right: 6px; }
 .rl-net b { font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------ full-screen roulette spin */
+.trail { fill: #fbfaf6; pointer-events: none; }
+.spin-ov {
+  position: fixed; inset: 0; z-index: 45; overflow: hidden; cursor: pointer;
+  display: grid; place-items: center;
+  animation: sv-in .5s ease both;
+}
+.spin-ov.closing { animation: sv-out .65s ease forwards; }
+@keyframes sv-in { from { background-color: transparent; } }
+@keyframes sv-out { to { opacity: 0; } }
+.spin-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 45% 50% at 50% 52%, rgba(255, 205, 130, .26), transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(18, 10, 5, .55), rgba(6, 3, 1, .96) 75%);
+  animation: sv-bg .7s ease both;
+}
+@keyframes sv-bg { from { opacity: 0; } }
+/* Slow light rays sweeping behind the wheel. */
+.spin-bg::before {
+  content: ''; position: absolute; left: 50%; top: 52%; width: 180vmax; height: 180vmax; transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 0deg, rgba(242, 190, 69, .07) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask: radial-gradient(circle, #000 0 18%, transparent 55%);
+  mask: radial-gradient(circle, #000 0 18%, transparent 55%);
+  animation: rays 24s linear infinite;
+}
+@keyframes rays { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.spin-cam { position: relative; width: min(84vmin, 780px); aspect-ratio: 1; perspective: 1400px; will-change: transform; }
+.spin-tilt { width: 100%; height: 100%; transform-origin: 50% 60%; filter: drop-shadow(0 60px 60px rgba(0, 0, 0, .7)); transition: filter .6s; }
+.spin-tilt .wheel { width: 100%; height: 100%; }
+.spin-ov.landed .spin-tilt { filter: drop-shadow(0 60px 60px rgba(0, 0, 0, .7)) brightness(.45) blur(1.5px); }
+
+.spin-title {
+  position: absolute; left: 0; right: 0; top: 9vh; z-index: 2; text-align: center; pointer-events: none;
+  font-weight: 800; font-variation-settings: 'wdth' 75, 'opsz' 96; font-size: clamp(40px, 8vw, 110px); line-height: .9;
+  letter-spacing: -.01em; color: var(--mustard);
+  text-shadow: 0 6px 30px rgba(0, 0, 0, .6);
+}
+.spin-title span { display: inline-block; animation: title-sweep 2.6s cubic-bezier(.2, .8, .2, 1) both .2s; }
+@keyframes title-sweep {
+  0% { transform: translateX(-60vw) skewX(-12deg); opacity: 0; }
+  22% { transform: translateX(0) skewX(0); opacity: 1; }
+  72% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(60vw) skewX(12deg); opacity: 0; }
+}
+.spin-skip {
+  position: absolute; bottom: calc(22px + env(safe-area-inset-bottom)); left: 0; right: 0; text-align: center;
+  font-size: 13px; color: rgba(245, 235, 221, .5); pointer-events: none; animation: sv-bg 1s ease 1.5s both;
+}
+
+.spin-result { position: absolute; inset: 0; z-index: 3; display: grid; place-content: center; justify-items: center; gap: 14px; pointer-events: none; }
+.sr-disc {
+  position: relative; width: min(46vmin, 380px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .25), transparent 45%), var(--sr);
+  box-shadow: 0 0 0 10px rgba(255, 253, 247, .95), 0 0 0 14px var(--sr), 0 30px 80px rgba(0, 0, 0, .7), 0 0 120px var(--sr);
+  animation: disc-pop .7s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+.sr-red { --sr: var(--card-red); }
+.sr-black { --sr: #1B1C20; }
+.sr-green { --sr: #1E7A50; }
+.sr-disc span {
+  font-weight: 800; font-variation-settings: 'wdth' 75, 'opsz' 96; font-size: min(28vmin, 230px); line-height: 1; color: #fff;
+  font-variant-numeric: tabular-nums; text-shadow: 0 6px 20px rgba(0, 0, 0, .35); margin-top: -.06em;
+}
+@keyframes disc-pop { from { transform: scale(.2) rotate(-25deg); opacity: 0; } }
+/* Shock rings bursting out of the number. */
+.sr-disc i { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--mustard); animation: ring-out 1.2s cubic-bezier(.1, .6, .3, 1) both; }
+.sr-disc i:nth-of-type(2) { animation-delay: .15s; border-color: rgba(255, 253, 247, .8); }
+.sr-disc i:nth-of-type(3) { animation-delay: .3s; }
+@keyframes ring-out { from { transform: scale(.9); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
+.sr-word { font-weight: 800; font-size: clamp(26px, 4.5vw, 46px); font-variation-settings: 'wdth' 80; color: var(--cream); animation: rise .5s var(--ease) .35s both; }
+.sr-line { font-size: clamp(18px, 2.6vw, 26px); color: var(--cream-dim); animation: rise .5s var(--ease) .55s both; }
+.sr-line b { color: var(--cream); font-variant-numeric: tabular-nums; }
+.sr-line.up b { color: var(--mustard); font-size: 1.3em; }
+.chip.rain { position: fixed; --chip: 34px; z-index: 4; pointer-events: none; }
