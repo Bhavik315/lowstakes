@@ -1,13 +1,13 @@
-import morphdom from '../vendor/morphdom-esm.js';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js';
-import { landing, gate } from './ui/landing.js';
-import { lobby, inviteLink } from './ui/lobby.js';
-import * as HU from './ui/holdem-ui.js';
-import * as BU from './ui/blackjack-ui.js';
-import * as RU from './ui/roulette-ui.js';
-import { sound } from './ui/sound.js';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js';
-import { WHEEL } from './games/roulette.js';
+import morphdom from '../vendor/morphdom-esm.js?v=2';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=2';
+import { landing, gate } from './ui/landing.js?v=2';
+import { lobby, inviteLink } from './ui/lobby.js?v=2';
+import * as HU from './ui/holdem-ui.js?v=2';
+import * as BU from './ui/blackjack-ui.js?v=2';
+import * as RU from './ui/roulette-ui.js?v=2';
+import { sound } from './ui/sound.js?v=2';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=2';
+import { WHEEL } from './games/roulette.js?v=2';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };

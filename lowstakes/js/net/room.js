@@ -1,9 +1,9 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js';
-import { Blackjack } from '../games/blackjack.js';
-import { Roulette } from '../games/roulette.js';
+import { Holdem } from '../games/holdem.js?v=2';
+import { Blackjack } from '../games/blackjack.js?v=2';
+import { Roulette } from '../games/roulette.js?v=2';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette };
 const PREFIX = 'lowstakes-v1-';
@@ -447,6 +447,15 @@ export class Guest extends Emitter {
     this.connect();
     // If the first join is taking a while, say what we're stuck on well before we give up.
     this.slowTimer = setTimeout(() => { if (!this.everOpen && !this.closed) this.fire('stage', { stage: this.stage, slow: true }); }, 6000);
+    // Absolute backstop: whatever state the connection logic is in, never let the
+    // first join sit on "Finding the table" forever. This doesn't depend on any
+    // particular event firing, so it catches cases the per-step timeouts miss.
+    this.hardTimer = setTimeout(() => {
+      if (this.everOpen || this.closed) return;
+      this.closed = true;
+      try { this.peer && this.peer.destroy(); } catch {}
+      this.setStatus(this.stage === 'server' ? 'noserver' : 'unreachable');
+    }, 22000);
     this.watchdog = setInterval(() => {
       if (this.status === 'open' && Date.now() - this.lastMsg > 12000) this.lost();
     }, 2000);
@@ -486,7 +495,7 @@ export class Guest extends Emitter {
       this.lastMsg = Date.now();
       if (!msg || typeof msg !== 'object') return;
       if (msg.t === 'state') {
-        if (this.status !== 'open') { this.everOpen = true; this.tries = 0; clearTimeout(this.slowTimer); this.setStatus('open'); }
+        if (this.status !== 'open') { this.everOpen = true; this.tries = 0; clearTimeout(this.slowTimer); clearTimeout(this.hardTimer); this.setStatus('open'); }
         this.fire('state', msg);
       } else if (msg.t === 'react') this.fire('react', msg);
       else if (msg.t === 'reject') { this.closed = true; this.setStatus(msg.why === 'full' ? 'full' : 'rejected'); }
