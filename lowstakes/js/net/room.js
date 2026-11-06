@@ -36,7 +36,18 @@ export function cleanCode(s) {
 function peerOptions() {
   const q = new URLSearchParams(location.search);
   const sig = q.get('signal');
-  const opts = { debug: 0, config: undefined };
+  // Don't set `config` to undefined: PeerJS spreads our options over its defaults,
+  // so that would wipe out its STUN/TURN servers and only same-network players could join.
+  const opts = {
+    debug: 0,
+    config: {
+      iceServers: [
+        { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
+        { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
+      ],
+      sdpSemantics: 'unified-plan',
+    },
+  };
   if (sig) {
     const [host, port] = sig.split(':');
     Object.assign(opts, { host, port: Number(port || 9000), path: '/', secure: q.get('secure') === '1' });
