@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=22';
-import { lastEvent, timerRing } from './holdem-ui.js?v=22';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=24';
+import { lastEvent, timerRing } from './holdem-ui.js?v=24';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -44,7 +44,7 @@ export function stage(view, state) {
     }).join('');
     const ring = s.active ? timerRing(`ring-${turnEv ? turnEv.id : 0}`, view.timer * 1000, view.timeLeft) : '';
     return `
-      <div class="${cls}" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%" data-seat="${esc(s.pid)}" id="spot-${esc(s.pid)}">
+      <div class="${cls}" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%;--ax:${Math.cos(ang).toFixed(3)};--ay:${Math.sin(ang).toFixed(3)}" data-seat="${esc(s.pid)}" id="spot-${esc(s.pid)}">
         <div class="hands h${s.hands.length}">${hands}</div>
         <div class="${circleCls}">${amount ? `${chipStack(amount, 6)}<b>${fmt(amount)}</b>` : ''}</div>
         <div class="plate">

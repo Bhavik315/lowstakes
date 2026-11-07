@@ -8,8 +8,8 @@ Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exa
 
 - **Texas Hold'em**: no-limit, 2–9 players, proper side pots, all-in run-outs with cards turned face up, turn timer, "show your cards" after an uncontested win, sit-out toggle.
 - **Blackjack**: up to 7 players against the dealer, 6-deck shoe, dealer stands on all 17s, blackjack pays 3 to 2, dealer peeks for blackjack, splits (up to four hands) and doubles. A **coach** toggle highlights the basic-strategy move.
-- **Roulette**: single zero, everyone bets on one shared layout (your chips show your amount, other players show as coloured dots), animated wheel, recent-numbers strip.
-- Up to 12 people per table, **bots** to fill seats, chat and quick reactions, a scoreboard that counts buy-ins so you can see who's really ahead, free rebuys, sounds synthesised in the browser (no audio files), keyboard shortcuts (F/C/R in hold'em, H/S/D/P in blackjack, Enter to deal or spin).
+- **Roulette**: up to 12 players (a roster strip lists everyone's balance, bet and result), single zero, everyone bets on one shared layout (your chips show your amount, other players show as coloured dots), animated wheel, recent-numbers strip.
+- Table limits are per game (Hold'em 9, Blackjack 7, Roulette 12; joining or adding a bot to a full table is refused with a message), **bots** to fill seats, chat and quick reactions, a scoreboard that counts buy-ins so you can see who's really ahead, free rebuys, sounds synthesised in the browser (no audio files), keyboard shortcuts (F/C/R in hold'em, H/S/D/P in blackjack, Enter to deal or spin).
 - Works on phones in portrait and landscape: a compact header (everything else is in a ⋯ menu), 44px touch targets, tables sized from the space actually available, and a side-by-side wheel and board for roulette.
 
 ## Motion

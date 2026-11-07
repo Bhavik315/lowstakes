@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=22';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=22';
-import { landing, gate } from './ui/landing.js?v=22';
-import { lobby, inviteLink } from './ui/lobby.js?v=22';
-import * as HU from './ui/holdem-ui.js?v=22';
-import * as BU from './ui/blackjack-ui.js?v=22';
-import * as RU from './ui/roulette-ui.js?v=22';
-import { sound } from './ui/sound.js?v=22';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=22';
-import { WHEEL } from './games/roulette.js?v=22';
-import * as Motion from './ui/motion.js?v=22';
+import morphdom from '../vendor/morphdom-esm.js?v=24';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=24';
+import { landing, gate } from './ui/landing.js?v=24';
+import { lobby, inviteLink } from './ui/lobby.js?v=24';
+import * as HU from './ui/holdem-ui.js?v=24';
+import * as BU from './ui/blackjack-ui.js?v=24';
+import * as RU from './ui/roulette-ui.js?v=24';
+import { sound } from './ui/sound.js?v=24';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=24';
+import { WHEEL } from './games/roulette.js?v=24';
+import * as Motion from './ui/motion.js?v=24';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -197,7 +197,12 @@ function onStatus(st) {
       showGate(code, { error: 'Found the table, but couldn’t connect to the host’s browser. Usually one of your networks is blocking it. Try turning off any VPN, or have one of you switch to mobile data, then try again.' });
       return;
     }
-    if (st === 'full') { const code = c.code; leave(false); showGate(code, { error: 'That table is full. Twelve is the limit.' }); return; }
+    if (st === 'full') {
+      const code = c.code; const info = c.fullInfo || {};
+      leave(false);
+      showGate(code, { error: info.game ? `That ${GAME_NAMES[info.game]} table is full (${info.limit} players). Ask the host to make room.` : `That table is full (${info.limit || 12} players).` });
+      return;
+    }
     if (st === 'offline' && S.screen !== 'table') { const code = c.code; leave(false); showGate(code, { error: 'Couldn’t reach the matchmaking server. Check your connection and try again.' }); return; }
     if (st === 'kicked') { leave(false); location.hash = '#/'; toast('The host removed you from the table.'); return; }
     if (st === 'closed') { if (S.screen === 'table') renderClosed(); return; }
@@ -453,8 +458,9 @@ function renderPop() {
       <div class="menu-list">
         ${room.gameId ? '<button class="btn btn-quiet btn-sm" data-act="to-lobby">Back to the lobby</button>' : ''}
         ${game && game.game === 'holdem' ? `<button class="btn btn-quiet btn-sm" data-act="pause">${paused ? 'Resume dealing' : 'Pause after this hand'}</button>` : ''}
-        <button class="btn btn-quiet btn-sm" data-act="add-bot">Add a bot</button>
+        <button class="btn btn-quiet btn-sm" data-act="add-bot"${room.players.length >= room.limit ? ' disabled' : ''}>Add a bot</button>
       </div>
+      ${room.players.length >= room.limit ? `<p class="pop-note" role="status">${room.gameId ? `${GAME_NAMES[room.gameId]} seats ${room.limit} and every seat is taken.` : 'The table is full.'}</p>` : ''}
       <h3>Players</h3>
       <ul class="menu-players">${room.players.map((p) => `<li>${avatar(p, 'xs')} <span>${esc(p.name)}${p.bot ? ' <em>bot</em>' : !p.connected ? ' <em>away</em>' : ''}</span>${p.id !== you ? `<button class="link-btn" data-act="remove" data-pid="${esc(p.id)}">Remove</button>` : '<em>you</em>'}</li>`).join('')}</ul>`;
   }
@@ -494,8 +500,8 @@ document.addEventListener('click', (e) => {
     case 'rebuy': c.requestRebuy(); return;
     // lobby / host
     case 'pick': S.ui.pick = el.dataset.game; renderTable(); return;
-    case 'start-game': c.setGame(S.ui.pick); return;
-    case 'add-bot': c.addBot(); return;
+    case 'start-game': { const r = c.setGame(S.ui.pick); if (r && !r.ok) toast(r.message); return; }
+    case 'add-bot': { const r = c.addBot(S.state.room.gameId ? undefined : S.ui.pick); if (r && !r.ok) toast(r.message); return; }
     case 'remove': c.removePlayer(el.dataset.pid); return;
     case 'to-lobby': closePop(); c.endGame(); return;
     case 'pause': c.setPaused(!(game && game.paused)); closePop(); return;

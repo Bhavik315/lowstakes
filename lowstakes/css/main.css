@@ -733,7 +733,7 @@ input[type=range]::-moz-range-thumb {
   --cw: clamp(34px, 6.4vmin, 72px);
 }
 .spot.me { z-index: 3; }
-.hands { display: flex; gap: 10px; align-items: flex-end; position: absolute; bottom: calc(100% - 2px); }
+.hands { display: flex; gap: 10px; align-items: flex-end; position: absolute; bottom: calc(100% - 2px); left: 50%; transform: translateX(-50%); }
 .hands.h2, .hands.h3, .hands.h4 { --cw: clamp(28px, 4.6vmin, 54px); }
 .hand { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px; border-radius: 10px; transition: background .2s; }
 .hand.on { background: rgba(242, 190, 69, .18); box-shadow: 0 0 0 2px var(--mustard); }
@@ -1489,3 +1489,41 @@ input[type=range]::-moz-range-thumb {
 /* A card whose entrance has finished never plays it again. */
 .tbl.holdem .card.played, .tbl.holdem .slot .card.played { animation: none; }
 .tbl.holdem .card.played-in .card-in { animation: none; }
+
+/* ------------------------------------------------------------ full tables on phones
+   Blackjack seats seven and hold'em nine. Every seated player stays on screen, and the compact panel keeps
+   the one thing you need at a glance (the balance) instead of hiding it. */
+.seat.out .plate { opacity: .5; filter: grayscale(.7); border-style: dashed; }
+.seat.folded .plate { opacity: .62; }
+.spot { z-index: 2; }
+.spot.acting, .spot:has(.hand.on) { z-index: 4; }
+
+@media (max-width: 700px) {
+  /* A narrower arc keeps the outer seats and their hands inside the screen. */
+  .tbl.blackjack .spot { left: calc(50% + var(--ax) * 37%); top: calc(9% + var(--ay) * 71%); }
+  .spot { --cwb: clamp(30px, calc(100cqw / (var(--n, 1) + 4.1)), 62px); }
+  .spot .plate { flex-direction: column; gap: 1px; padding: 3px 6px 2px; border-radius: 13px; align-items: center; }
+  .spot .plate-text { display: flex; }
+  .spot .pname { display: none; }
+  .spot .pchips { font-size: 10.5px; line-height: 1.1; }
+  .spot .avatar { --s: 26px; }
+  .seat.side .plate-text { display: flex; }
+  .seat.side .pname { display: none; }
+  .seat.side .plate { padding: 3px 9px 3px 3px; }
+  .seat .pchips { font-size: 11px; }
+}
+
+/* Roulette roster: every participant (up to 12), never hidden. */
+.rl-totals { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
+.rl-totals li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto auto auto; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 13px; }
+.rl-totals li.me { border-color: var(--mustard); }
+.rl-totals li.idle { opacity: .7; }
+.rl-totals .rn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--cream); }
+.rl-totals .rc2 { color: var(--cream-dim); font-variant-numeric: tabular-nums; font-size: 12px; }
+.rl-totals em.up { color: #7fd99a; } .rl-totals em.down { color: #ef8a80; }
+@media (max-width: 700px) {
+  .rl-totals { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 4px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .rl-totals li { flex: 0 0 auto; grid-template-columns: 10px auto auto auto auto; scroll-snap-align: start; max-width: 70vw; }
+  .rl-totals .rn { max-width: 84px; }
+  .rl-msg { order: -2; } .rl-totals { order: -1; margin: 0; }
+}

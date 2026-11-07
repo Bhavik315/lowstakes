@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=22';
-import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=22';
+import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=24';
+import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=24';
 
 const SEG = 360 / 37;
 
@@ -127,7 +127,10 @@ export function stage(view, state) {
 
   const totals = state.room.players.map((p) => {
     const t = view.bets.filter((b) => b.pid === p.id).reduce((a, b) => a + b.amount, 0);
-    return t ? `<li style="--c:${esc(p.color)}"><i></i>${esc(p.name)}<b>${fmt(t)}</b>${view.ready.includes(p.id) ? '<em>done</em>' : ''}</li>` : '';
+    const net = view.phase === 'result' && view.net ? view.net[p.id] : null;
+    const status = net != null ? `<em class="${net > 0 ? 'up' : net < 0 ? 'down' : ''}">${net ? signed(net) : 'even'}</em>`
+      : view.ready.includes(p.id) && t ? '<em>done</em>' : '';
+    return `<li id="rr-${esc(p.id)}" data-pid="${esc(p.id)}" class="${t ? 'in' : 'idle'}${p.id === state.you ? ' me' : ''}" style="--c:${esc(p.color)}"><i></i><span class="rn">${esc(p.name)}</span><span class="rc2">${fmt(p.chips)}</span><b>${t ? fmt(t) : '—'}</b>${status}</li>`;
   }).join('');
 
   return `
@@ -139,7 +142,7 @@ export function stage(view, state) {
   <div class="rl-board">
     <p class="rl-msg" aria-live="polite">${msg}</p>
     ${layout(view, state)}
-    <ul class="rl-totals">${totals}</ul>
+    <ul class="rl-totals" aria-label="Players at the table">${totals}</ul>
   </div>
 </div>`;
 }

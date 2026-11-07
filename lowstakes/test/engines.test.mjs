@@ -480,3 +480,68 @@ test('blackjack: split aces get one card each and no further action', () => {
   assert.equal(g.dealer.cards.length, 3);
   assert.equal(room.players[0].chips, 1000 - 200 + 100 /* push on 21 */ + 0 /* 20 loses */);
 });
+
+// ---------------------------------------------------------------- table capacity
+import { Host, GAME_LIMITS, limitFor, MAX_PLAYERS } from '../js/net/room.js';
+
+const mkHost = () => new Host({ name: 'Host', color: '#E0472F' });
+const fakeConn = () => ({ open: true, send() {}, close() {}, on() {} });
+const fill = (h, n) => { while (h.room.players.length < n) assert.ok(h.addBot().ok); };
+
+test('capacity: each game has its own limit and roulette does not inherit the smaller ones', () => {
+  assert.deepEqual(GAME_LIMITS, { holdem: 9, blackjack: 7, roulette: 12 });
+  assert.equal(MAX_PLAYERS, 12);
+  assert.equal(limitFor('roulette'), 12);
+  assert.equal(limitFor(null), 12, 'the lobby holds as many as the biggest game');
+});
+
+test('capacity: a blackjack table stops at 7 and says why', () => {
+  const h = mkHost();
+  try {
+    fill(h, 7);
+    const r = h.addBot('blackjack');
+    assert.equal(r.ok, false);
+    assert.match(r.message, /Blackjack seats 7/);
+    assert.equal(h.room.players.length, 7);
+    assert.ok(h.setGame('blackjack').ok);
+    assert.equal(h.addBot().ok, false, 'also refused while the game runs');
+    const e = h.engine.view(h.id);
+    assert.equal(e.seats.length, 7, 'all seven are seated and visible');
+    assert.deepEqual(e.seats.map((s) => s.pid).sort(), h.room.players.map((p) => p.id).sort());
+    // a stranger cannot take an eighth seat, but a seated player can come back
+    assert.equal(h.join('stranger', { name: 'Late' }, fakeConn()), 'full');
+    const guest = h.room.players.find((p) => p.bot);
+    assert.equal(h.join(guest.id, { name: guest.name }, fakeConn()), true, 'a seated player rejoining is not a new seat');
+  } finally { h.close(); }
+});
+
+test('capacity: a poker table stops at 9, and the game will not start with more', () => {
+  const h = mkHost();
+  try {
+    fill(h, 9);
+    assert.equal(h.addBot('holdem').ok, false);
+    assert.match(h.addBot('holdem').message, /Texas Hold'em seats 9/);
+    assert.ok(h.setGame('holdem').ok);
+    const v = h.engine.view(h.id);
+    assert.equal(v.seats.length, 9, 'all nine are seated and visible');
+    assert.equal(h.join('stranger', { name: 'Late' }, fakeConn()), 'full');
+  } finally { h.close(); }
+});
+
+test('capacity: a lobby of 12 can play roulette but is told how many to remove for the others', () => {
+  const h = mkHost();
+  try {
+    fill(h, 12);
+    assert.equal(h.addBot('roulette').ok, false, 'twelve is the most anyone can seat');
+    const bj = h.setGame('blackjack');
+    assert.equal(bj.ok, false);
+    assert.match(bj.message, /Blackjack seats 7, but 12 are at the table\. Remove 5 players or bots/);
+    assert.equal(h.room.gameId, null, 'nothing started, nobody hidden');
+    const pk = h.setGame('holdem');
+    assert.match(pk.message, /Remove 3 players or bots/);
+    assert.ok(h.setGame('roulette').ok);
+    const v = h.engine.view(h.id);
+    assert.equal(h.room.players.length, 12);
+    assert.equal(v.ready.length >= 0, true);
+  } finally { h.close(); }
+});

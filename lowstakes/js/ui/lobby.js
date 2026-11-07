@@ -1,10 +1,10 @@
-import { esc, fmt, signed, avatar, card } from './parts.js?v=22';
-import { GAME_NAMES, MAX_PLAYERS } from '../net/room.js?v=22';
+import { esc, fmt, signed, avatar, card } from './parts.js?v=24';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=24';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
   blackjack: 'Everyone against the dealer. Up to seven.',
-  roulette: 'Single zero. Everyone bets together.',
+  roulette: 'Single zero. Everyone bets together. Up to twelve.',
 };
 const GAME_ORDER = ['holdem', 'blackjack', 'roulette'];
 
@@ -40,6 +40,10 @@ export function lobby(state, ui) {
   const isHost = room.hostId === you;
   const host = room.players.find((p) => p.id === room.hostId);
   const pick = ui.pick || 'holdem';
+  const limit = limitFor(pick);
+  const have = room.players.length;
+  const over = Math.max(0, have - limit);
+  const full = have >= limit;
   const link = inviteLink(room.code);
   const offline = room.status === 'offline' || room.status === 'taken';
 
@@ -67,9 +71,9 @@ export function lobby(state, ui) {
   </section>
 
   <section class="lobby-seats">
-    <h2>At the table <span class="count">${room.players.length} of ${MAX_PLAYERS}</span></h2>
+    <h2>At the table <span class="count">${have} of ${limit}</span></h2>
     <ul class="lp-list">${players}</ul>
-    ${isHost ? `<button class="btn btn-quiet btn-sm" data-act="add-bot"${room.players.length >= MAX_PLAYERS ? ' disabled' : ''}>Add a bot</button>` : ''}
+    ${isHost ? `<button class="btn btn-quiet btn-sm" data-act="add-bot"${full ? ' disabled' : ''}>Add a bot</button>${full ? `<p class="lobby-hint cap-note" role="status">${GAME_NAMES[pick]} seats ${limit}${over ? `, and there are ${have} here` : ', and every seat is taken'}.</p>` : ''}` : ''}
   </section>
 
   <section class="lobby-games">
@@ -87,7 +91,8 @@ export function lobby(state, ui) {
       ${settingsForm(pick, room.settings)}
       <label class="field sm"><span>Chips per buy-in</span><select data-set="start">${[500, 1000, 2500, 10000].map((v) => opt(v, room.settings.start, fmt(v))).join('')}</select></label>
     </div>
-    <button class="btn btn-primary btn-wide" data-act="start-game">Deal ${GAME_NAMES[pick]}</button>
+    <button class="btn btn-primary btn-wide" data-act="start-game"${over ? ' disabled' : ''}>Deal ${GAME_NAMES[pick]}</button>
+    ${over ? `<p class="lobby-hint cap-note" role="status">${GAME_NAMES[pick]} seats ${limit}, but ${have} are at the table. Remove ${over} ${over === 1 ? 'player or bot' : 'players or bots'} to deal it.</p>` : ''}
     ${pick === 'holdem' && room.players.length < 2 ? '<p class="lobby-hint">Hold\'em needs at least two players. Add a bot or wait for a friend.</p>' : ''}`
     : '<p class="lobby-hint">You’re in. The game starts when the host deals.</p>'}
   </section>

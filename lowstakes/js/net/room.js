@@ -1,14 +1,18 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=22';
-import { Blackjack } from '../games/blackjack.js?v=22';
-import { Roulette } from '../games/roulette.js?v=22';
+import { Holdem } from '../games/holdem.js?v=24';
+import { Blackjack } from '../games/blackjack.js?v=24';
+import { Roulette } from '../games/roulette.js?v=24';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette };
 const PREFIX = 'lowstakes-v1-';
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-export const MAX_PLAYERS = 12;
+// How many people each game seats, bots included. The room holds as many as the biggest game; once a
+// game is running, its own limit applies. Nobody is ever seated without a visible place at the table.
+export const GAME_LIMITS = { holdem: 9, blackjack: 7, roulette: 12 };
+export const MAX_PLAYERS = Math.max(...Object.values(GAME_LIMITS));
+export const limitFor = (gameId) => GAME_LIMITS[gameId] || MAX_PLAYERS;
 
 export const COLORS = ['#E0472F', '#2A55C9', '#E8A825', '#1E8C7E', '#8A3B78', '#EE7B30', '#E86A92', '#4BA3D9', '#7FA83A', '#5B4B8A', '#C2563A', '#2F7D57'];
 const BOTS = [
@@ -103,7 +107,10 @@ export class Host extends Emitter {
     const me = this.room.players.find((p) => p.id === this.id);
     if (me) Object.assign(me, { name, color, connected: true });
     else this.addPlayer({ id: this.id, name, color });
-    if (snapshot && snapshot.gameId) this.setGame(snapshot.gameId, true);
+    if (snapshot && snapshot.gameId) {
+      const r = this.setGame(snapshot.gameId, true);
+      if (!r.ok) this.system(r.message);
+    }
     this.timer = setInterval(() => this.loop(), 100);
     this.pinger = setInterval(() => this.broadcastRaw({ t: 'ping' }), 4000);
     this.listen();
@@ -144,7 +151,7 @@ export class Host extends Emitter {
         pid = String(msg.cid || '').slice(0, 40);
         if (!pid || pid === this.id) { conn.send({ t: 'reject', why: 'duplicate' }); return; }
         const res = this.join(pid, msg, conn);
-        if (res !== true) { conn.send({ t: 'reject', why: res }); setTimeout(() => conn.close(), 300); pid = null; }
+        if (res !== true) { conn.send({ t: 'reject', why: res, game: this.room.gameId, limit: this.capacity() }); setTimeout(() => conn.close(), 300); pid = null; }
         return;
       }
       if (pid) this.receive(pid, msg);
@@ -164,7 +171,7 @@ export class Host extends Emitter {
   join(pid, msg, conn) {
     let p = this.player(pid);
     if (!p) {
-      if (this.room.players.length >= MAX_PLAYERS) return 'full';
+      if (this.room.players.length >= this.capacity()) return 'full';
       p = this.addPlayer({ id: pid, name: msg.name, color: msg.color });
       this.system(`${p.name} sat down.`);
     } else {
@@ -206,15 +213,30 @@ export class Host extends Emitter {
   requestRebuy() { this.rebuy(this.id, true); }
 
   // ---- host controls ----
+  // Seats left for the game that is running (or for the whole room in the lobby).
+  capacity() { return limitFor(this.room.gameId); }
+
+  fullMessage(gameId) {
+    const n = limitFor(gameId);
+    return gameId ? `${GAME_NAMES[gameId]} seats ${n} and all ${n} seats are taken.` : `The table is full (${n} players).`;
+  }
+
   setGame(gameId, quiet = false) {
-    if (this.engine) this.endGame(true);
     const G = GAMES[gameId];
-    if (!G) return;
+    if (!G) return { ok: false, message: 'Unknown game.' };
+    const cap = limitFor(gameId);
+    const have = this.room.players.length;
+    if (have > cap) {
+      const over = have - cap;
+      return { ok: false, message: `${GAME_NAMES[gameId]} seats ${cap}, but ${have} are at the table. Remove ${over} ${over === 1 ? 'player or bot' : 'players or bots'} to deal it.` };
+    }
+    if (this.engine) this.endGame(true);
     this.room.gameId = gameId;
     this.gameSeq = (this.gameSeq || 0) + 1;
     this.engine = new G(this.room, this.room.settings[gameId]);
     if (!quiet) this.system(`Now playing ${GAME_NAMES[gameId]}.`);
     this.changed(true);
+    return { ok: true };
   }
 
   endGame(quiet = false) {
@@ -231,8 +253,10 @@ export class Host extends Emitter {
     this.engine.clearJobs();
   }
 
-  addBot() {
-    if (this.room.players.length >= MAX_PLAYERS) return;
+  // `forGame` is the game being picked in the lobby, so the lobby enforces that game's limit too.
+  addBot(forGame) {
+    const gameId = this.room.gameId || forGame || null;
+    if (this.room.players.length >= limitFor(gameId)) return { ok: false, message: this.fullMessage(gameId) };
     const taken = new Set(this.room.players.map((p) => p.name));
     const pick = BOTS.find(([n]) => !taken.has(n)) || [`Bot ${this.room.players.length}`, 0.5];
     const used = new Set(this.room.players.map((p) => p.color));
@@ -240,6 +264,7 @@ export class Host extends Emitter {
     this.addPlayer({ id: 'bot-' + uid(), name: pick[0], color, bot: true, style: pick[1] });
     this.system(`${pick[0]} (bot) sat down.`);
     this.changed(true);
+    return { ok: true };
   }
 
   removePlayer(pid) {
@@ -366,6 +391,7 @@ export class Host extends Emitter {
       status: this.status,
       gameId: this.room.gameId,
       gameSeq: this.gameSeq || 0,
+      limit: this.capacity(),
       settings: this.room.settings,
       players: this.room.players.map((p) => ({
         id: p.id, name: p.name, color: p.color, bot: p.bot, connected: p.connected,
@@ -498,7 +524,7 @@ export class Guest extends Emitter {
         if (this.status !== 'open') { this.everOpen = true; this.tries = 0; clearTimeout(this.slowTimer); clearTimeout(this.hardTimer); this.setStatus('open'); }
         this.fire('state', msg);
       } else if (msg.t === 'react') this.fire('react', msg);
-      else if (msg.t === 'reject') { this.closed = true; this.setStatus(msg.why === 'full' ? 'full' : 'rejected'); }
+      else if (msg.t === 'reject') { this.closed = true; this.fullInfo = { game: msg.game, limit: msg.limit }; this.setStatus(msg.why === 'full' ? 'full' : 'rejected'); }
       else if (msg.t === 'closed') { this.closed = true; this.setStatus('closed'); }
       else if (msg.t === 'kicked') { this.closed = true; this.setStatus('kicked'); }
     });
