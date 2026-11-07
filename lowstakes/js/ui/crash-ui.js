@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, avatar, CHIP_VALUES } from './parts.js?v=27';
-import { AUTO_CHOICES } from '../games/crash.js?v=27';
+import { esc, fmt, signed, chip, avatar, CHIP_VALUES } from './parts.js?v=28';
+import { AUTO_CHOICES } from '../games/crash.js?v=28';
 
 const fx = (x) => `${x.toFixed(2)}x`;
 const tier = (x) => (x < 2 ? 'lo' : x < 10 ? 'mid' : 'hi');
@@ -130,7 +130,7 @@ function draw(canvas, view, el, m, now) {
   const pad = { l: 42, r: 18, t: 18, b: 26 };
   const pw = w - pad.l - pad.r;
   const ph = h - pad.t - pad.b;
-  const xMax = Math.max(10000, el * 1.1);
+  const xMax = Math.max(10000, el * 1.18);
   const yMax = Math.max(2, m * 1.2);
   const X = (t) => pad.l + (t / xMax) * pw;
   const Y = (x) => pad.t + ph - ((x - 1) / (yMax - 1)) * ph;
@@ -150,38 +150,133 @@ function draw(canvas, view, el, m, now) {
   const step = xMax > 40000 ? 20 : xMax > 20000 ? 10 : 5;
   for (let s = 0; s * 1000 <= xMax; s += step) { g.fillStyle = c.dim; g.fillText(`${s}s`, X(s * 1000), h - pad.b + 8); }
 
-  if (view.phase === 'betting') return;
-  // the curve
-  const n = 90;
-  const pts = [];
-  for (let i = 0; i <= n; i++) {
-    const t = (el * i) / n;
-    pts.push([X(t), Y(Math.exp((view.growth * t) / 1000))]);
-  }
-  const col = crashed ? c.red : c.mustard;
-  g.beginPath(); g.moveTo(pts[0][0], Y(1));
-  pts.forEach(([x, y]) => g.lineTo(x, y));
-  g.lineTo(pts[n][0], Y(1)); g.closePath();
-  const grad = g.createLinearGradient(0, pad.t, 0, pad.t + ph);
-  grad.addColorStop(0, crashed ? 'rgba(224,71,47,.32)' : 'rgba(242,190,69,.30)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
-  g.fillStyle = grad; g.fill();
-  g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
-  g.lineWidth = 4; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = col; g.stroke();
+  // The rocket flies the curve. Behind it, smoke puffs mark where it has been.
+  const rs = Math.max(18, Math.min(38, w / 15));
+  const idle = view.phase === 'betting';
+  const exploded = view.phase === 'crashed';
+  const age = exploded ? Math.max(0, now - CR.crashedAt) : 0;
+  const tipT = idle ? 0 : el;
+  const tx = X(tipT) + (idle ? rs * 1.5 : 0);
+  const ty = Y(idle ? 1 : Math.exp((view.growth * el) / 1000)) - (idle ? rs * 1.1 : 0);
+  // heading from the curve's slope, in screen space
+  const dt = Math.max(1, el * 0.02);
+  const ang = idle ? -0.6 : Math.atan2(Y(Math.exp((view.growth * el) / 1000)) - Y(Math.exp((view.growth * Math.max(0, el - dt)) / 1000)), X(el) - X(Math.max(0, el - dt)));
 
-  const [tx, ty] = pts[n];
-  if (!crashed) {
-    g.fillStyle = col; g.shadowColor = col; g.shadowBlur = 16;
-    g.beginPath(); g.arc(tx, ty, 6, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0;
+  g.save();
+  if (exploded && age < 420) g.translate(Math.sin(age * 0.09) * 6 * (1 - age / 420), Math.cos(age * 0.11) * 4 * (1 - age / 420));
+  if (!idle) smoke(g, view, el, X, Y, rs, exploded ? age : 0, now);
+  if (!exploded) {
+    rocket(g, tx, ty, ang, rs, now, idle);
   } else {
-    // a short burst at the crash point
-    const age = Math.min(1, (now - CR.crashedAt) / 650);
-    g.strokeStyle = c.red; g.lineWidth = 3; g.globalAlpha = 1 - age;
-    for (let i = 0; i < 10; i++) {
-      const a = (i / 10) * Math.PI * 2;
-      g.beginPath(); g.moveTo(tx + Math.cos(a) * (8 + age * 6), ty + Math.sin(a) * (8 + age * 6));
-      g.lineTo(tx + Math.cos(a) * (14 + age * 30), ty + Math.sin(a) * (14 + age * 30)); g.stroke();
+    explosion(g, tx, ty, rs, age);
+  }
+  g.restore();
+}
+
+// Puffs of exhaust along the path already flown; they drift, grow and fade (and keep fading after a crash).
+function smoke(g, view, el, X, Y, size, age, now) {
+  const puffs = 34;
+  const span = Math.min(el, 7500);
+  for (let i = puffs; i >= 1; i--) {
+    const back = (i / puffs) * span;
+    const t = el - back;
+    if (t < 0) continue;
+    const f = i / puffs;
+    const fade = Math.max(0, 1 - age / 1800);
+    const alpha = (1 - f) * 0.42 * fade;
+    if (alpha <= 0.01) continue;
+    const px = X(t) - Math.cos(0.4) * size * 0.9 + Math.sin(i * 12.9898) * size * 0.28 * f;
+    const py = Y(Math.exp((view.growth * t) / 1000)) + Math.cos(i * 78.233) * size * 0.28 * f + f * size * 0.5;
+    const r = size * (0.22 + f * 0.62);
+    g.fillStyle = `rgba(${isBoom(view) ? '255,190,170' : '255,226,170'},${alpha.toFixed(3)})`;
+    g.beginPath(); g.arc(px, py, r, 0, Math.PI * 2); g.fill();
+  }
+}
+const isBoom = (view) => view.phase === 'crashed';
+
+function rocket(g, x, y, ang, size, now, idle) {
+  const flick = 0.8 + 0.2 * Math.sin(now * 0.05) + 0.12 * Math.sin(now * 0.13 + 1);
+  const bob = idle ? Math.sin(now * 0.004) * 2 : 0;
+  g.save();
+  g.translate(x, y + bob);
+  g.rotate(ang);
+  const L = size * 2.1; // body length
+  const H = size * 0.78; // body thickness
+  // flame
+  const fl = size * (idle ? 0.7 : 1.5) * flick;
+  const fg = g.createLinearGradient(-L * 0.5 - fl, 0, -L * 0.5, 0);
+  fg.addColorStop(0, 'rgba(255,90,30,0)'); fg.addColorStop(0.35, 'rgba(255,140,40,.9)'); fg.addColorStop(1, '#fff3b0');
+  g.fillStyle = fg;
+  g.beginPath(); g.moveTo(-L * 0.5, -H * 0.3); g.quadraticCurveTo(-L * 0.5 - fl * 0.6, -H * 0.12, -L * 0.5 - fl, 0); g.quadraticCurveTo(-L * 0.5 - fl * 0.6, H * 0.12, -L * 0.5, H * 0.3); g.closePath(); g.fill();
+  // fins
+  g.fillStyle = '#C8312A';
+  g.beginPath(); g.moveTo(-L * 0.42, -H * 0.4); g.lineTo(-L * 0.62, -H * 1.0); g.lineTo(-L * 0.12, -H * 0.4); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(-L * 0.42, H * 0.4); g.lineTo(-L * 0.62, H * 1.0); g.lineTo(-L * 0.12, H * 0.4); g.closePath(); g.fill();
+  // body
+  const bg = g.createLinearGradient(0, -H / 2, 0, H / 2);
+  bg.addColorStop(0, '#FFFDF7'); bg.addColorStop(1, '#CFC6B4');
+  g.fillStyle = bg;
+  g.beginPath(); g.moveTo(-L * 0.5, -H * 0.5); g.lineTo(L * 0.12, -H * 0.5); g.quadraticCurveTo(L * 0.5, -H * 0.4, L * 0.55, 0); g.quadraticCurveTo(L * 0.5, H * 0.4, L * 0.12, H * 0.5); g.lineTo(-L * 0.5, H * 0.5); g.closePath(); g.fill();
+  // nose
+  g.fillStyle = '#E0472F';
+  g.beginPath(); g.moveTo(L * 0.12, -H * 0.5); g.quadraticCurveTo(L * 0.5, -H * 0.4, L * 0.55, 0); g.quadraticCurveTo(L * 0.5, H * 0.4, L * 0.12, H * 0.5); g.quadraticCurveTo(L * 0.26, 0, L * 0.12, -H * 0.5); g.closePath(); g.fill();
+  // band and window
+  g.fillStyle = '#E0472F'; g.fillRect(-L * 0.3, -H * 0.5, L * 0.09, H);
+  g.fillStyle = '#10302A'; g.beginPath(); g.arc(-L * 0.02, 0, H * 0.24, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#6FC3E8'; g.beginPath(); g.arc(-L * 0.02 - H * 0.04, -H * 0.04, H * 0.15, 0, Math.PI * 2); g.fill();
+  g.restore();
+}
+
+// Flash, shockwave, fireball and flying debris. All positions come from the time since the crash.
+function explosion(g, x, y, size, age) {
+  const T = 1500;
+  if (age < 140) { // white-hot flash
+    const k = 1 - age / 140;
+    const fg = g.createRadialGradient(x, y, 0, x, y, size * (3 + (1 - k) * 4));
+    fg.addColorStop(0, `rgba(255,255,240,${0.95 * k})`); fg.addColorStop(1, 'rgba(255,200,80,0)');
+    g.fillStyle = fg; g.beginPath(); g.arc(x, y, size * 7, 0, Math.PI * 2); g.fill();
+  }
+  const ring = Math.min(1, age / 700);
+  if (ring < 1) {
+    g.strokeStyle = `rgba(255,214,150,${(1 - ring) * 0.8})`; g.lineWidth = 3 + (1 - ring) * 4;
+    g.beginPath(); g.arc(x, y, size * (0.6 + ring * 5.5), 0, Math.PI * 2); g.stroke();
+  }
+  if (age < 800) { // fireball
+    const k = age / 800;
+    const fg = g.createRadialGradient(x, y, 0, x, y, size * (1.2 + k * 3.2));
+    fg.addColorStop(0, `rgba(255,236,150,${0.95 * (1 - k)})`); fg.addColorStop(0.45, `rgba(255,120,40,${0.8 * (1 - k)})`); fg.addColorStop(1, 'rgba(180,40,20,0)');
+    g.fillStyle = fg; g.beginPath(); g.arc(x, y, size * 5, 0, Math.PI * 2); g.fill();
+  }
+  // sparks and rocket pieces
+  const n = 34;
+  for (let i = 0; i < n; i++) {
+    const r1 = (Math.sin(i * 91.7) + 1) / 2;
+    const r2 = (Math.sin(i * 47.3 + 2) + 1) / 2;
+    const a = (i / n) * Math.PI * 2 + r1 * 0.5;
+    const sp = size * (2.2 + r2 * 5.5);
+    const life = 0.55 + r1 * 0.45;
+    const k = Math.min(1, age / (T * life));
+    if (k >= 1) continue;
+    const px = x + Math.cos(a) * sp * (1 - Math.pow(1 - k, 2)) * 1.6;
+    const py = y + Math.sin(a) * sp * (1 - Math.pow(1 - k, 2)) * 1.6 + k * k * size * 5;
+    const piece = i % 6 === 0;
+    g.globalAlpha = 1 - k;
+    if (piece) {
+      g.save(); g.translate(px, py); g.rotate(k * (r2 * 12 - 6)); g.fillStyle = i % 12 === 0 ? '#E0472F' : '#FFFDF7';
+      g.fillRect(-size * 0.28, -size * 0.12, size * 0.56, size * 0.24); g.restore();
+    } else {
+      g.fillStyle = r2 > 0.5 ? '#FFD976' : '#FF8A3D';
+      g.beginPath(); g.arc(px, py, size * (0.1 + r1 * 0.12) * (1 - k * 0.5), 0, Math.PI * 2); g.fill();
     }
     g.globalAlpha = 1;
+  }
+  if (age > 200 && age < 1700) { // dark smoke cloud left behind
+    const k = (age - 200) / 1500;
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * Math.PI * 2;
+      g.fillStyle = `rgba(60,48,56,${0.35 * (1 - k)})`;
+      g.beginPath(); g.arc(x + Math.cos(a) * size * (0.6 + k * 1.4), y + Math.sin(a) * size * (0.5 + k * 1.1) - k * size * 1.2, size * (0.7 + k * 0.9), 0, Math.PI * 2); g.fill();
+    }
   }
 }
 

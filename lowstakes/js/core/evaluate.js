@@ -1,6 +1,6 @@
 // Best-five-of-N poker hand evaluator (N = 5..7).
 // Returns { score, cat, name, best } where a higher score always wins.
-import { RV, RANK_NAME, RANK_PLURAL } from './cards.js?v=27';
+import { RV, RANK_NAME, RANK_PLURAL } from './cards.js?v=28';
 
 export const CATEGORY = [
   'High card', 'Pair', 'Two pair', 'Three of a kind', 'Straight',
