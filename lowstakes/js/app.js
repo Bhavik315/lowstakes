@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=10';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=10';
-import { landing, gate } from './ui/landing.js?v=10';
-import { lobby, inviteLink } from './ui/lobby.js?v=10';
-import * as HU from './ui/holdem-ui.js?v=10';
-import * as BU from './ui/blackjack-ui.js?v=10';
-import * as RU from './ui/roulette-ui.js?v=10';
-import { sound } from './ui/sound.js?v=10';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=10';
-import { WHEEL } from './games/roulette.js?v=10';
-import * as Motion from './ui/motion.js?v=10';
+import morphdom from '../vendor/morphdom-esm.js?v=17';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=17';
+import { landing, gate } from './ui/landing.js?v=17';
+import { lobby, inviteLink } from './ui/lobby.js?v=17';
+import * as HU from './ui/holdem-ui.js?v=17';
+import * as BU from './ui/blackjack-ui.js?v=17';
+import * as RU from './ui/roulette-ui.js?v=17';
+import { sound } from './ui/sound.js?v=17';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=17';
+import { WHEEL } from './games/roulette.js?v=17';
+import * as Motion from './ui/motion.js?v=17';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -274,11 +274,12 @@ function headerHtml() {
     <p class="r-title">${room.gameId ? esc(GAME_NAMES[room.gameId]) : 'Lobby'}${sub ? `<span>${sub}</span>` : ''}</p>
     <div class="r-tools">
       ${me ? `<span class="my-stack">${avatar(me, 'xs')}<b>${fmt(me.chips)}</b></span>` : ''}
-      <button class="tool" data-act="scores" aria-label="Scores">${ICON.scores}<span>Scores</span></button>
-      <button class="tool" data-act="sound" aria-label="${sound.on ? 'Mute sounds' : 'Turn sounds on'}" aria-pressed="${sound.on}">${sound.on ? ICON.sound : ICON.mute}<span>Sound</span></button>
+      <button class="tool tool-scores" data-act="scores" aria-label="Scores">${ICON.scores}<span>Scores</span></button>
+      <button class="tool tool-sound" data-act="sound" aria-label="${sound.on ? 'Mute sounds' : 'Turn sounds on'}" aria-pressed="${sound.on}">${sound.on ? ICON.sound : ICON.mute}<span>Sound</span></button>
       <button class="tool" data-act="chat" aria-label="Chat" aria-expanded="${S.ui.chatOpen}">${ICON.chat}<span>Chat</span>${S.ui.unread ? `<i class="badge">${S.ui.unread}</i>` : ''}</button>
-      ${isHost ? `<button class="tool" data-act="menu" aria-label="Table menu">${ICON.menu}<span>Table</span></button>` : ''}
+      ${isHost ? `<button class="tool tool-menu" data-act="menu" aria-label="Table menu">${ICON.menu}<span>Table</span></button>` : ''}
       <button class="tool tool-leave" data-act="leave">Leave</button>
+      <button class="tool tool-more" data-act="more" aria-label="More options" aria-haspopup="dialog">${ICON.menu}</button>
     </div>`;
 }
 
@@ -349,6 +350,7 @@ function renderTable() {
     S.dockSig = d.sig;
     dockEl.innerHTML = d.html;
     dockEl.className = `dock${game && game.you && game.you.myTurn ? ' my-turn' : ''}`;
+    dockEl.dataset.game = room.gameId || '';
     bindDock();
   }
 
@@ -432,6 +434,16 @@ function renderPop() {
       <td class="num">${fmt(p.chips)}</td><td class="num ${p.net > 0 ? 'up' : p.net < 0 ? 'down' : ''}">${p.net ? signed(p.net) : 'even'}</td><td class="num">${p.buyins}</td></tr>`).join('');
     body = `<h2>Scores</h2><table class="scores"><thead><tr><th></th><th>Player</th><th class="num">Chips</th><th class="num">Up/down</th><th class="num">Buy-ins</th></tr></thead><tbody>${rows}</tbody></table>
       <p class="pop-note">Up/down counts every buy-in, so it's the fair way to see who's actually winning.</p>`;
+  } else if (S.ui.pop === 'more') {
+    const isHost = room.hostId === you;
+    body = `<h2>Menu</h2>
+      <div class="more-list">
+        <button class="btn btn-quiet" data-act="scores">Scores</button>
+        <button class="btn btn-quiet" data-act="sound">Sound: ${sound.on ? 'on' : 'off'}</button>
+        <button class="btn btn-quiet" data-act="copy-link">Copy invite link</button>
+        ${isHost ? '<button class="btn btn-quiet" data-act="menu">Table options</button>' : ''}
+        <button class="btn btn-quiet danger" data-act="leave">Leave table</button>
+      </div>`;
   } else if (S.ui.pop === 'menu') {
     const paused = game && game.paused;
     body = `<h2>Table</h2>
@@ -464,7 +476,7 @@ document.addEventListener('click', (e) => {
       }
       leave();
       return;
-    case 'copy-link': copyInvite(); return;
+    case 'copy-link': closePop(); copyInvite(); return;
     case 'sound': sound.toggle(); renderTable(); return;
     case 'chat':
       S.ui.chatOpen = !S.ui.chatOpen;
@@ -473,7 +485,7 @@ document.addEventListener('click', (e) => {
       renderTable();
       if (S.ui.chatOpen && matchMedia('(min-width: 700px)').matches) document.getElementById('chat-input').focus();
       return;
-    case 'scores': case 'menu': S.ui.pop = S.ui.pop === act ? null : act; S.ui.pop ? renderPop() : closePop(); return;
+    case 'scores': case 'menu': case 'more': S.ui.pop = S.ui.pop === act ? null : act; S.ui.pop ? renderPop() : closePop(); return;
     case 'close-pop': closePop(); return;
     case 'react': c.emote(el.dataset.r); return;
     case 'rebuy': c.requestRebuy(); return;

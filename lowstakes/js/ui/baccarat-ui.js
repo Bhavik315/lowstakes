@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=10';
-import { SPOTS, SPOT_LABEL } from '../games/baccarat.js?v=10';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=17';
+import { SPOTS, SPOT_LABEL } from '../games/baccarat.js?v=17';
 
 const WORD = { player: 'Player', banker: 'Banker', tie: 'Tie' };
 const HIST_LETTER = { player: 'P', banker: 'B', tie: 'T' };

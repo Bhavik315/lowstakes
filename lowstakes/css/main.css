@@ -1361,3 +1361,118 @@ input[type=range]::-moz-range-thumb {
   transform: translateX(-110%); animation: card-glint 1.1s ease-out .35s 1 both;
 }
 @keyframes card-glint { from { transform: translateX(-110%); } to { transform: translateX(110%); } }
+
+/* ------------------------------------------------------------ mobile + touch */
+.tool-more { display: none; }
+.more-list { display: grid; gap: 8px; }
+.more-list .btn { justify-content: flex-start; width: 100%; border-color: rgba(16, 48, 42, .3); }
+.more-list .btn.danger { color: #a3281a; border-color: rgba(163, 40, 26, .45); }
+
+/* Compact header: phones in portrait, and phones on their side. Everything it hides lives in the More menu. */
+@media (max-width: 760px), (max-height: 520px) {
+  .tool-scores, .tool-sound, .tool-menu, .tool-leave, .r-title { display: none; }
+  .tool-more { display: inline-flex; }
+  .code-pill > span, .code-pill em { display: none; }
+  .code-pill { padding: 0 14px; }
+  .wordmark.sm span { display: none; }
+  .wordmark.sm::before { margin-right: 0; }
+  .my-stack .avatar { display: none; }
+  .r-top { gap: 8px; padding: 0 8px 0 12px; }
+}
+
+/* Touch devices: every control is at least 44px, and nothing relies on hover. */
+@media (pointer: coarse) {
+  .btn { min-height: 48px; }
+  .btn-sm { min-height: 44px; }
+  .tool, .icon-btn { min-width: 44px; min-height: 44px; justify-content: center; }
+  .code-pill { min-height: 44px; }
+  .wordmark { min-height: 44px; }
+  .wordmark.sm { min-width: 44px; justify-content: center; }
+  .chip-btn { min-height: 44px; padding: 0 12px; }
+  .reacts button { min-height: 44px; padding: 0 14px; }
+  .toggle { min-height: 44px; }
+  .toggle input { width: 48px; height: 28px; border-radius: 14px; }
+  .toggle input::after { width: 22px; height: 22px; left: 3px; top: 3px; }
+  .toggle input:checked::after { transform: translateX(20px); }
+  input[type=range] { height: 44px; }
+  .swatches { gap: 0; }
+  .swatch { width: 44px; height: 44px; display: grid; place-items: center; }
+  .swatch span { width: 34px; height: 34px; }
+  .field input, .field select, .field.sm input, .field.sm select { min-height: 48px; }
+  .gate-foot a, .l-foot a { display: inline-block; padding: 12px 6px; }
+  .l-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; }
+  .link-btn { min-height: 44px; padding: 0 10px; }
+  .chat-form input { height: 44px; }
+  .tray-chip { min-width: 46px; min-height: 46px; }
+  .btn:active:not(:disabled), .tray-chip:active:not(:disabled), .rc:active, .chip-btn:active { filter: brightness(.9); }
+}
+
+@media (max-width: 700px) {
+  /* Roulette: tall enough cells to hit with a thumb; the board scrolls above the chip tray. */
+  .rl-layout { grid-template-rows: 44px repeat(12, 44px) 44px; }
+  /* Blackjack: card size follows the table width and how many are seated, so a lone player
+     gets big, readable cards and a full table still fits. */
+  .tbl.blackjack { container-type: inline-size; }
+  .spot { --cwb: clamp(34px, calc(100cqw / (var(--n, 1) + 3.2)), 64px); --cw: var(--cwb); }
+  .hands.h2, .hands.h3, .hands.h4 { --cw: calc(var(--cwb) * .74); }
+  .dealer { --cw: clamp(44px, 15cqw, 62px); }
+  .tbl-wrap { padding-left: 40px; padding-right: 40px; }
+  .bj-wrap { padding-left: 6px; padding-right: 6px; }
+}
+
+/* ------------------------------------------------------------ landscape phones
+   The table formulas above assume a tall viewport. On a screen under ~520px tall they are
+   rebuilt from the height that is actually left once the header and dock are in place. */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root { --header: 44px; }
+  .dock { min-height: 0; padding: 6px 16px calc(6px + env(safe-area-inset-bottom)); gap: 12px; }
+  .dock-hand b { font-size: 16px; }
+  .dock-note { font-size: 14px; }
+  .dock-tip { display: none; }
+  .tbl-wrap { padding: 6px 12px; }
+
+  /* Blackjack: a wide, shallow table sized from the space that is left. */
+  .bj-wrap { padding: 4px 10px; }
+  .tbl.blackjack { width: min(100%, calc((100dvh - var(--header) - 60px - 30px) * 2)); aspect-ratio: 2 / 1; container-type: inline-size; }
+  .spot { --cwb: clamp(34px, calc(100cqw / (var(--n, 1) + 4.4)), 54px); --cw: var(--cwb); }
+  .hands.h2, .hands.h3, .hands.h4 { --cw: calc(var(--cwb) * .74); }
+  .dealer { --cw: clamp(40px, 8cqw, 54px); }
+  .felt-arc { display: none; }
+  .shoe { width: 30px; height: 40px; }
+
+  /* Hold'em: a wider, flatter oval, with room above and below for the seats. */
+  .tbl-wrap:has(.tbl.holdem) { padding: 64px 56px 52px; }
+  .tbl.holdem { aspect-ratio: 2.7 / 1; width: min(100%, calc((100dvh - var(--header) - 60px - 116px) * 2.7)); }
+  /* On your turn the raise controls share one row with Fold and Call, so the dock stays one row tall. */
+  .dock[data-game=holdem].my-turn .dock-hand, .dock[data-game=holdem].my-turn .dock-side { display: none; }
+  .dock[data-game=holdem].my-turn { grid-template-columns: 1fr; }
+  .dock[data-game=holdem] .dock-mid.acts { flex-wrap: nowrap; }
+  .dock[data-game=holdem] .raise { flex-direction: row; align-items: center; gap: 8px; }
+  .dock[data-game=holdem] .presets { gap: 4px; }
+  .dock[data-game=holdem] .chip-btn { padding: 0 9px; font-size: 12px; min-width: 44px; }
+  .dock[data-game=holdem] input[type=range] { width: 96px; }
+  .dock[data-game=holdem] #raise-btn { min-width: 0; padding: 0 14px; }
+  .seat { --cw: 28px; }
+  .seat.me { --cw: 44px; }
+  .pname { font-size: 12px; max-width: 8ch; }
+  .pchips { font-size: 11.5px; }
+  .plate { min-width: 0; padding: 3px 12px 3px 3px; }
+  .avatar { --s: 30px; }
+  .board { --cw: clamp(30px, 8.4vh, 46px); }
+  .center-msg { font-size: 12.5px; }
+
+  /* Roulette: wheel and board side by side instead of stacked. */
+  .rl { grid-template-columns: 104px minmax(0, 1fr); align-items: start; gap: 8px; padding: 8px 6px; overflow-y: auto; }
+  .rl-wheel { grid-template-columns: 1fr; justify-items: center; gap: 8px; }
+  .wheel-box { width: 100px; }
+  .history { justify-content: center; max-width: 112px; gap: 3px; }
+  .history li { width: 22px; height: 22px; font-size: 10.5px; }
+  .history li:first-child { width: 28px; height: 28px; font-size: 12px; }
+  .rl-layout { grid-template-rows: repeat(3, 44px) 44px 44px; grid-template-columns: repeat(14, minmax(0, 1fr)); padding: 4px; gap: 2px; }
+  .rl-msg { font-size: 14px; min-height: 0; }
+  .rl-totals { font-size: 12px; }
+
+  /* Lobby and gate scroll comfortably; keep the lists tight. */
+  .lobby { padding: 16px 20px 24px; gap: 18px 32px; }
+  .lobby-code { font-size: 56px; margin-bottom: 8px; }
+}

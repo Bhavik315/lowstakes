@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=10';
-import { lastEvent, timerRing } from './holdem-ui.js?v=10';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=17';
+import { lastEvent, timerRing } from './holdem-ui.js?v=17';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -67,7 +67,7 @@ export function stage(view, state) {
 
   return `
 <div class="tbl-wrap bj-wrap">
-  <div class="tbl blackjack">
+  <div class="tbl blackjack" style="--n:${n}">
     <div class="felt bj-felt">
       <svg class="felt-arc" viewBox="0 0 1000 560" aria-hidden="true">
         <path id="arc1" d="M140,170 Q500,470 860,170" fill="none"/>
