@@ -1,14 +1,12 @@
-import { esc, fmt, signed, avatar, card } from './parts.js?v=4';
-import { GAME_NAMES, MAX_PLAYERS } from '../net/room.js?v=4';
+import { esc, fmt, signed, avatar, card } from './parts.js?v=5';
+import { GAME_NAMES, MAX_PLAYERS } from '../net/room.js?v=5';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
   blackjack: 'Everyone against the dealer. Up to seven.',
   roulette: 'Single zero. Everyone bets together.',
-  baccarat: 'Player, Banker or Tie. No decisions, just nerve.',
-  craps: 'One shooter, everyone betting on the dice.',
 };
-const GAME_ORDER = ['holdem', 'blackjack', 'roulette', 'baccarat', 'craps'];
+const GAME_ORDER = ['holdem', 'blackjack', 'roulette'];
 
 function opt(value, current, label) {
   return `<option value="${value}"${String(value) === String(current) ? ' selected' : ''}>${label}</option>`;
@@ -26,27 +24,15 @@ function settingsForm(gameId, s) {
       <label class="field sm"><span>Minimum bet</span><select data-set="blackjack.min">${[5, 10, 25, 50].map((v) => opt(v, s.blackjack.min, v)).join('')}</select></label>
       <label class="field sm"><span>Time to act</span><select data-set="blackjack.timer">${[[10, '10 seconds'], [20, '20 seconds'], [45, '45 seconds'], [0, 'No limit']].map(([v, l]) => opt(v, s.blackjack.timer, l)).join('')}</select></label>`;
   }
-  if (gameId === 'roulette') {
-    return `
+  return `
       <label class="field sm"><span>Minimum chip</span><select data-set="roulette.min">${[1, 5, 25].map((v) => opt(v, s.roulette.min, v)).join('')}</select></label>
       <label class="field sm"><span>Betting time</span><select data-set="roulette.betTime">${[[15, '15 seconds'], [20, '20 seconds'], [40, '40 seconds']].map(([v, l]) => opt(v, s.roulette.betTime, l)).join('')}</select></label>`;
-  }
-  if (gameId === 'baccarat') {
-    return `
-      <label class="field sm"><span>Minimum chip</span><select data-set="baccarat.min">${[1, 5, 25].map((v) => opt(v, s.baccarat.min, v)).join('')}</select></label>
-      <label class="field sm"><span>Betting time</span><select data-set="baccarat.betTime">${[[12, '12 seconds'], [18, '18 seconds'], [30, '30 seconds']].map(([v, l]) => opt(v, s.baccarat.betTime, l)).join('')}</select></label>`;
-  }
-  return `
-      <label class="field sm"><span>Minimum chip</span><select data-set="craps.min">${[1, 5, 25].map((v) => opt(v, s.craps.min, v)).join('')}</select></label>
-      <label class="field sm"><span>Betting time</span><select data-set="craps.betTime">${[[8, '8 seconds'], [13, '13 seconds'], [25, '25 seconds']].map(([v, l]) => opt(v, s.craps.betTime, l)).join('')}</select></label>`;
 }
 
 const ART = {
   holdem: () => ['Qs', 'Qd'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   blackjack: () => ['Jc', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   roulette: () => '<div class="mini-wheel"></div>',
-  baccarat: () => ['8h', '8d'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
-  craps: () => '<div class="mini-dice"><i></i><i></i></div>',
 };
 
 export function lobby(state, ui) {
