@@ -4,6 +4,13 @@ Hold'em, blackjack, roulette and crash with your friends, in the browser. Play m
 
 Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.
 
+**Play it:** https://lowstakes.pages.dev
+
+## Hosting
+
+The site is static files, hosted free on Cloudflare Pages and redeployed on every push to `claude/epic-gauss-fb52gi`.
+Cloudflare Pages settings: production branch `claude/epic-gauss-fb52gi`, framework preset None, build command empty, build output directory `lowstakes`.
+
 ## What's in it
 
 - **Texas Hold'em**: no-limit, 2–9 players, proper side pots, all-in run-outs with cards turned face up, turn timer, "show your cards" after an uncontested win, sit-out toggle.
