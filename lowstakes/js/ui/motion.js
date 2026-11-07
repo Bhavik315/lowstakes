@@ -101,6 +101,8 @@ export function afterRender({ root, before, added, moves = {} }) {
     const el = document.getElementById(id);
     if (!el || addedSet.has(el)) return;
     const to = el.getBoundingClientRect();
+    // A card that is still mid-flight lands in its new place by itself; re-animating it would make it jump.
+    if (el.getAnimations().length) return;
     if (Math.abs(to.left - rect.left) > 1.5 || Math.abs(to.top - rect.top) > 1.5) jobs.push({ el, to, from: rect, kind: 'shift' });
   });
 

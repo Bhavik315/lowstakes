@@ -1,19 +1,21 @@
-import morphdom from '../vendor/morphdom-esm.js?v=17';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=17';
-import { landing, gate } from './ui/landing.js?v=17';
-import { lobby, inviteLink } from './ui/lobby.js?v=17';
-import * as HU from './ui/holdem-ui.js?v=17';
-import * as BU from './ui/blackjack-ui.js?v=17';
-import * as RU from './ui/roulette-ui.js?v=17';
-import { sound } from './ui/sound.js?v=17';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=17';
-import { WHEEL } from './games/roulette.js?v=17';
-import * as Motion from './ui/motion.js?v=17';
+import morphdom from '../vendor/morphdom-esm.js?v=21';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=21';
+import { landing, gate } from './ui/landing.js?v=21';
+import { lobby, inviteLink } from './ui/lobby.js?v=21';
+import * as HU from './ui/holdem-ui.js?v=21';
+import * as BU from './ui/blackjack-ui.js?v=21';
+import * as RU from './ui/roulette-ui.js?v=21';
+import { sound } from './ui/sound.js?v=21';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=21';
+import { WHEEL } from './games/roulette.js?v=21';
+import * as Motion from './ui/motion.js?v=21';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
 const app = document.getElementById('app');
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
+let reduceMotion = reduceQuery.matches;
+reduceQuery.addEventListener('change', (e) => { reduceMotion = e.matches; });
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -321,6 +323,7 @@ function renderTable() {
     ...morphOpts,
     onBeforeElUpdated(from, to) {
       if (from.dataset && from.dataset.static) return false;
+      if (from.id && from.id.startsWith('ring-') && to.id === from.id) return false;
       // keep the "instant" class while we're suppressing first-paint animation
       if (from === stage) { to.className = from.className.includes('instant') ? 'stage instant' : 'stage'; }
       return !from.isEqualNode(to);
@@ -781,7 +784,7 @@ function startSpin(view) {
   sound.play('spin', { ms: left });
   // The ball clatters off the studs and frets as it falls: one knock per hop.
   W.timers.forEach(clearTimeout);
-  W.timers = [0.6, 0.665, 0.725, 0.785].map((p, i) => setTimeout(() => sound.play('bounce', { n: i }), t0 + p * total - performance.now()));
+  W.timers = [0.6, 0.665, 0.725, 0.785].map((p, i) => ({ i, at: t0 + p * total - performance.now() })).filter((k) => k.at > 0).map((k) => setTimeout(() => sound.play('bounce', { n: k.i }), k.at));
   if (left > 2500) openSpinView(total, left);
 }
 
@@ -828,18 +831,22 @@ function wheelLoop() {
     W.vel = W.spin ? (W.ball - prev) / dt : 0; // degrees per millisecond
     const rot = `rotate(${W.angle.toFixed(2)}deg)`;
     const a = (W.ball * Math.PI) / 180;
-    const bx = (W.r * Math.sin(a)).toFixed(2);
-    const by = (-W.r * Math.cos(a)).toFixed(2);
+    const bx = W.r * Math.sin(a);
+    const by = -W.r * Math.cos(a);
+    // One wheel unit is .5cqw of the wheel's width (see the .wl-ball rules in main.css).
+    const cq = (n) => `${(n * 0.5).toFixed(3)}cqw`;
+    const ballT = `translate(${cq(bx)}, ${cq(by)})`;
+    const shadowT = `translate(${cq(bx + 1.1)}, ${cq(by + 1.6)})`;
     const fast = Math.abs(W.vel) > 0.05;
     const step = Math.max(-10, Math.min(10, -W.vel * 9));
+    // Transforms on plain elements only, so a frame never triggers layout.
     for (const w of wheels) {
       w.rotor.style.transform = rot;
-      w.ball.setAttribute('cx', bx); w.ball.setAttribute('cy', by);
-      w.shadow.setAttribute('cx', bx); w.shadow.setAttribute('cy', by);
+      w.ball.style.transform = ballT;
+      w.shadow.style.transform = shadowT;
       w.trails.forEach((tr, i) => {
         const ta = ((W.ball + step * (i + 1)) * Math.PI) / 180;
-        tr.setAttribute('cx', (W.r * Math.sin(ta)).toFixed(2));
-        tr.setAttribute('cy', (-W.r * Math.cos(ta)).toFixed(2));
+        tr.style.transform = `translate(${cq(W.r * Math.sin(ta))}, ${cq(-W.r * Math.cos(ta))})`;
         tr.style.opacity = fast ? String(0.34 - i * 0.08) : '0';
       });
     }
@@ -952,7 +959,7 @@ function closeSpinView(instant = false) {
   SV.el = null;
   SV.timers.forEach(clearTimeout);
   SV.timers = [];
-  const done = () => { el.remove(); W.els = null; if (smallBox()) smallBox().classList.remove('away'); };
+  const done = () => { el.remove(); W.els = null; if (!SV.el && smallBox()) smallBox().classList.remove('away'); };
   if (instant) { done(); return; }
   const cam = el.querySelector('.spin-cam');
   cam.getAnimations().forEach((a) => a.cancel());

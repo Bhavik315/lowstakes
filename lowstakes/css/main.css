@@ -776,9 +776,12 @@ input[type=range]::-moz-range-thumb {
   content: ''; position: absolute; left: -4%; right: -4%; top: 8%; bottom: -12%; z-index: -1; pointer-events: none;
   background: radial-gradient(closest-side, rgba(0, 0, 0, .55), rgba(0, 0, 0, .22) 62%, transparent 100%);
 }
-.wheel { position: relative; width: 100%; height: 100%; }
+.wheel { position: relative; width: 100%; height: 100%; container-type: inline-size; }
 .wl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+/* The spinning part is a plain div around the SVG: rotating an <svg> element makes the browser re-lay-out its
+   37 labels every frame, rotating a div is a compositor-only change. */
 .wl-rotor { transform-origin: 50% 50%; will-change: transform; }
+.wl-rotor > svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .pk-red { fill: #c32b24; }
 .pk-black { fill: #17181c; }
 .pk-green { fill: #1b7a4e; }
@@ -791,9 +794,13 @@ input[type=range]::-moz-range-thumb {
 .turret { fill: #c9922f; stroke: #6f4a17; stroke-width: 1; }
 .pocket-hit { fill: rgba(255, 226, 140, .28); stroke: #ffe08a; stroke-width: 1.5; stroke-linejoin: round; animation: pocket-pulse 1s ease-in-out infinite; }
 @keyframes pocket-pulse { 50% { fill: rgba(255, 226, 140, .5); stroke-width: 2.2; } }
-.trail { fill: #fbfaf6; pointer-events: none; }
-.ball-shadow { fill: rgba(0, 0, 0, .45); transform: translate(1.1px, 1.6px); }
-.ball { fill: #f7f5ee; stroke: rgba(0, 0, 0, .25); stroke-width: .4; }
+/* The ball is HTML, not SVG: moving an SVG child forces a layout pass every frame, a transform on a plain
+   element does not. One wheel unit is .5cqw, so these sizes and offsets match the SVG's coordinates. */
+.wl-ball { pointer-events: none; }
+.wl-ball i { position: absolute; left: 50%; top: 50%; border-radius: 50%; will-change: transform; }
+.trail { width: 2.7cqw; height: 2.7cqw; margin: -1.35cqw 0 0 -1.35cqw; background: #fbfaf6; }
+.ball-shadow { width: 2.9cqw; height: 2.9cqw; margin: -1.45cqw 0 0 -1.45cqw; background: rgba(0, 0, 0, .45); }
+.ball { width: 2.9cqw; height: 2.9cqw; margin: -1.45cqw 0 0 -1.45cqw; background: radial-gradient(circle at 36% 30%, #fff, #ece8dc 58%, #bcb7a6); box-shadow: 0 0 0 .08cqw rgba(0, 0, 0, .3); }
 .history { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 420px; }
 .history li { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
 .history li:first-child { width: 36px; height: 36px; font-size: 15px; }

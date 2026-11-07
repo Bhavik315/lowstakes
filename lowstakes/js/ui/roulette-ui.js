@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=17';
-import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=17';
+import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=21';
+import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=21';
 
 const SEG = 360 / 37;
 
@@ -50,7 +50,7 @@ export function wheelSvg() {
     <circle r="86.6" fill="none" stroke="url(#${u}gold)" stroke-width="1.1"/>
     ${studs}
   </svg>
-  <svg class="wl wl-rotor" ${vb}>
+  <div class="wl wl-rotor"><svg ${vb}>
     <defs>
       <radialGradient id="${u}cone" cx="-.2" cy="-.25" r="1" >
         <stop offset="0" stop-color="#f0c866"/><stop offset=".38" stop-color="#9a6630"/><stop offset="1" stop-color="#3a2112"/>
@@ -72,12 +72,12 @@ export function wheelSvg() {
       <circle r="13.5" class="turret"/>
       <circle r="6.2" fill="url(#${u}chrome)"/>
     </g>
-  </svg>
-  <svg class="wl wl-ball" ${vb}>
-    ${[0, 1, 2, 3].map(() => '<circle class="trail" r="2.7" cx="0" cy="-91" style="opacity:0"/>').join('')}
-    <circle class="ball-shadow" r="2.9" cx="0" cy="-91"/>
-    <circle class="ball" r="2.9" cx="0" cy="-91"/>
-  </svg>
+  </svg></div>
+  <div class="wl wl-ball" aria-hidden="true">
+    ${[0, 1, 2, 3].map(() => '<i class="trail" style="opacity:0;transform:translate(0cqw,-45.5cqw)"></i>').join('')}
+    <i class="ball-shadow" style="transform:translate(.55cqw,-44.7cqw)"></i>
+    <i class="ball" style="transform:translate(0cqw,-45.5cqw)"></i>
+  </div>
 </div>`;
 }
 
