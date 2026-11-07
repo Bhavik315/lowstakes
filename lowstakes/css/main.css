@@ -621,7 +621,6 @@ input[type=range]::-moz-range-thumb {
 .bet {
   position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); z-index: 1;
   display: flex; align-items: center; gap: 5px;
-  animation: bet-in .6s var(--ease) backwards;
 }
 /* Chips slide out from the player's seat to where the bet sits. */
 @keyframes bet-in {
@@ -1483,3 +1482,10 @@ input[type=range]::-moz-range-thumb {
   .lobby { padding: 16px 20px 24px; gap: 18px 32px; }
   .lobby-code { font-size: 56px; margin-bottom: 8px; }
 }
+
+/* Hold'em: the seats, bets and dealer button each sit in their own stable layer, so adding or removing a bet
+   can never reorder (and so restart the animations of) the seats. The layers themselves draw nothing. */
+.tbl.holdem > .seats, .tbl.holdem > .bets, .tbl.holdem > .btn-layer { display: contents; }
+/* A card whose entrance has finished never plays it again. */
+.tbl.holdem .card.played, .tbl.holdem .slot .card.played { animation: none; }
+.tbl.holdem .card.played-in .card-in { animation: none; }

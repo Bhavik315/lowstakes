@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=21';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=21';
-import { landing, gate } from './ui/landing.js?v=21';
-import { lobby, inviteLink } from './ui/lobby.js?v=21';
-import * as HU from './ui/holdem-ui.js?v=21';
-import * as BU from './ui/blackjack-ui.js?v=21';
-import * as RU from './ui/roulette-ui.js?v=21';
-import { sound } from './ui/sound.js?v=21';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=21';
-import { WHEEL } from './games/roulette.js?v=21';
-import * as Motion from './ui/motion.js?v=21';
+import morphdom from '../vendor/morphdom-esm.js?v=22';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=22';
+import { landing, gate } from './ui/landing.js?v=22';
+import { lobby, inviteLink } from './ui/lobby.js?v=22';
+import * as HU from './ui/holdem-ui.js?v=22';
+import * as BU from './ui/blackjack-ui.js?v=22';
+import * as RU from './ui/roulette-ui.js?v=22';
+import { sound } from './ui/sound.js?v=22';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=22';
+import { WHEEL } from './games/roulette.js?v=22';
+import * as Motion from './ui/motion.js?v=22';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -661,6 +661,7 @@ function postEffects(events) {
       case 'chip':
         sound.play('chip');
         if (game.game === 'blackjack') bjChipFlight(ev);
+        else if (game.game === 'holdem') hdBetPop(ev);
         break;
       case 'check': sound.play('check'); break;
       case 'fold': sound.play('fold'); break;
@@ -968,6 +969,31 @@ function closeSpinView(instant = false) {
   back.onfinish = done;
   setTimeout(done, 720); // safety net if the animation is interrupted
 }
+
+// ---------------------------------------------------------------- hold'em effects
+// A bet slides out from its seat once, when the engine says a bet was made. The bet element itself is
+// keyed by player (not amount), so ordinary re-renders patch it in place and never replay this.
+function hdBetPop(ev) {
+  if (reduceMotion || !(ev.amount > 0)) return;
+  const el = document.querySelector(`#stage .bet[data-bet="${CSS.escape(ev.pid)}"]`);
+  if (!el) return;
+  el.animate([
+    { transform: 'translate(calc(-50% + var(--bx, 0) * 1cqw), calc(-50% + var(--by, 0) * 1cqw / var(--ar))) scale(.85)', opacity: 0 },
+    { opacity: 1, offset: 0.25 },
+    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+  ], { duration: 600, easing: 'cubic-bezier(.2,.7,.2,1)' });
+}
+
+// Remember every card entrance that has finished, so it can never be replayed (see holdem-ui.js).
+document.addEventListener('animationend', (e) => {
+  const el = e.target;
+  if (!el.classList) return;
+  if (el.classList.contains('card') && el.id && /^(deal-seat|flop-spread|late-in)$/.test(e.animationName)) HU.markDealt(el.id);
+  else if (el.classList.contains('card-in') && e.animationName === 'turnover') {
+    const c = el.closest('.card');
+    if (c && c.id) HU.markDealt(`${c.id}#in`);
+  }
+}, true);
 
 // ---------------------------------------------------------------- blackjack effects
 // Keep these two in step with PEEK_MS / FLIP_MS in js/games/blackjack.js.

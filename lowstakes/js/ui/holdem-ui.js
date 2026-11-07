@@ -1,7 +1,13 @@
-import { esc, fmt, card, chipStack, avatar } from './parts.js?v=21';
+import { esc, fmt, card, chipStack, avatar } from './parts.js?v=22';
 
 // Time between cards when dealing round the table (keep in step with the engine).
 export const DEAL_GAP = 200;
+
+// Entrance animations that have actually finished. Once a card's has, it renders with animations off,
+// so nothing (a re-render, a DOM move, a new player joining) can ever play its dealing again.
+const played = new Set();
+let playedHand = -1;
+export const markDealt = (id) => played.add(id);
 
 export function lastEvent(view, type) {
   for (let i = view.events.length - 1; i >= 0; i--) if (view.events[i].type === type) return view.events[i];
@@ -32,6 +38,8 @@ export function stage(view, state) {
     for (const s of view.seats) if (winners.has(s.pid) && s.best) s.best.forEach((c) => hiCards.add(c));
   }
   const showdown = view.results && view.results.showdown;
+  if (view.handNo !== playedHand) { played.clear(); playedHand = view.handNo; }
+  const seen = (id) => (played.has(id) ? ' played' : '') + (played.has(`${id}#in`) ? ' played-in' : '');
 
   // Deal order starts at the small blind and goes round the table, so each
   // card can leave the dealer at its real moment.
@@ -64,7 +72,8 @@ export function stage(view, state) {
     const cards = s.cards.map((c, i) => {
       let extra = '';
       if (showdown && s.best) extra = hiCards.has(c) ? 'hi' : 'lo';
-      return card(c, { key: `h${view.handNo}-${s.pid}-${i}`, cls: extra, style: `--dd:${(i * live.length + k0) * DEAL_GAP}ms` });
+      const id = `h${view.handNo}-${s.pid}-${i}`;
+      return card(c, { key: id, cls: extra + seen(id), style: `--dd:${(i * live.length + k0) * DEAL_GAP}ms` });
     }).join('');
     const tag = s.handName ? `<span class="tag tag-hand">${esc(s.handName)}</span>`
       : won && s.won ? `<span class="tag tag-win">+${fmt(s.won)}</span>`
@@ -73,18 +82,13 @@ export function stage(view, state) {
       : s.sitOut ? '<span class="tag">Sitting out</span>'
       : !s.inHand && s.chips === 0 ? '<span class="tag">Busted</span>' : '';
     const ring = acting ? timerRing(`ring-${turnEv ? turnEv.id : 0}`, view.timer * 1000, view.timeLeft) : '';
-    return `
-      <div class="${cls}" style="${pos}" data-seat="${esc(s.pid)}" id="seat-${esc(s.pid)}">
-        <div class="seat-cards">${cards}</div>
-        <div class="plate">
-          <span class="av-wrap">${avatar(p)}${ring}</span>
-          <span class="plate-text"><span class="pname">${esc(p.name)}</span><span class="pchips">${fmt(s.chips)}</span></span>
-        </div>
-        ${tag}
-      </div>
-      ${s.bet > 0 ? `<div class="bet" style="${betPos}" id="bet-${esc(s.pid)}-${s.bet}" data-bet="${esc(s.pid)}">${chipStack(s.bet, 6)}<b>${fmt(s.bet)}</b></div>` : ''}
-      ${s.btn ? `<div class="dealer-btn" style="${btnPos}" id="dealer-btn" aria-label="Dealer button">D</div>` : ''}`;
-  }).join('');
+    return {
+      seat: `<div class="${cls}" style="${pos}" data-seat="${esc(s.pid)}" id="seat-${esc(s.pid)}"><div class="seat-cards">${cards}</div><div class="plate"><span class="av-wrap">${avatar(p)}${ring}</span><span class="plate-text"><span class="pname">${esc(p.name)}</span><span class="pchips">${fmt(s.chips)}</span></span></div>${tag}</div>`,
+      // Keyed by player only (not by amount), so a changed bet is patched in place instead of re-created.
+      bet: s.bet > 0 ? `<div class="bet" style="${betPos}" id="bet-${esc(s.pid)}" data-bet="${esc(s.pid)}">${chipStack(s.bet, 6)}<b>${fmt(s.bet)}</b></div>` : '',
+      btn: s.btn ? `<div class="dealer-btn" style="${btnPos}" id="dealer-btn" aria-label="Dealer button">D</div>` : '',
+    };
+  });
 
   const slots = Array.from({ length: 5 }, (_, i) => {
     const c = view.board[i];
@@ -119,9 +123,11 @@ export function stage(view, state) {
       <div class="pot" id="pot" aria-live="polite">${view.pot > 0 ? `${chipStack(view.pot, 7)}<span>Pot <b>${fmt(view.pot)}</b></span>` : ''}</div>
       <div class="center-msg" aria-live="polite">${center}</div>
     </div>
-    ${seatHtml}
+    <div class="seats">${seatHtml.map((x) => x.seat).join('')}</div>
+    <div class="bets">${seatHtml.map((x) => x.bet).join('')}</div>
+    <div class="btn-layer">${seatHtml.map((x) => x.btn).join('')}</div>
   </div>
-</div>`;
+</div>`.replace(/>\s+</g, '><');
 }
 
 export function dock(view, state, ui) {
