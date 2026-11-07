@@ -1545,3 +1545,11 @@ input[type=range]::-moz-range-thumb {
 .tag-ins.wait { opacity: .75; }
 .tag-ins.up { background: #7fd99a; }
 .tag-ins.down { background: #ef8a80; }
+
+/* Dealer's check for blackjack: announced to everyone, card stays hidden unless it is one. */
+.dealer-check { position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%); z-index: 6; white-space: nowrap; text-align: center; padding: 7px 16px 8px; border-radius: 999px; font-weight: 700; font-size: 15px; background: rgba(15, 28, 22, .92); color: var(--cream); border: 1px solid rgba(242, 226, 190, .35); box-shadow: 0 6px 20px rgba(0, 0, 0, .4); animation: dc-in .4s var(--ease) both; pointer-events: none; }
+.dealer-check small { display: block; font-size: 11px; font-weight: 500; opacity: .75; }
+.dealer-check.none { border-color: #7fd99a; color: #bff0cc; }
+.dealer-check.bj { border-color: #ef8a80; color: #ffd0ca; background: rgba(60, 14, 12, .92); }
+@keyframes dc-in { from { opacity: 0; transform: translate(-50%, -6px) scale(.96); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@media (max-width: 700px) { .dealer-check { font-size: 13px; padding: 5px 12px 6px; } }

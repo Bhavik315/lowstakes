@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=25';
-import { lastEvent, timerRing } from './holdem-ui.js?v=25';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=26';
+import { lastEvent, timerRing } from './holdem-ui.js?v=26';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -80,6 +80,7 @@ export function stage(view, state) {
         <div class="shoe" title="${view.shoe.left} cards left in the shoe"><span style="--fill:${shoePct}%"></span></div>
         <div class="dealer-cards">${d.cards.map((c, i) => card(c, { key: `bjd${view.round}-${i}`, style: `--k:${i}` })).join('')}</div>
         ${dealerTotal ? `<span class="total dealer-total">${dealerTotal}</span>` : ''}
+        ${view.check ? `<div class="dealer-check ${view.check.bj ? 'bj' : 'none'}" id="dealer-check-${view.check.id}" role="status">${view.check.bj ? 'Dealer has blackjack' : 'No dealer blackjack'}<small>${view.check.bj ? 'Hands without blackjack lose' : 'Play continues'}</small></div>` : ''}
       </div>
       <div class="center-msg">${center}</div>
     </div>

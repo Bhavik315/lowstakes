@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=25';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=25';
-import { landing, gate } from './ui/landing.js?v=25';
-import { lobby, inviteLink } from './ui/lobby.js?v=25';
-import * as HU from './ui/holdem-ui.js?v=25';
-import * as BU from './ui/blackjack-ui.js?v=25';
-import * as RU from './ui/roulette-ui.js?v=25';
-import { sound } from './ui/sound.js?v=25';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=25';
-import { WHEEL } from './games/roulette.js?v=25';
-import * as Motion from './ui/motion.js?v=25';
+import morphdom from '../vendor/morphdom-esm.js?v=26';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=26';
+import { landing, gate } from './ui/landing.js?v=26';
+import { lobby, inviteLink } from './ui/lobby.js?v=26';
+import * as HU from './ui/holdem-ui.js?v=26';
+import * as BU from './ui/blackjack-ui.js?v=26';
+import * as RU from './ui/roulette-ui.js?v=26';
+import { sound } from './ui/sound.js?v=26';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=26';
+import { WHEEL } from './games/roulette.js?v=26';
+import * as Motion from './ui/motion.js?v=26';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };

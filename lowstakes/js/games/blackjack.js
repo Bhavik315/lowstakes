@@ -1,7 +1,7 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=25';
-import { newDeck, shuffle } from '../core/cards.js?v=25';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=25';
+import { Engine } from '../core/engine.js?v=26';
+import { newDeck, shuffle } from '../core/cards.js?v=26';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=26';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
@@ -26,6 +26,8 @@ export class Blackjack extends Engine {
     this.deadline = 0;
     this.betDeadline = 0;
     this.insDeadline = 0;
+    this.check = null;
+    this.checkSeq = 0;
     this.round = 0;
     this.botAt = 0;
     this.locked = false;
@@ -357,16 +359,29 @@ export class Blackjack extends Engine {
     if (this.seats.some((s) => s.insurance)) {
       this.note(dealerBJ ? 'Dealer has blackjack. Insurance pays 2 to 1.' : 'No blackjack. Insurance bets lose.');
     }
-    if ((up[0] === 'A' || cardValue(up) === 10) && dealerBJ) {
-      for (const s of this.seats) for (const h of s.hands) h.done = true;
-      this.emit('peek');
-      return this.after(PEEK_MS, () => {
+    const checks = up[0] === 'A' || cardValue(up) === 10; // the dealer looks under an ace or a ten
+    if (!checks) return this.beginPlay();
+    this.emit('peek');
+    this.after(PEEK_MS, () => {
+      // Everyone is told the result; the card itself stays hidden unless it is a blackjack.
+      this.check = { id: ++this.checkSeq, bj: dealerBJ };
+      this.after(dealerBJ ? 4200 : 2600, () => { this.check = null; });
+      if (dealerBJ) {
+        for (const s of this.seats) for (const h of s.hands) h.done = true;
         this.dealer.hidden = false;
         this.emit('reveal');
-        this.note('Dealer has blackjack.');
-        this.after(FLIP_MS + 500, () => this.settle());
-      });
-    }
+        this.emit('dealer-check', { bj: true });
+        this.note('Dealer has blackjack. Hands without one lose.');
+        this.after(FLIP_MS + 700, () => this.settle());
+      } else {
+        this.emit('dealer-check', { bj: false });
+        this.note('Dealer checks: no blackjack. Play continues.');
+        this.after(650, () => this.beginPlay());
+      }
+    });
+  }
+
+  beginPlay() {
     for (const s of this.seats) {
       for (const h of s.hands) {
         if (isNatural(h.cards, false)) { h.done = true; h.natural = true; this.emit('blackjack', { pid: s.pid }); }
@@ -488,6 +503,7 @@ export class Blackjack extends Engine {
   nextRound() {
     for (const s of this.seats) s.hands = [];
     this.dealer = { cards: [], hidden: true };
+    this.check = null;
     if (this.shoe.length < this.cut) this.newShoe();
     this.phase = 'betting';
     this.syncSeats();
@@ -547,6 +563,7 @@ export class Blackjack extends Engine {
       betLeft: this.remaining(this.betDeadline),
       insLeft: this.phase === 'insurance' ? this.remaining(this.insDeadline) : 0,
       insMs: INS_MS,
+      check: this.check,
       timer: this.s.timer,
       betTime: this.s.betTime,
       shoe: { left: this.shoe.length, total: this.s.decks * 52 },

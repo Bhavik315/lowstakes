@@ -578,7 +578,7 @@ test('insurance: loses the premium when the dealer has no blackjack, and play co
   const { room, clock, g } = insGame(['9h', 'As', '8s', '6c', 'Td']);
   assert.equal(g.phase, 'insurance');
   g.handle('p0', { type: 'insure' });
-  run(g, 1500, clock);
+  run(g, 3500, clock);
   assert.equal(g.seats[0].insNet, -50);
   assert.equal(g.phase, 'playing');
   assert.equal(room.players[0].chips, 1000 - 100 - 50);
@@ -587,12 +587,12 @@ test('insurance: loses the premium when the dealer has no blackjack, and play co
 test('insurance: declining, timeouts, and no offer without an ace or without chips', () => {
   const a = insGame(['9h', 'As', '8s', '6c']);
   assert.ok(a.g.handle('p0', { type: 'decline' }));
-  run(a.g, 1500, a.clock);
+  run(a.g, 3500, a.clock);
   assert.equal(a.g.phase, 'playing');
   assert.equal(a.room.players[0].chips, 900);
 
   const t = insGame(['9h', 'As', '8s', '6c']);
-  run(t.g, 10000, t.clock); // nobody answers: treated as no
+  run(t.g, 13000, t.clock); // nobody answers: treated as no
   assert.equal(t.g.phase, 'playing');
   assert.equal(t.room.players[0].chips, 900);
 
@@ -629,4 +629,33 @@ test('insurance: rounds with bots keep advancing, and bots only ever pay half th
     assert.ok(lastRound >= 5, 'rounds keep advancing');
   }
   assert.ok(offered > 0, 'an ace showed at least once across the runs');
+});
+
+test('dealer check: everyone is told the result; the hole card stays hidden unless it is blackjack', () => {
+  // Ten up, no blackjack: announced, card hidden, play continues.
+  const a = insGame(['9h', 'Ks', '8s', '6c', '2d']);
+  assert.notEqual(a.g.phase, 'insurance');
+  run(a.g, 1300, a.clock);
+  assert.deepEqual(a.g.view('p0').check && a.g.view('p0').check.bj, false, 'no-blackjack announcement is visible');
+  assert.equal(a.g.view('p0').dealer.cards[1], '??', 'hole card still hidden');
+  run(a.g, 1500, a.clock);
+  assert.equal(a.g.phase, 'playing');
+  run(a.g, 3000, a.clock);
+  assert.equal(a.g.view('p0').check, null, 'announcement clears itself');
+
+  // Ace up, blackjack: announced, card revealed, hands lose without further action.
+  const b = insGame(['9h', 'As', '8s', 'Kc']);
+  b.g.handle('p0', { type: 'decline' });
+  run(b.g, 1700, b.clock);
+  const v = b.g.view('p0');
+  assert.equal(v.check.bj, true);
+  assert.equal(v.dealer.cards[1], 'Kc', 'blackjack reveals the card');
+  assert.equal(b.g.handle('p0', { type: 'hit' }), false, 'no playing on a dealer blackjack');
+  untilPhase(b.g, b.clock, 'settle');
+  assert.equal(b.room.players[0].chips, 900);
+
+  // A low card up: no check at all.
+  const c = insGame(['9h', '5s', '8s', 'Kc']);
+  assert.equal(c.g.phase, 'playing');
+  assert.equal(c.g.view('p0').check, null);
 });
