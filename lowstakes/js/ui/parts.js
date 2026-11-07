@@ -1,4 +1,5 @@
 // Small markup builders shared by every screen.
+import { Ads } from '../ads.js?v=30';
 
 export const ROCKET_SVG = `<svg class="mini-crash" viewBox="0 0 90 90" aria-hidden="true"><g transform="rotate(45 45 45)">
 <path d="M45 70 C37 78 40 88 45 92 C50 88 53 78 45 70Z" fill="#FFB43C"/><path d="M45 70 C41 75 42 82 45 85 C48 82 49 75 45 70Z" fill="#FFF3B0"/>
@@ -7,6 +8,8 @@ export const ROCKET_SVG = `<svg class="mini-crash" viewBox="0 0 90 90" aria-hidd
 <path d="M45 6 C52 12 56 20 57.500 28 L32.500 28 C34 20 38 12 45 6Z" fill="#E0472F"/>
 <rect x="32" y="52" width="26" height="6" fill="#E0472F"/>
 <circle cx="45" cy="40" r="7.500" fill="#10302A"/><circle cx="43.500" cy="38.500" r="4.800" fill="#6FC3E8"/></g></svg>`;
+// The out-of-chips button: a rewarded ad when a network is connected, otherwise the free rebuy.
+export const refillLabel = (n) => (Ads.enabled() ? `Watch an ad to refill ${fmt(n)}` : `Buy back in for ${fmt(n)}`);
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 export const fmt = (n) => Math.round(n).toLocaleString('en-US');
 export const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n));

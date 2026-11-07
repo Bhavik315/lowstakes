@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, avatar, CHIP_VALUES } from './parts.js?v=29';
-import { AUTO_CHOICES } from '../games/crash.js?v=29';
+import { esc, fmt, signed, chip, avatar, CHIP_VALUES, refillLabel } from './parts.js?v=30';
+import { AUTO_CHOICES } from '../games/crash.js?v=30';
 
 const fx = (x) => `${x.toFixed(2)}x`;
 const tier = (x) => (x < 2 ? 'lo' : x < 10 ? 'mid' : 'hi');
@@ -68,7 +68,7 @@ export function dock(view, state, ui) {
     return empty(mine > 0 ? `You won ${fmt(mine)}.` : mine < 0 ? `Crashed at ${fx(view.crashAt)}. You lost ${fmt(-mine)}.` : 'You broke even.');
   }
   if (chips < view.settings.min && !me.total) {
-    return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">Buy back in for ${fmt(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
+    return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">${refillLabel(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
   }
   if (me.ready) {
     return empty(`You're in for ${fmt(me.total)}. Launching when everyone is ready.`, '<button class="btn btn-quiet btn-sm" data-act="cr-unready">Change my bet</button>');

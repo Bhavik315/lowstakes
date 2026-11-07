@@ -1,15 +1,16 @@
-import morphdom from '../vendor/morphdom-esm.js?v=29';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=29';
-import { landing, gate } from './ui/landing.js?v=29';
-import { lobby, inviteLink } from './ui/lobby.js?v=29';
-import * as HU from './ui/holdem-ui.js?v=29';
-import * as BU from './ui/blackjack-ui.js?v=29';
-import * as RU from './ui/roulette-ui.js?v=29';
-import * as CU from './ui/crash-ui.js?v=29';
-import { sound } from './ui/sound.js?v=29';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=29';
-import { WHEEL } from './games/roulette.js?v=29';
-import * as Motion from './ui/motion.js?v=29';
+import { Ads } from './ads.js?v=30';
+import morphdom from '../vendor/morphdom-esm.js?v=30';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=30';
+import { landing, gate } from './ui/landing.js?v=30';
+import { lobby, inviteLink } from './ui/lobby.js?v=30';
+import * as HU from './ui/holdem-ui.js?v=30';
+import * as BU from './ui/blackjack-ui.js?v=30';
+import * as RU from './ui/roulette-ui.js?v=30';
+import * as CU from './ui/crash-ui.js?v=30';
+import { sound } from './ui/sound.js?v=30';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=30';
+import { WHEEL } from './games/roulette.js?v=30';
+import * as Motion from './ui/motion.js?v=30';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -500,7 +501,23 @@ document.addEventListener('click', (e) => {
     case 'scores': case 'menu': case 'more': S.ui.pop = S.ui.pop === act ? null : act; S.ui.pop ? renderPop() : closePop(); return;
     case 'close-pop': closePop(); return;
     case 'react': c.emote(el.dataset.r); return;
-    case 'rebuy': c.requestRebuy(); return;
+    case 'rebuy': {
+      // With an ad network connected the refill is a rewarded ad; otherwise it is the free rebuy.
+      if (!Ads.enabled()) { c.requestRebuy(); return; }
+      if (S.adBusy) return;
+      S.adBusy = true;
+      el.disabled = true;
+      Ads.showRewarded(() => dialog({
+        title: 'Watch a short ad to refill?',
+        body: 'Ads are how Low Stakes stays free. This is the only place you will ever see one. The ad is requested without personalisation, and you can stop at any time. If it does not finish, you get no chips.',
+        yes: 'Watch the ad', no: 'Not now',
+      })).then((ok) => {
+        S.adBusy = false;
+        el.disabled = false;
+        if (ok) { c.requestRebuy(); toast('Thanks for watching. Chips added.'); } else toast('No ad finished, so no chips this time.');
+      });
+      return;
+    }
     // lobby / host
     case 'pick': S.ui.pick = el.dataset.game; renderTable(); return;
     case 'start-game': { const r = c.setGame(S.ui.pick); if (r && !r.ok) toast(r.message); return; }
@@ -1075,6 +1092,53 @@ function bjSettleFx(game) {
   if (paid) setTimeout(() => sound.play('collect'), 1250);
 }
 
+// ---------------------------------------------------------------- dialogs and the 18+ gate
+function dialog({ title, body, yes, no }) {
+  return new Promise((resolve) => {
+    const el = document.createElement('div');
+    el.className = 'ls-modal';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-label', title);
+    el.innerHTML = `<div class="ls-modal-card"><h2>${esc(title)}</h2><p>${esc(body)}</p>
+      <div class="ls-modal-acts">${no ? `<button class="btn btn-quiet" data-m="no">${esc(no)}</button>` : ''}<button class="btn btn-primary" data-m="yes">${esc(yes)}</button></div></div>`;
+    const done = (v) => { document.removeEventListener('keydown', onKey, true); el.remove(); resolve(v); };
+    const onKey = (e) => { if (e.key === 'Escape' && no) { e.preventDefault(); done(false); } };
+    el.addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (b) done(b.dataset.m === 'yes'); });
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(el);
+    el.querySelector('[data-m=yes]').focus();
+  });
+}
+
+// Low Stakes is casino-style, so it is for adults only. This is a self-declaration, not identity verification.
+function ageOk() { return store.get('ls.age') === '18'; }
+function ageGate(done) {
+  const state = store.get('ls.age');
+  if (state === '18') return done();
+  document.body.className = 'on-gate';
+  const el = document.createElement('div');
+  el.className = 'ls-modal ls-age';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', 'Age check');
+  const blocked = () => {
+    el.innerHTML = `<div class="ls-modal-card"><h2>Sorry, this one is for adults</h2><p>Low Stakes is a play-money casino-style game and is only for people aged 18 or over. Come back when you are 18.</p></div>`;
+  };
+  if (state === 'under') { blocked(); document.body.appendChild(el); return; }
+  el.innerHTML = `<div class="ls-modal-card"><h2>Are you 18 or older?</h2>
+    <p>Low Stakes has poker, blackjack, roulette and crash. It uses play money only, but it is casino-style, so it is for adults.</p>
+    <div class="ls-modal-acts"><button class="btn btn-quiet" data-a="under">No, I am under 18</button><button class="btn btn-primary" data-a="18">Yes, I am 18 or older</button></div></div>`;
+  el.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-a]');
+    if (!b) return;
+    store.set('ls.age', b.dataset.a);
+    if (b.dataset.a === '18') { el.remove(); done(); } else blocked();
+  });
+  document.body.appendChild(el);
+  el.querySelector('[data-a="18"]').focus();
+}
+
 // ---------------------------------------------------------------- countdowns
 setInterval(() => {
   if (S.screen !== 'table') return;
@@ -1093,8 +1157,8 @@ window.addEventListener('beforeunload', (e) => {
 });
 window.addEventListener('pagehide', () => { if (S.client && !S.client.isHost) S.client.close(); });
 
-window.addEventListener('hashchange', route);
-route();
+window.addEventListener('hashchange', () => { if (ageOk()) route(); });
+ageGate(() => route());
 
 // Exposed for debugging in the console.
 window.lowstakes = S;

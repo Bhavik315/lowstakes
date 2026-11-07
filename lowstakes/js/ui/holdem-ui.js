@@ -1,4 +1,4 @@
-import { esc, fmt, card, chipStack, avatar } from './parts.js?v=29';
+import { esc, fmt, card, chipStack, avatar, refillLabel } from './parts.js?v=30';
 
 // Time between cards when dealing round the table (keep in step with the engine).
 export const DEAL_GAP = 200;
@@ -144,7 +144,7 @@ export function dock(view, state, ui) {
   const sit = `<label class="toggle"><input type="checkbox" data-act="sitout"${me.sitOut ? ' checked' : ''}><span>Sit out next hand</span></label>`;
 
   if (broke) {
-    return { sig, html: `${left}<div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">Buy back in for ${fmt(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
+    return { sig, html: `${left}<div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">${refillLabel(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
   }
 
   if (me.myTurn && me.legal) {

@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=29';
-import { lastEvent, timerRing } from './holdem-ui.js?v=29';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES, refillLabel } from './parts.js?v=30';
+import { lastEvent, timerRing } from './holdem-ui.js?v=30';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -109,7 +109,7 @@ export function dock(view, state, ui) {
 
   if (view.phase === 'betting') {
     if (chips + seat.bet < min) {
-      return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">Buy back in for ${fmt(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
+      return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">${refillLabel(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
     }
     if (seat.ready) {
       const waiting = view.seats.filter((s) => !s.ready && !s.sitOut).map((s) => state.room.players.find((p) => p.id === s.pid)).filter((p) => p && !p.bot && p.connected);

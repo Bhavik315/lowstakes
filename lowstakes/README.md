@@ -6,6 +6,13 @@ Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exa
 
 **Play it:** https://lowstakes.pages.dev
 
+## Ads
+
+There are no banner or display ads, ever. The only ad is an optional rewarded video on the out-of-chips screen ("Watch an ad to refill").
+No ad network is connected yet, so that button still gives the free rebuy. When a network approves the site, register its adapter
+with `window.LowStakesAds.register({ name, show })` (see `js/ads.js`). Ads are requested non-personalised, with a one-time notice first.
+A self-declared 18+ gate, `privacy.html` and `terms.html` are in place. When accounts arrive, the refill must be granted by the server after the network confirms the view.
+
 ## Hosting
 
 The site is static files, hosted free on Cloudflare Pages and redeployed on every push to `claude/epic-gauss-fb52gi`.

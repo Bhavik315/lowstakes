@@ -1,5 +1,5 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=29';
-import { COLORS } from '../net/room.js?v=29';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=30';
+import { COLORS } from '../net/room.js?v=30';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -95,6 +95,7 @@ export function landing(me, { error = '' } = {}) {
   <footer class="l-foot">
     <p>Play money only. There's nothing to buy and nothing to cash out.</p>
     <p>Tables are peer-to-peer: the host's browser deals, and guests connect to it directly. Keep the host tab open.</p>
+    <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · For adults (18+) only</p>
   </footer>
 </div>`;
 }
