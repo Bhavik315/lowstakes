@@ -6,6 +6,17 @@ Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exa
 
 **Play it:** https://lowstakes.pages.dev
 
+## Accounts (in progress)
+
+Email sign-up, sign-in, email verification, password reset, a profile with the wallet balance, username change (5,000 coins) and transaction history are built on Supabase
+(project URL and *publishable* key in `js/config.js`; never put a secret key there). The database rules live in `supabase/migrations/0001_accounts_wallet.sql`.
+The first username is free, there is a one-time 20,000 coin welcome bonus after email verification, and every later username change costs 5,000.
+Google sign-in is built into the database design but switched off in `js/config.js` until it is set up in Supabase.
+`requireLogin` is `false` on purpose: the four games still run in the host's browser with their own table chips, so they do not use the wallet yet.
+Turning it on, and moving the games onto a server so payouts can be trusted, is the next stage.
+
+Tests: `supabase/test/run.sh` (SQL rules and races on a local Postgres) and `test/browser/accounts.cjs` (screens against a stand-in backend).
+
 ## Ads
 
 There are no banner or display ads, ever. The only ad is an optional rewarded video on the out-of-chips screen ("Watch an ad to refill").

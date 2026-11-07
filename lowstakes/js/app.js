@@ -1,16 +1,19 @@
-import { Ads } from './ads.js?v=30';
-import morphdom from '../vendor/morphdom-esm.js?v=30';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=30';
-import { landing, gate } from './ui/landing.js?v=30';
-import { lobby, inviteLink } from './ui/lobby.js?v=30';
-import * as HU from './ui/holdem-ui.js?v=30';
-import * as BU from './ui/blackjack-ui.js?v=30';
-import * as RU from './ui/roulette-ui.js?v=30';
-import * as CU from './ui/crash-ui.js?v=30';
-import { sound } from './ui/sound.js?v=30';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=30';
-import { WHEEL } from './games/roulette.js?v=30';
-import * as Motion from './ui/motion.js?v=30';
+import { Ads } from './ads.js?v=31';
+import { Auth } from './auth.js?v=31';
+import { CONFIG } from './config.js?v=31';
+import * as AU from './ui/account-ui.js?v=31';
+import morphdom from '../vendor/morphdom-esm.js?v=31';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=31';
+import { landing, gate } from './ui/landing.js?v=31';
+import { lobby, inviteLink } from './ui/lobby.js?v=31';
+import * as HU from './ui/holdem-ui.js?v=31';
+import * as BU from './ui/blackjack-ui.js?v=31';
+import * as RU from './ui/roulette-ui.js?v=31';
+import * as CU from './ui/crash-ui.js?v=31';
+import { sound } from './ui/sound.js?v=31';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=31';
+import { WHEEL } from './games/roulette.js?v=31';
+import * as Motion from './ui/motion.js?v=31';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -86,6 +89,8 @@ function showLanding(error = '') {
   document.body.className = 'on-landing';
   document.title = 'Low Stakes';
   app.innerHTML = landing(S.me, { error });
+  AU.bindSlot();
+  syncAccountName();
   const form = document.getElementById('start-form');
   const code = document.getElementById('code');
   code.addEventListener('input', () => { code.value = cleanCode(code.value); });
@@ -103,6 +108,14 @@ function showLanding(error = '') {
     }
     startHost({ bots: mode === 'bots' });
   });
+}
+
+// A signed-in player has one username, used everywhere: lock the name box to it.
+function syncAccountName() {
+  const n = document.getElementById('name');
+  if (!n) return;
+  if (Auth.ready()) { n.value = Auth.username(); n.readOnly = true; n.title = 'Your Low Stakes username'; }
+  else if (n.readOnly) { n.readOnly = false; n.title = ''; }
 }
 
 function showGate(code, opts = {}) {
@@ -1157,8 +1170,33 @@ window.addEventListener('beforeunload', (e) => {
 });
 window.addEventListener('pagehide', () => { if (S.client && !S.client.isHost) S.client.close(); });
 
-window.addEventListener('hashchange', () => { if (ageOk()) route(); });
-ageGate(() => route());
+const accountsOk = () => !CONFIG.requireLogin || Auth.ready();
+window.addEventListener('hashchange', () => {
+  if (!ageOk()) return;
+  // An email link opened in a tab that already has the site loaded.
+  if (/(^#|&)(access_token|error)=/.test(location.hash)) {
+    const link = Auth.consumeLink();
+    Auth.init().then(() => AU.handleLink(link));
+    return;
+  }
+  if (accountsOk()) route();
+});
+Auth.onChange(() => { AU.bindSlot(); if (S.screen === 'landing') syncAccountName(); });
+AU.setToast(toast);
+ageGate(async () => {
+  const link = Auth.consumeLink(); // must run before route() reads the address
+  const starting = Auth.init();
+  if (CONFIG.requireLogin) {
+    await starting;
+    if (!Auth.ready()) { if (link) await AU.handleLink(link); else AU.openAuth('signin', { required: true }); }
+    const wait = setInterval(() => { if (Auth.ready()) { clearInterval(wait); route(); } }, 400);
+    if (Auth.ready()) { clearInterval(wait); route(); }
+    return;
+  }
+  route();
+  starting.then(() => { const n = Auth.takeNotice(); if (n === 'expired') toast('Your session expired. Please sign in again.'); });
+  if (link) { await starting; AU.handleLink(link); }
+});
 
 // Exposed for debugging in the console.
 window.lowstakes = S;
