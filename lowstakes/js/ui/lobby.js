@@ -1,12 +1,13 @@
-import { esc, fmt, signed, avatar, card } from './parts.js?v=26';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=26';
+import { esc, fmt, signed, avatar, card } from './parts.js?v=27';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=27';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
   blackjack: 'Everyone against the dealer. Up to seven.',
   roulette: 'Single zero. Everyone bets together. Up to twelve.',
+  crash: 'Cash out before it crashes. Up to twelve.',
 };
-const GAME_ORDER = ['holdem', 'blackjack', 'roulette'];
+const GAME_ORDER = ['holdem', 'blackjack', 'roulette', 'crash'];
 
 function opt(value, current, label) {
   return `<option value="${value}"${String(value) === String(current) ? ' selected' : ''}>${label}</option>`;
@@ -24,15 +25,23 @@ function settingsForm(gameId, s) {
       <label class="field sm"><span>Minimum bet</span><select data-set="blackjack.min">${[5, 10, 25, 50].map((v) => opt(v, s.blackjack.min, v)).join('')}</select></label>
       <label class="field sm"><span>Time to act</span><select data-set="blackjack.timer">${[[10, '10 seconds'], [20, '20 seconds'], [45, '45 seconds'], [0, 'No limit']].map(([v, l]) => opt(v, s.blackjack.timer, l)).join('')}</select></label>`;
   }
+  if (gameId === 'crash') {
+    return `
+      <label class="field sm"><span>Minimum bet</span><select data-set="crash.min">${[1, 5, 25].map((v) => opt(v, s.crash.min, v)).join('')}</select></label>
+      <label class="field sm"><span>Betting time</span><select data-set="crash.betTime">${[[10, '10 seconds'], [15, '15 seconds'], [30, '30 seconds']].map(([v, l]) => opt(v, s.crash.betTime, l)).join('')}</select></label>`;
+  }
   return `
       <label class="field sm"><span>Minimum chip</span><select data-set="roulette.min">${[1, 5, 25].map((v) => opt(v, s.roulette.min, v)).join('')}</select></label>
       <label class="field sm"><span>Betting time</span><select data-set="roulette.betTime">${[[15, '15 seconds'], [20, '20 seconds'], [40, '40 seconds']].map(([v, l]) => opt(v, s.roulette.betTime, l)).join('')}</select></label>`;
 }
 
+const MINI_CRASH = '<svg class="mini-crash" viewBox="0 0 80 60" aria-hidden="true"><path d="M4 54 C30 52 50 40 62 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="62" cy="10" r="5" fill="currentColor"/></svg>';
+
 const ART = {
   holdem: () => ['Qs', 'Qd'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   blackjack: () => ['Jc', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   roulette: () => '<div class="mini-wheel"></div>',
+  crash: () => MINI_CRASH,
 };
 
 export function lobby(state, ui) {

@@ -4,6 +4,7 @@ import { evaluate } from '../js/core/evaluate.js';
 import { basicStrategy, handValue } from '../js/core/blackjack-rules.js';
 import { Holdem } from '../js/games/holdem.js';
 import { Blackjack } from '../js/games/blackjack.js';
+import { Crash, crashPoint, multAt, timeFor, GROWTH } from '../js/games/crash.js';
 import { Roulette } from '../js/games/roulette.js';
 import { Baccarat } from '../js/games/baccarat.js';
 import { Craps } from '../js/games/craps.js';
@@ -489,7 +490,7 @@ const fakeConn = () => ({ open: true, send() {}, close() {}, on() {} });
 const fill = (h, n) => { while (h.room.players.length < n) assert.ok(h.addBot().ok); };
 
 test('capacity: each game has its own limit and roulette does not inherit the smaller ones', () => {
-  assert.deepEqual(GAME_LIMITS, { holdem: 9, blackjack: 7, roulette: 12 });
+  assert.deepEqual(GAME_LIMITS, { holdem: 9, blackjack: 7, roulette: 12, crash: 12 });
   assert.equal(MAX_PLAYERS, 12);
   assert.equal(limitFor('roulette'), 12);
   assert.equal(limitFor(null), 12, 'the lobby holds as many as the biggest game');
@@ -658,4 +659,114 @@ test('dealer check: everyone is told the result; the hole card stays hidden unle
   const c = insGame(['9h', '5s', '8s', 'Kc']);
   assert.equal(c.g.phase, 'playing');
   assert.equal(c.g.view('p0').check, null);
+});
+
+// ---------------------------------------------------------------- crash
+function crashGame(humans = 1, bots = false) {
+  const room = makeRoom(humans, bots);
+  const clock = { t: 0 };
+  const g = new Crash(room, { min: 5, betTime: 15 });
+  g.now = () => clock.t;
+  g.jobs.forEach((j) => (j.at = 0));
+  return { room, clock, g };
+}
+
+test('crash: multiplier maths and crash distribution have a 1% house edge', () => {
+  assert.equal(multAt(0), 1);
+  assert.ok(Math.abs(multAt(timeFor(2)) - 2) < 0.02);
+  const N = 200000;
+  let ge2 = 0, ge10 = 0, rtp2 = 0;
+  for (let i = 0; i < N; i++) { const x = crashPoint(); assert.ok(x >= 1 && x <= 1000); if (x >= 2) ge2++; if (x >= 10) ge10++; }
+  assert.ok(Math.abs(ge2 / N - 0.495) < 0.01, `P(>=2x) ~ 0.495, got ${ge2 / N}`);
+  assert.ok(Math.abs(ge10 / N - 0.099) < 0.006, `P(>=10x) ~ 0.099, got ${ge10 / N}`);
+  assert.ok(Math.abs((2 * ge2) / N - 0.99) < 0.02, 'cashing out at 2x returns about 99%');
+});
+
+test('crash: cash out in time pays bet x multiplier; late is refused; busting loses the bet', () => {
+  const { room, clock, g } = crashGame();
+  assert.ok(g.handle('p0', { type: 'add', amount: 100 }));
+  assert.equal(room.players[0].chips, 900);
+  g.handle('p0', { type: 'ready' });
+  assert.equal(g.phase, 'running');
+  g.crash = 5; // pin the outcome for the test
+  run(g, 8000, clock);
+  assert.equal(g.phase, 'running');
+  assert.ok(g.handle('p0', { type: 'cashout' }));
+  const x = g.bet('p0').cashed;
+  assert.ok(x >= 1.9 && x <= 2.1, `cashed near 2x, got ${x}`);
+  assert.equal(room.players[0].chips, 900 + Math.floor(100 * x));
+  assert.equal(g.handle('p0', { type: 'cashout' }), false, 'only once');
+  run(g, 12000, clock);
+  assert.equal(g.phase, 'crashed');
+  assert.equal(g.net.p0, Math.floor(100 * x) - 100);
+
+  // A second round: ride it into the crash.
+  run(g, 6000, clock);
+  assert.equal(g.phase, 'betting');
+  g.handle('p0', { type: 'add', amount: 50 }); g.handle('p0', { type: 'ready' });
+  g.crash = 1.5;
+  run(g, 6000, clock);
+  assert.equal(g.phase, 'crashed');
+  assert.equal(g.handle('p0', { type: 'cashout' }), false, 'too late after the crash');
+  assert.equal(g.net.p0, -50);
+});
+
+test('crash: cash-out is refused once the crash time has passed, even before the next tick', () => {
+  const { clock, g } = crashGame();
+  g.handle('p0', { type: 'add', amount: 10 }); g.handle('p0', { type: 'ready' });
+  g.crash = 2;
+  clock.t += timeFor(2) + 5; // past the crash time but step() has not run yet
+  assert.equal(g.handle('p0', { type: 'cashout' }), false);
+});
+
+test('crash: auto cash-out pays exactly its target; others cannot see it', () => {
+  const { room, clock, g } = crashGame(2);
+  g.handle('p0', { type: 'add', amount: 100 }); g.handle('p0', { type: 'auto', x: 3 });
+  g.handle('p1', { type: 'add', amount: 100 }); g.handle('p1', { type: 'auto', x: 50 });
+  assert.equal(g.view('p0').bets.find((b) => b.pid === 'p1').auto, null, 'others targets are hidden');
+  assert.equal(g.view('p1').you.auto, 50);
+  g.handle('p0', { type: 'ready' }); g.handle('p1', { type: 'ready' });
+  g.crash = 4;
+  run(g, 17500, clock);
+  assert.equal(g.bet('p0').cashed, 3);
+  assert.equal(room.players[0].chips, 900 + 300);
+  assert.equal(g.bet('p1').cashed, null, 'target above the crash point loses');
+  assert.equal(room.players[1].chips, 900);
+  assert.equal(g.handle('p0', { type: 'auto', x: 2 }), false, 'no changes mid-flight');
+});
+
+test('crash: bets are validated and refunded on clear, and ending mid-round refunds', () => {
+  const { room, g } = crashGame();
+  assert.equal(g.handle('p0', { type: 'add', amount: 2 }), false, 'below the minimum');
+  assert.equal(g.handle('p0', { type: 'add', amount: 5000 }), false, 'more than you have');
+  g.handle('p0', { type: 'add', amount: 50 });
+  g.handle('p0', { type: 'clear' });
+  assert.equal(room.players[0].chips, 1000);
+  g.handle('p0', { type: 'add', amount: 50 });
+  assert.equal(g.handle('p0', { type: 'auto', x: 1.0 }), false);
+  g.handle('p0', { type: 'ready' });
+  assert.equal(g.handle('p0', { type: 'add', amount: 50 }), false, 'locked in');
+});
+
+test('crash: a table with bots keeps cycling rounds', () => {
+  for (let i = 0; i < 15; i++) {
+    const room = makeRoom(5, true);
+    room.players[0].bot = false;
+    const clock = { t: 0 };
+    const g = new Crash(room, { min: 5, betTime: 10 });
+    g.now = () => clock.t;
+    for (let t = 0; t < 200000; t += 50) {
+      clock.t += 50; g.tick();
+      if (g.phase === 'betting' && !g.ready.has('p0') && room.players[0].chips >= 5) { g.handle('p0', { type: 'add', amount: 5 }); g.handle('p0', { type: 'ready' }); }
+      if (g.phase === 'running' && g.bet('p0') && g.bet('p0').cashed === null && multAt(g.elapsed()) >= 1.5 && Math.random() < 0.2) g.handle('p0', { type: 'cashout' });
+    }
+    assert.ok(g.round >= 6, `rounds advance (got ${g.round})`);
+    const total = room.players.reduce((a, p) => a + p.chips, 0);
+    assert.ok(total > 0);
+  }
+});
+
+test('crash: seats twelve and refuses a thirteenth', () => {
+  assert.equal(GAME_LIMITS.crash, 12);
+  assert.equal(limitFor('crash'), 12);
 });

@@ -1,16 +1,17 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=26';
-import { Blackjack } from '../games/blackjack.js?v=26';
-import { Roulette } from '../games/roulette.js?v=26';
+import { Holdem } from '../games/holdem.js?v=27';
+import { Blackjack } from '../games/blackjack.js?v=27';
+import { Roulette } from '../games/roulette.js?v=27';
+import { Crash } from '../games/crash.js?v=27';
 
-const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette };
+const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 const PREFIX = 'lowstakes-v1-';
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 // How many people each game seats, bots included. The room holds as many as the biggest game; once a
 // game is running, its own limit applies. Nobody is ever seated without a visible place at the table.
-export const GAME_LIMITS = { holdem: 9, blackjack: 7, roulette: 12 };
+export const GAME_LIMITS = { holdem: 9, blackjack: 7, roulette: 12, crash: 12 };
 export const MAX_PLAYERS = Math.max(...Object.values(GAME_LIMITS));
 export const limitFor = (gameId) => GAME_LIMITS[gameId] || MAX_PLAYERS;
 
@@ -25,6 +26,7 @@ export const DEFAULT_SETTINGS = {
   holdem: { sb: 10, bb: 20, timer: 30 },
   blackjack: { min: 10, timer: 20 },
   roulette: { min: 5, betTime: 20 },
+  crash: { min: 5, betTime: 15 },
 };
 
 export function newCode() {
@@ -455,6 +457,11 @@ export function held(engine, pid) {
     if (engine.phase === 'result') return 0;
     return engine.total(pid);
   }
+  if (engine instanceof Crash) {
+    const b = engine.bet(pid);
+    if (!b || engine.phase === 'crashed') return 0;
+    return b.cashed !== null ? 0 : b.amount;
+  }
   return 0;
 }
 
@@ -566,7 +573,7 @@ export class Guest extends Emitter {
 }
 
 export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
-export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette' };
+export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
 
 function cleanName(n) {
   return String(n || '').replace(/\s+/g, ' ').trim().slice(0, 16);

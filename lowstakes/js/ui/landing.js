@@ -1,5 +1,5 @@
-import { esc, card, chipStack } from './parts.js?v=26';
-import { COLORS } from '../net/room.js?v=26';
+import { esc, card, chipStack } from './parts.js?v=27';
+import { COLORS } from '../net/room.js?v=27';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -20,7 +20,7 @@ export function landing(me, { error = '' } = {}) {
   <section class="hero">
     <div class="hero-copy">
       <h1>Game night, minus the&nbsp;cash.</h1>
-      <p class="lede">Hold'em, blackjack and roulette with your friends, right in the browser. Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.</p>
+      <p class="lede">Hold'em, blackjack, roulette and crash with your friends, right in the browser. Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.</p>
 
       <form class="sit" id="start-form" autocomplete="off" novalidate>
         <label class="field">
@@ -57,7 +57,7 @@ export function landing(me, { error = '' } = {}) {
   </section>
 
   <section class="games" id="games">
-    <h2>Three tables, one link</h2>
+    <h2>Four tables, one link</h2>
     <div class="game-row">
       <article class="placard p-holdem">
         <div class="placard-art">${['As', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
@@ -74,6 +74,11 @@ export function landing(me, { error = '' } = {}) {
         <h3>Roulette</h3>
         <p>Single zero. Everyone stacks chips on the same layout, then watches the ball go round together.</p>
       </article>
+      <article class="placard p-crash">
+        <div class="placard-art"><svg class="mini-crash" viewBox="0 0 80 60" aria-hidden="true"><path d="M4 54 C30 52 50 40 62 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="62" cy="10" r="5" fill="currentColor"/></svg></div>
+        <h3>Crash</h3>
+        <p>A multiplier climbs until it doesn't. Up to twelve of you bet, then race to cash out before the crash.</p>
+      </article>
     </div>
   </section>
 
@@ -82,7 +87,7 @@ export function landing(me, { error = '' } = {}) {
     <ol class="steps">
       <li><b>Start a table.</b> You're the host. Your browser runs the game, so there's nothing to install and no account to make.</li>
       <li><b>Send the link.</b> Paste it in the group chat. Friends open it, type a name and sit down. Up to twelve at a table.</li>
-      <li><b>Pick a game and deal.</b> Switch between hold'em, blackjack and roulette whenever you like. Chip counts carry over.</li>
+      <li><b>Pick a game and deal.</b> Switch between hold'em, blackjack, roulette and crash whenever you like. Chip counts carry over.</li>
     </ol>
     <p class="how-note">Short a player? Add bots. They play a sensible game and don't mind losing.</p>
   </section>

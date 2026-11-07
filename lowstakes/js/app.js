@@ -1,16 +1,17 @@
-import morphdom from '../vendor/morphdom-esm.js?v=26';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=26';
-import { landing, gate } from './ui/landing.js?v=26';
-import { lobby, inviteLink } from './ui/lobby.js?v=26';
-import * as HU from './ui/holdem-ui.js?v=26';
-import * as BU from './ui/blackjack-ui.js?v=26';
-import * as RU from './ui/roulette-ui.js?v=26';
-import { sound } from './ui/sound.js?v=26';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=26';
-import { WHEEL } from './games/roulette.js?v=26';
-import * as Motion from './ui/motion.js?v=26';
+import morphdom from '../vendor/morphdom-esm.js?v=27';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=27';
+import { landing, gate } from './ui/landing.js?v=27';
+import { lobby, inviteLink } from './ui/lobby.js?v=27';
+import * as HU from './ui/holdem-ui.js?v=27';
+import * as BU from './ui/blackjack-ui.js?v=27';
+import * as RU from './ui/roulette-ui.js?v=27';
+import * as CU from './ui/crash-ui.js?v=27';
+import { sound } from './ui/sound.js?v=27';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=27';
+import { WHEEL } from './games/roulette.js?v=27';
+import * as Motion from './ui/motion.js?v=27';
 
-const UIS = { holdem: HU, blackjack: BU, roulette: RU };
+const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
 const app = document.getElementById('app');
 const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
@@ -274,6 +275,7 @@ function headerHtml() {
   if (game && game.game === 'holdem') sub = `Blinds ${game.settings.sb}/${game.settings.bb}`;
   if (game && game.game === 'blackjack') sub = `Minimum bet ${game.settings.min}`;
   if (game && game.game === 'roulette') sub = 'Single zero';
+  if (game && game.game === 'crash') sub = `Minimum bet ${game.settings.min}`;
   const me = room.players.find((p) => p.id === S.state.you);
   return `
     <a class="wordmark sm" href="#/" data-act="leave" aria-label="Leave and go home"><span>Low</span><span>Stakes</span></a>
@@ -348,6 +350,7 @@ function renderTable() {
   }
   postEffects(newEvents);
   if (game && game.game === 'roulette') wheelLoop();
+  if (game && game.game === 'crash') CU.crashLoop(() => S.state && S.state.game);
 
   // Action dock
   const dockEl = document.getElementById('dock');
@@ -526,6 +529,10 @@ document.addEventListener('click', (e) => {
     case 'bj-insure': c.act({ type: 'insure' }); return;
     case 'bj-decline': c.act({ type: 'decline' }); return;
     case 'bj-hit': case 'bj-stand': case 'bj-double': case 'bj-split': c.act({ type: act.slice(3) }); return;
+    // crash
+    case 'cr-add': S.chipSrc = { ...centre(el.getBoundingClientRect()), t: performance.now() }; c.act({ type: 'add', amount: Number(el.dataset.v) }); return;
+    case 'cr-clear': case 'cr-rebet': case 'cr-ready': case 'cr-unready': c.act({ type: act.slice(3) }); return;
+    case 'cr-cash': c.act({ type: 'cashout' }); return;
     // roulette
     case 'rl-chip': S.ui.chip = Number(el.dataset.v); S.dockSig = null; renderTable(); return;
     case 'rl-bet':
@@ -541,6 +548,7 @@ document.addEventListener('change', (e) => {
   const el = e.target;
   if (!S.client) return;
   if (el.matches('[data-act=sitout]')) S.client.act({ type: 'sitout', on: el.checked });
+  if (el.matches('[data-act=cr-auto]')) S.client.act({ type: 'auto', x: el.value === '' ? null : Number(el.value) });
   if (el.matches('[data-act=coach]')) { S.ui.coach = el.checked; store.set('ls.coach', el.checked ? '1' : '0'); S.dockSig = null; renderTable(); }
   if (el.matches('[data-set]')) {
     const path = el.dataset.set;
@@ -565,6 +573,7 @@ document.addEventListener('keydown', (e) => {
     holdem: { f: 'fold', c: ['check', 'call'], r: 'raise' },
     blackjack: { h: 'bj-hit', s: 'bj-stand', d: 'bj-double', p: 'bj-split', y: 'bj-insure', n: 'bj-decline', enter: 'bj-ready' },
     roulette: { enter: 'rl-ready' },
+    crash: { enter: ['cr-cash', 'cr-ready'], ' ': ['cr-cash', 'cr-ready'], c: 'cr-cash' },
   }[S.state.game.game];
   let target = map && map[k];
   if (!target) return;
@@ -716,6 +725,15 @@ function postEffects(events) {
         if (game.game === 'blackjack') bjSettleFx(game);
         break;
       case 'spin': if (game && game.game === 'roulette') startSpin(game); break;
+      case 'launch': sound.play('whoosh'); break;
+      case 'cashout':
+        if (ev.pid === you) sound.play('win'); else sound.play('chip');
+        break;
+      case 'crash': {
+        const mine = game.bets && game.bets.find((b) => b.pid === you);
+        sound.play(mine && mine.cashed === null ? 'bust' : 'land');
+        break;
+      }
       case 'land': {
         if (game.game === 'roulette') {
           const bet = game.bets.some((b) => b.pid === you);
