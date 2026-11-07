@@ -1,10 +1,18 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=5';
-import { newDeck, shuffle } from '../core/cards.js?v=5';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=5';
+import { Engine } from '../core/engine.js?v=6';
+import { newDeck, shuffle } from '../core/cards.js?v=6';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=6';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
+// Presentation pacing only. Every card is drawn at the moment of the action, so the
+// outcome is already fixed; these delays just control when it is shown.
+const HIT_SETTLE = 460;
+const DOUBLE_PAUSE = 680;
+const SPLIT_PAUSE = 760; // the two cards separate and settle before anything is dealt
+const SPLIT_GAP = 540; // between the two new cards
+const PEEK_MS = 950; // dealer leans in on the hole card before turning it
+const FLIP_MS = 1000; // the flip itself, then a beat to read the total
 
 export class Blackjack extends Engine {
   constructor(room, settings = {}) {
@@ -19,6 +27,7 @@ export class Blackjack extends Engine {
     this.round = 0;
     this.botAt = 0;
     this.locked = false;
+    this.hidSeq = 0;
     this.newShoe();
     this.syncSeats();
     this.botsBet();
@@ -105,8 +114,9 @@ export class Blackjack extends Engine {
     if (this.phase === 'betting') {
       if (a.type === 'bet' || a.type === 'add') {
         if (seat.ready) return false;
+        const was = seat.bet;
         this.setBet(seat, a.type === 'add' ? seat.bet + Number(a.amount || 0) : a.amount);
-        this.emit('chip', { pid });
+        this.emit('chip', { pid, amount: seat.bet - was });
         return true;
       }
       if (a.type === 'ready') {
@@ -155,46 +165,82 @@ export class Blackjack extends Engine {
     if (type === 'hit') {
       hand.cards.push(this.draw());
       this.emit('card', { pid: seat.pid });
-      const v = handValue(hand.cards).total;
-      if (v > 21) { hand.done = true; hand.result = 'Bust'; this.emit('bust', { pid: seat.pid }); this.note(`${who} busts with ${v}.`); }
-      else if (v === 21) hand.done = true;
-    } else if (type === 'stand') {
-      hand.done = true;
-      hand.stood = true;
-      if (auto) hand.timedOut = true;
-      this.note(`${who} stands on ${handValue(hand.cards).total}.`);
-    } else if (type === 'double') {
-      p.chips -= hand.bet;
-      hand.bet *= 2;
-      hand.doubled = true;
-      hand.cards.push(this.draw());
-      hand.done = true;
-      this.emit('chip', { pid: seat.pid });
-      this.emit('card', { pid: seat.pid });
-      const v = handValue(hand.cards).total;
-      if (v > 21) { hand.result = 'Bust'; this.emit('bust', { pid: seat.pid }); }
-      this.note(`${who} doubles and draws to ${v}.`);
-    } else if (type === 'split') {
-      p.chips -= hand.bet;
-      const second = hand.cards.pop();
-      const fresh = { cards: [second], bet: hand.bet, done: false, fromSplit: true };
-      hand.fromSplit = true;
-      seat.hands.splice(this.turn.hand + 1, 0, fresh);
-      hand.cards.push(this.draw());
-      fresh.cards.push(this.draw());
-      this.emit('chip', { pid: seat.pid });
-      this.emit('card', { pid: seat.pid });
-      this.note(`${who} splits ${second[0] === 'T' ? '10' : second[0]}s.`);
-      if (second[0] === 'A') { hand.done = true; fresh.done = true; }
-      else if (handValue(hand.cards).total === 21) hand.done = true;
+      this.deadline = 0;
+      this.locked = true;
+      this.after(HIT_SETTLE, () => this.finishHit(seat, hand, who));
+      return true;
     }
 
-    this.deadline = 0;
-    if (hand.done) {
+    if (type === 'double') {
+      const stake = hand.bet;
+      p.chips -= stake;
+      hand.bet *= 2;
+      hand.doubled = true;
+      const c = this.draw(); // decided now; shown after the stake lands
+      this.emit('chip', { pid: seat.pid, double: true, amount: stake });
+      this.note(`${who} doubles and draws to ${handValue([...hand.cards, c]).total}.`);
+      this.deadline = 0;
       this.locked = true;
-      this.after(450, () => { this.locked = false; this.nextTurn(); });
-    } else this.armTurn();
+      this.after(DOUBLE_PAUSE, () => {
+        hand.cards.push(c);
+        this.emit('card', { pid: seat.pid });
+        hand.done = true;
+        if (handValue(hand.cards).total > 21) {
+          hand.result = 'Bust';
+          this.after(HIT_SETTLE, () => this.emit('bust', { pid: seat.pid }));
+        }
+        this.after(HIT_SETTLE + 300, () => { this.locked = false; this.nextTurn(); });
+      });
+      return true;
+    }
+
+    if (type === 'split') {
+      p.chips -= hand.bet;
+      const idx = this.turn.hand;
+      const second = hand.cards.pop();
+      const fresh = { hid: ++this.hidSeq, cards: [second], bet: hand.bet, done: false, fromSplit: true };
+      hand.fromSplit = true;
+      seat.hands.splice(idx + 1, 0, fresh);
+      const first = this.draw(); // both new cards are decided now, in the same order as before
+      const next = this.draw();
+      this.emit('chip', { pid: seat.pid, split: true, amount: hand.bet });
+      this.emit('split', { pid: seat.pid, from: hand.hid, to: fresh.hid });
+      this.note(`${who} splits ${second[0] === 'T' ? '10' : second[0]}s.`);
+      this.deadline = 0;
+      this.locked = true;
+      this.after(SPLIT_PAUSE, () => { hand.cards.push(first); this.emit('card', { pid: seat.pid }); });
+      this.after(SPLIT_PAUSE + SPLIT_GAP, () => { fresh.cards.push(next); this.emit('card', { pid: seat.pid }); });
+      this.after(SPLIT_PAUSE + SPLIT_GAP + 460, () => {
+        if (second[0] === 'A') { hand.done = true; fresh.done = true; }
+        else if (handValue(hand.cards).total === 21) hand.done = true;
+        this.locked = false;
+        if (hand.done) this.nextTurn(); else this.armTurn();
+      });
+      return true;
+    }
+
+    // stand
+    hand.done = true;
+    hand.stood = true;
+    if (auto) hand.timedOut = true;
+    this.emit('stand', { pid: seat.pid, hid: hand.hid });
+    this.note(`${who} stands on ${handValue(hand.cards).total}.`);
+    this.deadline = 0;
+    this.locked = true;
+    this.after(450, () => { this.locked = false; this.nextTurn(); });
     return true;
+  }
+
+  finishHit(seat, hand, who) {
+    const v = handValue(hand.cards).total;
+    if (v > 21) {
+      hand.done = true;
+      hand.result = 'Bust';
+      this.emit('bust', { pid: seat.pid });
+      this.note(`${who} busts with ${v}.`);
+    } else if (v === 21) hand.done = true;
+    if (hand.done) this.after(320, () => { this.locked = false; this.nextTurn(); });
+    else { this.locked = false; this.armTurn(); }
   }
 
   // ---- round flow ------------------------------------------------------
@@ -204,7 +250,7 @@ export class Blackjack extends Engine {
     if (!playing.length) { this.phase = 'betting'; return; }
     for (const s of this.seats) {
       if (s.bet >= this.s.min) {
-        s.hands = [{ cards: [], bet: s.bet, done: false }];
+        s.hands = [{ hid: ++this.hidSeq, cards: [], bet: s.bet, done: false }];
         s.lastBet = s.bet;
       } else {
         // Not enough on the felt to play: hand it back.
@@ -231,11 +277,14 @@ export class Blackjack extends Engine {
     const up = this.dealer.cards[0];
     const dealerBJ = isNatural(this.dealer.cards);
     if ((up[0] === 'A' || cardValue(up) === 10) && dealerBJ) {
-      this.dealer.hidden = false;
-      this.emit('reveal');
-      this.note('Dealer has blackjack.');
       for (const s of this.seats) for (const h of s.hands) h.done = true;
-      return this.after(900, () => this.settle());
+      this.emit('peek');
+      return this.after(PEEK_MS, () => {
+        this.dealer.hidden = false;
+        this.emit('reveal');
+        this.note('Dealer has blackjack.');
+        this.after(FLIP_MS + 500, () => this.settle());
+      });
     }
     for (const s of this.seats) {
       for (const h of s.hands) {
@@ -300,18 +349,24 @@ export class Blackjack extends Engine {
     this.phase = 'dealer';
     const hands = this.seats.flatMap((s) => s.hands);
     const live = hands.some((h) => h.result !== 'Bust' && !h.natural);
-    this.after(500, () => {
-      this.dealer.hidden = false;
-      this.emit('reveal');
-      const drawNext = () => {
-        const { total } = handValue(this.dealer.cards);
-        if (live && total < 17) {
-          this.dealer.cards.push(this.draw());
-          this.emit('card', { pid: 'dealer' });
-          this.after(720, drawNext);
-        } else this.after(500, () => this.settle());
-      };
-      this.after(600, drawNext);
+    // With nobody left to beat there's no tension to build, so skip the long beat.
+    const lead = live ? 450 : 250;
+    const peek = live ? PEEK_MS : 250;
+    this.after(lead, () => {
+      if (live) this.emit('peek');
+      this.after(peek, () => {
+        this.dealer.hidden = false;
+        this.emit('reveal');
+        const drawNext = () => {
+          const { total } = handValue(this.dealer.cards);
+          if (live && total < 17) {
+            this.dealer.cards.push(this.draw());
+            this.emit('card', { pid: 'dealer' });
+            this.after(900, drawNext);
+          } else this.after(live ? 650 : 400, () => this.settle());
+        };
+        this.after(live ? FLIP_MS : 500, drawNext);
+      });
     });
   }
 
@@ -372,7 +427,7 @@ export class Blackjack extends Engine {
         hands: s.hands.map((h) => {
           const v = handValue(h.cards);
           return {
-            cards: h.cards, total: v.total, soft: v.soft && v.total < 21, bet: h.bet,
+            hid: h.hid, cards: h.cards, total: v.total, soft: v.soft && v.total < 21, bet: h.bet,
             done: h.done, result: h.result || null, net: h.net ?? null, doubled: !!h.doubled,
             natural: !!h.natural, timedOut: !!h.timedOut,
           };

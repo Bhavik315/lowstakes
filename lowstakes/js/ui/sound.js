@@ -154,6 +154,14 @@ const SOUNDS = {
     burst(c, t + 0.015, { freq: 2600, q: 2, dur: 0.04, gain: 0.3 });
     burst(c, t + 0.09, { freq: 2200, q: 2, dur: 0.03, gain: 0.16 });
   },
+  // Dealer leans in on the hole card: a low swell that builds, then the turn-over.
+  tension(c, t) { tone(c, t, { freq: 110, end: 230, dur: 0.95, gain: 0.07, type: 'triangle', attack: 0.4 }); },
+  hole(c, t) {
+    burst(c, t, { freq: 3000, q: 0.8, dur: 0.12, gain: 0.34 });
+    burst(c, t + 0.06, { freq: 1200, q: 0.6, dur: 0.24, gain: 0.18 });
+    tone(c, t + 0.78, { freq: 95, end: 58, dur: 0.2, gain: 0.26 });
+  },
+  slide(c, t) { burst(c, t, { freq: 1700, q: 0.5, dur: 0.18, gain: 0.28 }); burst(c, t + 0.05, { freq: 900, q: 0.6, dur: 0.14, gain: 0.14 }); },
   point(c, t) { tone(c, t, { freq: 523.25, dur: 0.14, gain: 0.1, type: 'triangle' }); tone(c, t + 0.08, { freq: 659.25, dur: 0.22, gain: 0.09, type: 'triangle' }); },
   sevenout(c, t) { tone(c, t, { freq: 180, end: 90, dur: 0.5, gain: 0.3, type: 'sawtooth' }); burst(c, t, { freq: 300, q: 0.6, dur: 0.3, gain: 0.2, type: 'lowpass' }); },
 };

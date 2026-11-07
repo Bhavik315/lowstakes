@@ -1,13 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=5';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=5';
-import { landing, gate } from './ui/landing.js?v=5';
-import { lobby, inviteLink } from './ui/lobby.js?v=5';
-import * as HU from './ui/holdem-ui.js?v=5';
-import * as BU from './ui/blackjack-ui.js?v=5';
-import * as RU from './ui/roulette-ui.js?v=5';
-import { sound } from './ui/sound.js?v=5';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=5';
-import { WHEEL } from './games/roulette.js?v=5';
+import morphdom from '../vendor/morphdom-esm.js?v=6';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=6';
+import { landing, gate } from './ui/landing.js?v=6';
+import { lobby, inviteLink } from './ui/lobby.js?v=6';
+import * as HU from './ui/holdem-ui.js?v=6';
+import * as BU from './ui/blackjack-ui.js?v=6';
+import * as RU from './ui/roulette-ui.js?v=6';
+import { sound } from './ui/sound.js?v=6';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=6';
+import { WHEEL } from './games/roulette.js?v=6';
+import * as Motion from './ui/motion.js?v=6';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -311,6 +312,9 @@ function renderTable() {
   if (newEvents.length) S.seenEv = newEvents[newEvents.length - 1].id;
 
   preEffects(newEvents);
+  const isBJ = !!game && game.game === 'blackjack';
+  const cardsBefore = isBJ && newEvents.length ? Motion.snapshot(stage) : null;
+  const newCards = [];
   const html = game ? UIS[game.game].stage(game, S.state, S.ui) : lobby(S.state, S.ui);
   morphdom(stage, `<main class="stage" id="stage" data-game="${room.gameId || 'lobby'}">${html}</main>`, {
     ...morphOpts,
@@ -320,7 +324,19 @@ function renderTable() {
       if (from === stage) { to.className = from.className.includes('instant') ? 'stage instant' : 'stage'; }
       return !from.isEqualNode(to);
     },
+    onNodeAdded(node) {
+      if (isBJ && node.nodeType === 1 && node.classList.contains('card') && node.id) newCards.push(node);
+      return node;
+    },
   });
+  if (isBJ && cardsBefore) {
+    // A split moves a card from one hand to the other: tell the animator where it came from.
+    const moves = {};
+    for (const ev of newEvents) {
+      if (ev.type === 'split') moves[`bj${game.round}-${ev.pid}-${ev.to}-0`] = `bj${game.round}-${ev.pid}-${ev.from}-1`;
+    }
+    Motion.afterRender({ root: stage, before: cardsBefore, added: newCards, moves });
+  }
   postEffects(newEvents);
   if (game && game.game === 'roulette') wheelLoop();
 
@@ -479,8 +495,8 @@ document.addEventListener('click', (e) => {
     case 'show': c.act({ type: 'show' }); return;
     // blackjack
     case 'bj-add': {
+      S.chipSrc = { ...centre(el.getBoundingClientRect()), t: performance.now() };
       c.act({ type: 'add', amount: Number(el.dataset.v) });
-      sound.play('chip');
       return;
     }
     case 'bj-clear': c.act({ type: 'bet', amount: 0 }); return;
@@ -627,11 +643,20 @@ function postEffects(events) {
         break;
       }
       case 'card': if (cardSounds++ < 3) sound.play('card'); break;
-      case 'chip': sound.play('chip'); break;
+      case 'chip':
+        sound.play('chip');
+        if (game.game === 'blackjack') bjChipFlight(ev);
+        break;
       case 'check': sound.play('check'); break;
       case 'fold': sound.play('fold'); break;
       case 'collect': sound.play('collect'); break;
+      case 'peek':
+        if (game.game === 'blackjack') { Motion.dealerPeek(document.getElementById('stage'), BJ_PEEK_MS); sound.play('tension'); }
+        break;
+      case 'split': sound.play('slide'); break;
+      case 'stand': if (game.game === 'blackjack') bjStand(ev); break;
       case 'reveal': {
+        if (game.game === 'blackjack') { Motion.dealerReveal(document.getElementById('stage'), BJ_FLIP_MS); sound.play('hole'); break; }
         const n = game.seats ? game.seats.filter((s) => s.inHand && !s.folded).length : 1;
         for (let i = 0; i < n; i++) setTimeout(() => sound.play('flip'), i * 380);
         break;
@@ -664,6 +689,7 @@ function postEffects(events) {
       }
       case 'settle':
         if (ev.pids.includes(you)) sound.play('win');
+        if (game.game === 'blackjack') bjSettleFx(game);
         break;
       case 'spin': if (game && game.game === 'roulette') startSpin(game); break;
       case 'land': {
@@ -893,6 +919,59 @@ function closeSpinView(instant = false) {
   el.querySelector('.spin-tilt').animate([{ transform: 'rotateX(0deg)' }], { duration: 500, fill: 'forwards' });
   cam.animate([{ transform: getComputedStyle(cam).transform }, { transform: back }], { duration: 650, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
   setTimeout(() => el.remove(), 680);
+}
+
+// ---------------------------------------------------------------- blackjack effects
+// Keep these two in step with PEEK_MS / FLIP_MS in js/games/blackjack.js.
+const BJ_PEEK_MS = 950;
+const BJ_FLIP_MS = 1000;
+
+function bjSpot(pid, part) {
+  return document.querySelector(`#stage #spot-${CSS.escape(pid)} ${part}`);
+}
+
+// A stake slides from where it came from (the tapped chip, or the player's plate) onto the felt.
+function bjChipFlight(ev) {
+  if (!(ev.amount > 0)) return;
+  const circle = bjSpot(ev.pid, '.circle');
+  if (!circle) return;
+  const to = centre(circle.getBoundingClientRect());
+  let from = null;
+  if (ev.pid === S.state.you && S.chipSrc && performance.now() - S.chipSrc.t < 900) from = S.chipSrc;
+  else { const plate = bjSpot(ev.pid, '.plate'); if (plate) from = centre(plate.getBoundingClientRect()); }
+  fly(chipStack(ev.amount, 5), from, to, { dur: ev.double || ev.split ? 620 : 480, lift: ev.double || ev.split ? 28 : 16 });
+}
+
+function bjStand(ev) {
+  sound.play('check');
+  const pill = document.querySelector(`#stage #hand-${CSS.escape(ev.pid)}-${ev.hid} .total`);
+  if (pill && !reduceMotion) pill.animate([{ scale: '1' }, { scale: '1.22' }, { scale: '1' }], { duration: 360, easing: 'cubic-bezier(.3,.7,.3,1)' });
+}
+
+// Winners are paid from the dealer's side; losing stakes are swept back to it.
+function bjSettleFx(game) {
+  const dealer = document.querySelector('#stage .dealer-cards');
+  if (!dealer) return;
+  const dealerAt = centre(dealer.getBoundingClientRect());
+  const you = S.state.you;
+  let paid = false;
+  game.seats.forEach((s, i) => {
+    if (!s.hands.length) return;
+    const circle = bjSpot(s.pid, '.circle');
+    if (!circle) return;
+    const at = centre(circle.getBoundingClientRect());
+    const net = s.hands.reduce((t, h) => t + (h.net || 0), 0);
+    const staked = s.hands.reduce((t, h) => t + h.bet, 0);
+    if (net > 0) {
+      paid = true;
+      fly(chipStack(net, 7), dealerAt, at, { dur: 950, delay: 380 + i * 150, lift: 38 });
+      if (!reduceMotion) circle.animate([{ scale: '1' }, { scale: '1.2' }, { scale: '1' }], { duration: 520, delay: 1250 + i * 150, easing: 'ease-out' });
+    } else if (net < 0) {
+      fly(chipStack(Math.min(staked, -net), 6), at, dealerAt, { dur: 700, delay: 450 + i * 110, lift: 12 });
+    }
+    if (s.pid === you && net < 0) setTimeout(() => sound.play('lose'), 520);
+  });
+  if (paid) setTimeout(() => sound.play('collect'), 1250);
 }
 
 // ---------------------------------------------------------------- countdowns

@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=5';
-import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=5';
+import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=6';
+import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=6';
 
 const SEG = 360 / 37;
 

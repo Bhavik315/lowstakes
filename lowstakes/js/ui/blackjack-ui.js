@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=5';
-import { lastEvent, timerRing } from './holdem-ui.js?v=5';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=6';
+import { lastEvent, timerRing } from './holdem-ui.js?v=6';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -27,13 +27,16 @@ export function stage(view, state) {
     const me = s.pid === you;
     const amount = s.hands.length ? s.hands.reduce((t, h) => t + h.bet, 0) : s.bet;
     const cls = ['spot', me && 'me', s.active && 'acting', !p.connected && !p.bot && 'away', s.ready && 'ready'].filter(Boolean).join(' ');
+    const settled = view.phase === 'settle';
+    const net = s.hands.reduce((t, h) => t + (h.net || 0), 0);
+    const circleCls = ['circle', amount && 'has', settled && net > 0 && 'won', settled && net < 0 && 'swept'].filter(Boolean).join(' ');
     const hands = s.hands.map((h, hi) => {
-      const res = h.result && view.phase === 'settle'
-        ? `<span class="res res-${h.result.toLowerCase()}">${h.result === 'Lose' ? 'Lose' : h.result}${h.net ? ` ${signed(h.net)}` : ''}</span>`
+      const res = h.result && settled
+        ? `<span class="res res-${h.result.toLowerCase()}" style="animation-delay:${i * 130 + hi * 90}ms">${h.result === 'Lose' ? 'Lose' : h.result}${h.net ? ` ${signed(h.net)}` : ''}</span>`
         : h.result === 'Bust' ? '<span class="res res-bust">Bust</span>' : '';
       return `
-        <div class="hand${s.activeHand === hi ? ' on' : ''}${h.result === 'Bust' ? ' bust' : ''}" id="hand-${esc(s.pid)}-${hi}">
-          <div class="hand-cards">${h.cards.map((c, ci) => card(c, { key: `bj${view.round}-${s.pid}-${hi}-${ci}`, style: `--k:${ci};--dx:${((50 - x) * 0.6).toFixed(1)}vmin;--dy:-40vmin` })).join('')}</div>
+        <div class="hand${s.activeHand === hi ? ' on' : ''}${h.result === 'Bust' ? ' bust' : ''}${h.natural ? ' natural' : ''}${h.done && h.result !== 'Bust' && !settled ? ' held' : ''}" id="hand-${esc(s.pid)}-${h.hid}" data-hid="${h.hid}">
+          <div class="hand-cards">${h.cards.map((c, ci) => card(c, { key: `bj${view.round}-${s.pid}-${h.hid}-${ci}`, style: `--k:${ci}` })).join('')}</div>
           <span class="total">${totalLabel(h)}</span>
           ${res}
           <span class="hand-bet">${chipStack(h.bet, 5)}<b>${fmt(h.bet)}</b>${h.doubled ? '<em>×2</em>' : ''}</span>
@@ -43,7 +46,7 @@ export function stage(view, state) {
     return `
       <div class="${cls}" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%" data-seat="${esc(s.pid)}" id="spot-${esc(s.pid)}">
         <div class="hands h${s.hands.length}">${hands}</div>
-        <div class="circle${amount ? ' has' : ''}">${amount ? `${chipStack(amount, 6)}<b>${fmt(amount)}</b>` : ''}</div>
+        <div class="${circleCls}">${amount ? `${chipStack(amount, 6)}<b>${fmt(amount)}</b>` : ''}</div>
         <div class="plate">
           <span class="av-wrap">${avatar(p)}${ring}</span>
           <span class="plate-text"><span class="pname">${esc(p.name)}</span><span class="pchips">${fmt(s.chips)}</span></span>
@@ -74,7 +77,7 @@ export function stage(view, state) {
       </svg>
       <div class="dealer">
         <div class="shoe" title="${view.shoe.left} cards left in the shoe"><span style="--fill:${shoePct}%"></span></div>
-        <div class="dealer-cards">${d.cards.map((c, i) => card(c, { key: `bjd${view.round}-${i}`, style: `--k:${i};--dx:30vmin;--dy:-5vmin` })).join('')}</div>
+        <div class="dealer-cards">${d.cards.map((c, i) => card(c, { key: `bjd${view.round}-${i}`, style: `--k:${i}` })).join('')}</div>
         ${dealerTotal ? `<span class="total dealer-total">${dealerTotal}</span>` : ''}
       </div>
       <div class="center-msg">${center}</div>

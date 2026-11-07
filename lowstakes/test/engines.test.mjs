@@ -404,3 +404,79 @@ test('craps plays many rolls with bots, chips never go negative', () => {
   assert.ok(room.players.every((p) => p.chips >= 0), 'nobody owes the table');
   assert.ok(room.players.some((p) => p.id === g.shooterId), 'the shooter is always someone at the table');
 });
+
+// ---------------------------------------------------------------- blackjack staging
+function bjGame(draws, bet = 100) {
+  const room = makeRoom(1, false);
+  const clock = { t: 0 };
+  const g = new Blackjack(room, { timer: 0, min: 10 });
+  g.now = () => clock.t;
+  g.jobs.forEach((j) => (j.at = 0));
+  g.shoe = draws.slice().reverse(); // shoe.pop() yields `draws` in order
+  g.handle('p0', { type: 'bet', amount: bet });
+  g.handle('p0', { type: 'ready' });
+  run(g, 3000, clock); // deal 4 cards, reach p0's turn
+  assert.equal(g.phase, 'playing');
+  return { room, clock, g };
+}
+const untilPhase = (g, clock, phase, max = 20000) => { for (let t = 0; t < max && g.phase !== phase; t += 50) run(g, 50, clock); };
+
+test('blackjack: split deals the same cards in the same order, just later', () => {
+  const { room, clock, g } = bjGame(['8h', '6d', '8s', 'Tc', 'Th', '9c', 'Kd']);
+  assert.equal(g.view('p0').dealer.cards[1], '??', 'hole card is hidden from every view');
+  assert.ok(g.handle('p0', { type: 'split' }));
+  const [a, b] = g.seats[0].hands;
+  assert.equal(room.players[0].chips, 1000 - 100 - 100, 'second stake is taken immediately');
+  assert.deepEqual([a.cards.length, b.cards.length], [1, 1], 'the pair separates first');
+  assert.equal(g.handle('p0', { type: 'hit' }), false, 'no actions while the split plays out');
+  run(g, 1000, clock);
+  assert.deepEqual([a.cards.length, b.cards.length], [2, 1], 'first new card lands on hand one');
+  run(g, 700, clock);
+  assert.deepEqual(a.cards, ['8h', 'Th']);
+  assert.deepEqual(b.cards, ['8s', '9c']);
+  assert.notEqual(a.hid, b.hid, 'each hand has its own stable id');
+  run(g, 700, clock);
+  assert.ok(g.handle('p0', { type: 'stand' }));
+  run(g, 700, clock);
+  assert.ok(g.handle('p0', { type: 'stand' }));
+  untilPhase(g, clock, 'settle');
+  assert.equal(g.dealer.cards.length, 3, 'dealer drew to 16 and busted');
+  assert.equal(room.players[0].chips, 1000 - 100 - 100 + 200 + 200);
+});
+
+test('blackjack: double takes the stake at once and shows the card after a beat', () => {
+  const { room, clock, g } = bjGame(['5h', '9d', '6c', '7s', 'Th', 'Tc'], 50);
+  assert.ok(g.handle('p0', { type: 'double' }));
+  const hand = g.seats[0].hands[0];
+  assert.equal(hand.bet, 100);
+  assert.equal(room.players[0].chips, 1000 - 50 - 50);
+  assert.equal(hand.cards.length, 2, 'card not shown yet');
+  run(g, 1000, clock);
+  assert.deepEqual(hand.cards, ['5h', '6c', 'Th']);
+  untilPhase(g, clock, 'settle');
+  assert.equal(room.players[0].chips, 1000 - 100 + 200, 'dealer 16 draws a ten and busts');
+});
+
+test('blackjack: hitting to a bust is scored after the card lands, and loses the stake', () => {
+  const { room, clock, g } = bjGame(['Th', '6d', '6c', 'Tc', 'Kh']);
+  assert.ok(g.handle('p0', { type: 'hit' }));
+  assert.equal(g.seats[0].hands[0].result, undefined, 'not scored until the card has landed');
+  run(g, 800, clock);
+  assert.equal(g.seats[0].hands[0].result, 'Bust');
+  untilPhase(g, clock, 'settle');
+  assert.equal(room.players[0].chips, 1000 - 100);
+});
+
+test('blackjack: split aces get one card each and no further action', () => {
+  const { room, clock, g } = bjGame(['Ah', '6d', 'As', 'Tc', 'Kh', '9d', '5s']);
+  assert.ok(g.handle('p0', { type: 'split' }));
+  run(g, 2200, clock);
+  const [a, b] = g.seats[0].hands;
+  assert.deepEqual(a.cards, ['Ah', 'Kh']);
+  assert.deepEqual(b.cards, ['As', '9d']);
+  assert.ok(a.done && b.done, 'split aces are finished');
+  untilPhase(g, clock, 'settle');
+  // dealer 6+10=16 draws a 5 -> 21; 21 beats A+K (21 after a split is not blackjack, but ties) and A+9
+  assert.equal(g.dealer.cards.length, 3);
+  assert.equal(room.players[0].chips, 1000 - 200 + 100 /* push on 21 */ + 0 /* 20 loses */);
+});

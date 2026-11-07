@@ -1,5 +1,5 @@
-import { esc, card, chipStack } from './parts.js?v=5';
-import { COLORS } from '../net/room.js?v=5';
+import { esc, card, chipStack } from './parts.js?v=6';
+import { COLORS } from '../net/room.js?v=6';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
