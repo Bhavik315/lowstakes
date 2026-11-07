@@ -1,8 +1,8 @@
 // No-limit Texas Hold'em, host-authoritative.
-import { Engine } from '../core/engine.js?v=8';
-import { newDeck, shuffle } from '../core/cards.js?v=8';
-import { evaluate } from '../core/evaluate.js?v=8';
-import { holdemBot } from '../bots/holdem-bot.js?v=8';
+import { Engine } from '../core/engine.js?v=10';
+import { newDeck, shuffle } from '../core/cards.js?v=10';
+import { evaluate } from '../core/evaluate.js?v=10';
+import { holdemBot } from '../bots/holdem-bot.js?v=10';
 
 export const MAX_SEATS = 9;
 const NEXT_STREET = { preflop: 'flop', flop: 'turn', turn: 'river' };
@@ -321,7 +321,7 @@ export class Holdem extends Engine {
         if (this.isLive(s) && !s.allIn) s.last = null;
       }
       // Let the flop spread and turn over (or the turn/river flip) before anyone acts.
-      this.after(this.street === 'flop' ? 2000 : 1300, () => this.advance(this.button));
+      this.after(this.street === 'flop' ? 2000 : 1700, () => this.advance(this.button));
     });
   }
 

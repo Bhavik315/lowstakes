@@ -653,12 +653,14 @@ input[type=range]::-moz-range-thumb {
 /* ---- hold'em motion ---- */
 /* Hole cards leave the dealer one at a time and spin onto each seat. */
 .tbl.holdem .seat .card {
-  animation: deal-seat .7s cubic-bezier(.16, .8, .3, 1) backwards;
+  animation: deal-seat .66s cubic-bezier(.2, .75, .25, 1) backwards;
   animation-delay: var(--dd, 0ms);
 }
+/* Same arc and tilt as the blackjack shoe deal: lift off, travel, set down. */
 @keyframes deal-seat {
-  from { transform: translate(calc(var(--ox) * 1cqw), calc(var(--oy) * 1cqw / var(--ar))) rotate(-200deg) scale(.5); opacity: 0; }
-  12% { opacity: 1; }
+  from { transform: translate(calc(var(--ox) * 1cqw), calc(var(--oy) * 1cqw / var(--ar))) rotate(-22deg) scale(.8); opacity: 0; animation-timing-function: cubic-bezier(.3, .1, .4, 1); }
+  38% { transform: translate(calc(var(--ox) * .36cqw), calc(var(--oy) * .36cqw / var(--ar) - 16px)) rotate(-8deg) scale(.96); opacity: 1; animation-timing-function: cubic-bezier(.2, .8, .3, 1); }
+  to { transform: none; opacity: 1; }
 }
 /* Your cards land face down, then you peek. */
 .tbl.holdem .seat.me .card-in {
@@ -681,9 +683,16 @@ input[type=range]::-moz-range-thumb {
   100% { transform: none; }
 }
 .slot .card.flop .card-in { animation: turnover .55s var(--ease) backwards; animation-delay: calc(1150ms + var(--i) * 260ms); }
-.slot .card.late { animation: drop-in .6s var(--ease) backwards; }
-@keyframes drop-in { from { transform: translateY(-46px) rotate(-8deg) scale(.9); opacity: 0; } }
-.slot .card.late .card-in { animation: turnover .55s var(--ease) backwards; animation-delay: .7s; }
+.slot .card.late { animation: late-in 1.5s cubic-bezier(.2, .75, .25, 1) backwards; }
+/* Lands face down, holds a beat, then rises as it turns over. */
+@keyframes late-in {
+  from { transform: translateY(-46px) rotate(-10deg) scale(.88); opacity: 0; }
+  26% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  46% { transform: translateY(0) rotate(0deg) scale(1); }
+  62% { transform: translateY(-14px) rotate(0deg) scale(1.08); }
+  to { transform: none; }
+}
+.slot .card.late .card-in { animation: turnover .7s cubic-bezier(.3, .7, .2, 1) backwards; animation-delay: .8s; }
 
 /* Winner's plate glows as the pot arrives. */
 .tbl.holdem .seat.won .plate { animation: won-glow 1.6s ease-out var(--wd, 1.2s) backwards; }
@@ -1344,3 +1353,11 @@ input[type=range]::-moz-range-thumb {
 @keyframes win-ring { from { transform: scale(.85); opacity: .95; } to { transform: scale(1.55); opacity: 0; } }
 .circle.swept .stack, .circle.swept b { opacity: 0; transition: opacity .35s ease .45s; }
 .hand.bust .hand-cards { transition: filter .5s ease .2s; }
+
+/* Winning hand: one slow glint across each of the five cards. */
+.card.hi .card-face::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 236, 170, .55) 50%, transparent 62%);
+  transform: translateX(-110%); animation: card-glint 1.1s ease-out .35s 1 both;
+}
+@keyframes card-glint { from { transform: translateX(-110%); } to { transform: translateX(110%); } }
