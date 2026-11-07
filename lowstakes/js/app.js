@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=6';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=6';
-import { landing, gate } from './ui/landing.js?v=6';
-import { lobby, inviteLink } from './ui/lobby.js?v=6';
-import * as HU from './ui/holdem-ui.js?v=6';
-import * as BU from './ui/blackjack-ui.js?v=6';
-import * as RU from './ui/roulette-ui.js?v=6';
-import { sound } from './ui/sound.js?v=6';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=6';
-import { WHEEL } from './games/roulette.js?v=6';
-import * as Motion from './ui/motion.js?v=6';
+import morphdom from '../vendor/morphdom-esm.js?v=8';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=8';
+import { landing, gate } from './ui/landing.js?v=8';
+import { lobby, inviteLink } from './ui/lobby.js?v=8';
+import * as HU from './ui/holdem-ui.js?v=8';
+import * as BU from './ui/blackjack-ui.js?v=8';
+import * as RU from './ui/roulette-ui.js?v=8';
+import { sound } from './ui/sound.js?v=8';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=8';
+import { WHEEL } from './games/roulette.js?v=8';
+import * as Motion from './ui/motion.js?v=8';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -738,75 +738,100 @@ function flashTitle(text) {
 }
 
 // ---------------------------------------------------------------- roulette wheel
-// One wheel state drives every wheel on screen: the small one on the table
-// and the big one in the full-screen spin view.
+// The pocket the ball lands in is chosen by the game (view.result) before any of this runs.
+// Here we only decide how to *show* it: the ball's angle is the wheel's angle plus an angle
+// relative to the wheel, and that relative angle is built to decay to exactly the chosen pocket
+// at the moment the spin ends. Wheel and ball both slow down; timing can't change the result.
 const SEG = 360 / 37;
-const W = { angle: 0, ball: 0, r: 92, spin: null, raf: 0, last: 0, pocket: null, vel: 0, pending: null, timers: [] };
+const TRACK_R = 91; // ball running on the outer track
+const POCKET_R = 73; // ball sitting in a pocket
+const DROP_FROM = 0.58; // fraction of the spin at which the ball leaves the track
+const DROP_TO = 0.8; // ...and is settled in its pocket
+const W = { angle: 0, ball: 0, r: TRACK_R, spin: null, raf: 0, last: 0, pocket: null, vel: 0, pending: null, timers: [], els: null };
+
+const clamp01 = (x) => Math.max(0, Math.min(1, x));
+const easeInOut = (x) => x * x * (3 - 2 * x);
 
 function startSpin(view) {
   const idx = WHEEL.indexOf(view.result);
   const total = view.spinMs;
   const left = view.spinLeft || total;
-  const w0 = W.angle;
-  const w1 = w0 + 400 + Math.random() * 120;
-  const b1 = w1 + idx * SEG;
-  const b0 = b1 + 360 * 6;
   const t0 = performance.now() - (total - left);
-  W.spin = { t0, total, w0, w1, b0, b1, idx };
+  W.spin = {
+    t0, total, idx,
+    w0: W.angle,
+    wTotal: 560 + Math.random() * 90, // degrees the wheel turns while it slows to a stop
+    turns: 7 + Math.floor(Math.random() * 2), // laps the ball makes relative to the wheel
+    seed: Math.random() * Math.PI * 2,
+  };
   W.pocket = null;
   W.pending = null;
   sound.play('spin', { ms: left });
-  // The ball hits the frets three times as it drops (matches the bounce curve below).
+  // The ball clatters off the studs and frets as it falls: one knock per hop.
   W.timers.forEach(clearTimeout);
-  W.timers = [0.72, 0.82, 0.92].map((p, i) => setTimeout(() => sound.play('bounce', { n: i }), t0 + p * total - performance.now()));
+  W.timers = [0.6, 0.665, 0.725, 0.785].map((p, i) => setTimeout(() => sound.play('bounce', { n: i }), t0 + p * total - performance.now()));
   if (left > 2500) openSpinView(total, left);
+}
+
+function wheelEls() {
+  if (!W.els || W.els.some((w) => !w.rotor.isConnected)) {
+    W.els = [...document.querySelectorAll('.wheel')].map((root) => ({
+      root,
+      rotor: root.querySelector('.wl-rotor'),
+      ball: root.querySelector('.ball'),
+      shadow: root.querySelector('.ball-shadow'),
+      trails: [...root.querySelectorAll('.trail')],
+    })).filter((w) => w.rotor && w.ball);
+  }
+  return W.els;
 }
 
 function wheelLoop() {
   if (W.raf) return;
   W.last = performance.now();
   const frame = (t) => {
-    const rotors = document.querySelectorAll('.rotor');
-    if (!rotors.length || !S.state || !S.state.game || S.state.game.game !== 'roulette') { W.raf = 0; closeSpinView(true); return; }
+    const wheels = wheelEls();
+    if (!wheels.length || !S.state || !S.state.game || S.state.game.game !== 'roulette') { W.raf = 0; W.els = null; closeSpinView(true); return; }
     const dt = Math.max(1, t - W.last);
     W.last = t;
     const game = S.state.game;
-    const prevBall = W.ball;
+    const prev = W.ball;
     if (W.spin) {
-      const p = Math.min(1, (t - W.spin.t0) / W.spin.total);
-      const ew = 1 - (1 - p) ** 3;
-      const eb = 1 - (1 - p) ** 4;
-      W.angle = W.spin.w0 + (W.spin.w1 - W.spin.w0) * ew;
-      W.ball = W.spin.b0 + (W.spin.b1 - W.spin.b0) * eb;
-      const drop = Math.min(1, Math.max(0, (p - 0.62) / 0.3));
-      const bounce = drop > 0 && drop < 1 ? Math.abs(Math.sin(drop * Math.PI * 3)) * (1 - drop) * 7 : 0;
-      W.r = 92 - drop * 20 + bounce;
-      if (p >= 1) { W.pocket = W.spin.idx; W.spin = null; }
+      const sp = W.spin;
+      const p = clamp01((t - sp.t0) / sp.total);
+      W.angle = sp.w0 + sp.wTotal * (1 - (1 - p) ** 3); // ease-out: friction slows the wheel
+      const rel = sp.idx * SEG + (1 - p) ** 3 * sp.turns * 360; // ball laps against the wheel, slowing as it goes
+      const d = clamp01((p - DROP_FROM) / (DROP_TO - DROP_FROM));
+      const env = d * (1 - d) * 4; // 0 at both ends of the fall, so the ball is never displaced at the start or the end
+      const hop = Math.sin(d * Math.PI * 3.1 + sp.seed) * env * (1 - d) * 1.7 * SEG; // skips across a few pockets
+      const bounce = Math.abs(Math.sin(d * Math.PI * 3.6)) * env * (1 - d) * 5; // and bounces off the frets
+      W.r = TRACK_R + (POCKET_R - TRACK_R) * easeInOut(d) - bounce;
+      W.ball = W.angle + rel + hop;
+      if (p >= 1) { W.pocket = sp.idx; W.spin = null; W.ball = W.angle + sp.idx * SEG; W.r = POCKET_R; }
     } else {
       if (!reduceMotion) W.angle += dt * 0.008;
       if (W.pocket == null && game.history && game.history.length) W.pocket = WHEEL.indexOf(game.history[0]);
-      if (W.pocket != null) { W.ball = W.angle + W.pocket * SEG; W.r = 72; }
-      else { W.r = 92; }
-      if (W.pending) { const r = W.pending; W.pending = null; revealSpin(r); }
+      if (W.pocket != null) { W.ball = W.angle + W.pocket * SEG; W.r = POCKET_R; } else { W.r = TRACK_R; }
     }
-    W.vel = W.spin ? (W.ball - prevBall) / dt : 0; // degrees per ms
-    const rot = `rotate(${W.angle.toFixed(2)})`;
-    rotors.forEach((r) => r.setAttribute('transform', rot));
-    const place = (el, ang, r) => {
-      const a = (ang * Math.PI) / 180;
-      el.setAttribute('cx', (r * Math.sin(a)).toFixed(2));
-      el.setAttribute('cy', (-r * Math.cos(a)).toFixed(2));
-    };
-    document.querySelectorAll('.wheel').forEach((svg) => {
-      const ball = svg.querySelector('.ball');
-      if (ball) place(ball, W.ball, W.r);
-      // Motion trail: ghost balls strung out behind the real one while it's fast.
-      const step = Math.max(-11, Math.min(11, -W.vel * 14));
-      svg.querySelectorAll('.trail').forEach((tr, i) => {
-        place(tr, W.ball + step * (i + 1), W.r);
-        tr.style.opacity = Math.abs(W.vel) > 0.04 ? String(0.42 - i * 0.07) : '0';
+    W.vel = W.spin ? (W.ball - prev) / dt : 0; // degrees per millisecond
+    const rot = `rotate(${W.angle.toFixed(2)}deg)`;
+    const a = (W.ball * Math.PI) / 180;
+    const bx = (W.r * Math.sin(a)).toFixed(2);
+    const by = (-W.r * Math.cos(a)).toFixed(2);
+    const fast = Math.abs(W.vel) > 0.05;
+    const step = Math.max(-10, Math.min(10, -W.vel * 9));
+    for (const w of wheels) {
+      w.rotor.style.transform = rot;
+      w.ball.setAttribute('cx', bx); w.ball.setAttribute('cy', by);
+      w.shadow.setAttribute('cx', bx); w.shadow.setAttribute('cy', by);
+      w.trails.forEach((tr, i) => {
+        const ta = ((W.ball + step * (i + 1)) * Math.PI) / 180;
+        tr.setAttribute('cx', (W.r * Math.sin(ta)).toFixed(2));
+        tr.setAttribute('cy', (-W.r * Math.cos(ta)).toFixed(2));
+        tr.style.opacity = fast ? String(0.34 - i * 0.08) : '0';
       });
-    });
+    }
+    if (!W.spin && W.pending) { const r = W.pending; W.pending = null; revealSpin(r); }
     W.raf = requestAnimationFrame(frame);
   };
   W.raf = requestAnimationFrame(frame);
@@ -815,15 +840,14 @@ function wheelLoop() {
 // ---- the full-screen spin view
 const SV = { el: null, timers: [] };
 
-function wheelBoxRect() {
-  const box = document.querySelector('#stage .wheel-box');
-  return box ? box.getBoundingClientRect() : null;
-}
+function smallBox() { return document.querySelector('#stage .wheel-box'); }
 
+// Transform that makes the big wheel look like it is sitting exactly on the small one.
 function flipFrom(cam) {
-  const from = wheelBoxRect();
+  const box = smallBox();
+  const from = box && box.getBoundingClientRect();
   const to = cam.getBoundingClientRect();
-  if (!from || !to.width) return 'translate(0,0) scale(.3)';
+  if (!from || !to.width) return 'translate(0px, 0px) scale(.3)';
   const dx = from.left + from.width / 2 - (to.left + to.width / 2);
   const dy = from.top + from.height / 2 - (to.top + to.height / 2);
   return `translate(${dx}px, ${dy}px) scale(${from.width / to.width})`;
@@ -838,24 +862,23 @@ function openSpinView(total, left) {
   el.setAttribute('aria-label', 'The wheel is spinning');
   el.innerHTML = `
     <div class="spin-bg"></div>
-    <p class="spin-title" aria-hidden="true"><span>No more bets</span></p>
-    <div class="spin-cam"><div class="spin-tilt">${RU.wheelSvg()}</div></div>
-    <div class="spin-result" aria-live="assertive"></div>
+    <p class="spin-title" aria-live="assertive"><span class="tt-in">No more bets</span></p>
+    <div class="spin-cam">${RU.wheelSvg()}<div class="spin-medal" aria-live="assertive"></div></div>
     <p class="spin-skip">Tap anywhere to close</p>`;
   document.body.appendChild(el);
+  W.els = null; // the wheel list now includes the big one
   SV.el = el;
   el.addEventListener('click', () => closeSpinView());
   const cam = el.querySelector('.spin-cam');
-  const tilt = el.querySelector('.spin-tilt');
-  // Lift the wheel off the table and into the spotlight...
-  cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0,0) scale(1)' }], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
-  tilt.animate([{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(48deg)' }], { duration: 1100, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' });
-  // ...then push the camera in as the ball slows down.
-  const pushAt = Math.max(0, left - total * 0.5);
-  cam.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: 'translate(0,4%) scale(1.16)' }], {
-    duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards', composite: 'replace',
-  });
+  const box = smallBox();
+  // Lift the wheel off the table and carry it to the middle of the screen; the small one steps aside meanwhile.
+  cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0px, 0px) scale(1)' }], { duration: 850, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  if (box) box.classList.add('away');
+  // A very slow push-in as the ball settles; subtle on purpose.
+  const pushAt = Math.max(0, left - total * 0.42);
+  cam.animate([{ scale: '1' }, { scale: '1.045' }], { duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'ease-in-out', fill: 'forwards' });
   sound.play('whoosh');
+  SV.timers.push(setTimeout(() => { const t = el.querySelector('.spin-title span'); if (t && !el.classList.contains('landed')) t.style.opacity = '.55'; }, 2200));
 }
 
 function revealSpin({ n, net, bet }) {
@@ -865,19 +888,27 @@ function revealSpin({ n, net, bet }) {
   const el = SV.el;
   if (!el) return;
   const colour = RU.colorName(n);
-  const line = !bet ? 'You sat this one out.'
-    : won ? `You win <b>${fmt(net)}</b>` : net === 0 ? 'You broke even.' : `You lose <b>${fmt(-net)}</b>`;
-  const res = el.querySelector('.spin-result');
-  res.innerHTML = `
-    <div class="sr-disc sr-${colour.toLowerCase()}"><span>${n}</span><i></i><i></i><i></i></div>
-    <p class="sr-word">${colour}${n === 0 ? '' : `, ${n % 2 ? 'odd' : 'even'}`}</p>
-    <p class="sr-line${won ? ' up' : ''}">${line}</p>`;
+  const parity = n === 0 ? '' : n % 2 ? 'odd' : 'even';
+  // Highlight the pocket the ball is sitting in (it rotates with the wheel).
+  const rotorG = el.querySelector('.rotor-g');
+  const idx = WHEEL.indexOf(n);
+  if (rotorG && idx >= 0) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const hit = document.createElementNS(ns, 'path');
+    hit.setAttribute('d', RU.pocketPath(idx));
+    hit.setAttribute('class', 'pocket-hit');
+    rotorG.appendChild(hit);
+  }
+  const medal = el.querySelector('.spin-medal');
+  medal.className = `spin-medal m-${colour.toLowerCase()}`;
+  medal.innerHTML = `<b>${n}</b><i>${colour}${parity ? `, ${parity}` : ''}</i>`;
+  const line = !bet ? 'You sat this one out' : won ? `You win <b class="up">${fmt(net)}</b>` : net === 0 ? 'You broke even' : `You lose <b>${fmt(-net)}</b>`;
+  const title = el.querySelector('.spin-title');
+  title.innerHTML = `<span class="tt-in">${line}</span>`;
   el.classList.add('landed');
   sound.play('boom');
-  const tilt = el.querySelector('.spin-tilt');
-  tilt.animate([{ transform: 'rotateX(48deg)' }, { transform: 'rotateX(20deg)' }], { duration: 900, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'forwards' });
-  if (won) chipRain(el, Math.min(60, 18 + Math.round(net / 10)));
-  SV.timers.push(setTimeout(() => closeSpinView(), 3400));
+  if (won) chipRain(el, Math.min(36, 14 + Math.round(net / 12)));
+  SV.timers.push(setTimeout(() => closeSpinView(), 3800));
 }
 
 function chipRain(host, count) {
@@ -888,37 +919,35 @@ function chipRain(host, count) {
     const c = document.createElement('i');
     c.className = `chip rain ${kinds[i % kinds.length]}`;
     host.appendChild(c);
-    const x0 = w / 2 + (Math.random() - 0.5) * 80;
-    const y0 = h * 0.45;
-    const vx = (Math.random() - 0.5) * w * 0.9;
-    const up = h * (0.25 + Math.random() * 0.35);
-    const spin = (Math.random() - 0.5) * 1440;
-    const dur = 1400 + Math.random() * 900;
-    c.style.left = `${x0}px`;
-    c.style.top = `${y0}px`;
+    c.style.left = `${w / 2 + (Math.random() - 0.5) * 60}px`;
+    c.style.top = `${h * 0.46}px`;
+    const vx = (Math.random() - 0.5) * w * 0.8;
+    const up = h * (0.2 + Math.random() * 0.28);
+    const spin = (Math.random() - 0.5) * 720;
     c.animate([
-      { transform: 'translate(-50%,-50%) rotate(0deg) scale(.4)', opacity: 0 },
-      { transform: `translate(calc(-50% + ${vx * 0.45}px), calc(-50% - ${up}px)) rotate(${spin * 0.4}deg) scale(1)`, opacity: 1, offset: 0.35 },
-      { transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${h * 0.7}px)) rotateX(${spin}deg) rotate(${spin}deg) scale(1)`, opacity: 1 },
-    ], { duration: dur, delay: Math.random() * 250, easing: 'cubic-bezier(.25,.6,.5,1)', fill: 'both' }).onfinish = () => c.remove();
+      { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 0 },
+      { transform: `translate(calc(-50% + ${vx * 0.45}px), calc(-50% - ${up}px)) rotate(${spin * 0.4}deg) scale(1)`, opacity: 1, offset: 0.34 },
+      { transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${h * 0.62}px)) rotate(${spin}deg) scale(1)`, opacity: 1, offset: 0.9 },
+      { transform: `translate(calc(-50% + ${vx}px), calc(-50% + ${h * 0.7}px)) rotate(${spin}deg) scale(1)`, opacity: 0 },
+    ], { duration: 1500 + Math.random() * 700, delay: Math.random() * 220, easing: 'cubic-bezier(.25,.6,.5,1)', fill: 'both' }).onfinish = () => c.remove();
   }
 }
 
 function closeSpinView(instant = false) {
   const el = SV.el;
-  if (!el) return;
+  const box = smallBox();
+  if (!el) { if (box) box.classList.remove('away'); return; }
   SV.el = null;
   SV.timers.forEach(clearTimeout);
   SV.timers = [];
-  if (instant) { el.remove(); return; }
+  const done = () => { el.remove(); W.els = null; if (smallBox()) smallBox().classList.remove('away'); };
+  if (instant) { done(); return; }
   const cam = el.querySelector('.spin-cam');
-  cam.getAnimations().forEach((a) => a.commitStyles && a.commitStyles());
   cam.getAnimations().forEach((a) => a.cancel());
-  const back = flipFrom(cam);
   el.classList.add('closing');
-  el.querySelector('.spin-tilt').animate([{ transform: 'rotateX(0deg)' }], { duration: 500, fill: 'forwards' });
-  cam.animate([{ transform: getComputedStyle(cam).transform }, { transform: back }], { duration: 650, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
-  setTimeout(() => el.remove(), 680);
+  const back = cam.animate([{ transform: 'translate(0px, 0px) scale(1)' }, { transform: flipFrom(cam) }], { duration: 620, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
+  back.onfinish = done;
+  setTimeout(done, 720); // safety net if the animation is interrupted
 }
 
 // ---------------------------------------------------------------- blackjack effects

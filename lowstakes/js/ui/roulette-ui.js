@@ -1,44 +1,84 @@
-import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=6';
-import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=6';
+import { esc, fmt, signed, chip, CHIP_VALUES } from './parts.js?v=8';
+import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=8';
 
 const SEG = 360 / 37;
 
 export const colorName = (n) => ({ red: 'Red', black: 'Black', green: 'Green' })[colorOf(n)];
 
+export { SEG };
+
+const rad = (deg) => (deg * Math.PI) / 180;
+const pt = (r, a) => `${(r * Math.cos(a)).toFixed(2)},${(r * Math.sin(a)).toFixed(2)}`;
+const POCKET_IN = 60;
+const POCKET_OUT = 86;
+
+// The wedge for pocket `i` (0 is at 12 o'clock, going clockwise).
+export function pocketPath(i, r = POCKET_IN, R = POCKET_OUT) {
+  const a0 = rad((i - 0.5) * SEG - 90);
+  const a1 = rad((i + 0.5) * SEG - 90);
+  return `M${pt(r, a0)} L${pt(R, a0)} A${R},${R} 0 0 1 ${pt(R, a1)} L${pt(r, a1)} A${r},${r} 0 0 0 ${pt(r, a0)}Z`;
+}
+
+let wheelSeq = 0;
+
+// Three stacked layers so the part that spins is a plain CSS rotate on its own compositor
+// layer: a still base (bowl, track, studs), the rotor (pockets, cone, turret) and the ball.
 export function wheelSvg() {
-  const pockets = WHEEL.map((n, i) => {
-    const a0 = ((i - 0.5) * SEG - 90) * (Math.PI / 180);
-    const a1 = ((i + 0.5) * SEG - 90) * (Math.PI / 180);
-    const R = 86;
-    const r = 60;
-    const p = (rad, a) => `${(rad * Math.cos(a)).toFixed(2)},${(rad * Math.sin(a)).toFixed(2)}`;
-    const d = `M${p(r, a0)} L${p(R, a0)} A${R},${R} 0 0 1 ${p(R, a1)} L${p(r, a1)} A${r},${r} 0 0 0 ${p(r, a0)}Z`;
-    const c = colorOf(n);
-    return `<path d="${d}" class="pk pk-${c}"/>
-      <text transform="rotate(${(i * SEG).toFixed(2)}) translate(0,-77)" class="pk-n">${n}</text>`;
-  }).join('');
-  const frets = Array.from({ length: 8 }, (_, i) => `<path d="M0,-58 L0,-26" transform="rotate(${i * 45})" class="spoke"/>`).join('');
+  const u = `w${++wheelSeq}`;
+  const vb = 'viewBox="-100 -100 200 200" aria-hidden="true"';
+  const pockets = WHEEL.map((n, i) => `<path d="${pocketPath(i)}" class="pk pk-${colorOf(n)}"/>`).join('');
+  const labels = WHEEL.map((n, i) => `<text transform="rotate(${(i * SEG).toFixed(2)}) translate(0,-75.6)" class="pk-n">${n}</text>`).join('');
+  const studs = Array.from({ length: 8 }, (_, k) => `<path d="M0,-95.6 L2.1,-91.8 L0,-88 L-2.1,-91.8Z" transform="rotate(${k * 45 + 22.5})" class="stud"/>`).join('');
+  const arms = [0, 90, 180, 270].map((a) => `<path d="M0,-12 L0,-52" transform="rotate(${a + 45})" class="arm"/>`).join('');
   return `
-<svg class="wheel" viewBox="-100 -100 200 200" aria-hidden="true">
-  <defs>
-    <radialGradient id="cone" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(60)">
-      <stop offset="0" stop-color="#d9a441"/><stop offset=".35" stop-color="#7a4a26"/><stop offset="1" stop-color="#3b2014"/>
-    </radialGradient>
-    <radialGradient id="bowl" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(100)">
-      <stop offset=".86" stop-color="#2a170e"/><stop offset=".92" stop-color="#6b3f22"/><stop offset="1" stop-color="#2a170e"/>
-    </radialGradient>
-  </defs>
-  <circle r="99" fill="url(#bowl)"/>
-  <circle r="88" class="track"/>
-  <g class="rotor">
-    ${pockets}
-    <circle r="60" fill="url(#cone)"/>
-    ${frets}
-    <circle r="14" class="turret"/><circle r="6" class="turret-top"/>
-  </g>
-  ${[0, 1, 2, 3, 4].map(() => '<circle class="trail" r="3.4" cx="0" cy="-92" style="opacity:0"/>').join('')}
-  <circle class="ball" r="3.6" cx="0" cy="-92"/>
-</svg>`;
+<div class="wheel">
+  <svg class="wl wl-base" ${vb}>
+    <defs>
+      <radialGradient id="${u}wood" cx="-.18" cy="-.2" r="1.15">
+        <stop offset="0" stop-color="#7a4a2a"/><stop offset=".55" stop-color="#4a2a17"/><stop offset="1" stop-color="#21110a"/>
+      </radialGradient>
+      <radialGradient id="${u}trk" cx="0" cy="0" r="96" gradientUnits="userSpaceOnUse">
+        <stop offset=".88" stop-color="#170c06"/><stop offset=".915" stop-color="#3b2212"/><stop offset=".955" stop-color="#6a4126"/><stop offset="1" stop-color="#2a170b"/>
+      </radialGradient>
+      <linearGradient id="${u}gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f6e2a0"/><stop offset=".5" stop-color="#b98a34"/><stop offset="1" stop-color="#f0d98c"/>
+      </linearGradient>
+    </defs>
+    <circle r="99.4" fill="url(#${u}wood)"/>
+    <circle r="97.4" fill="none" stroke="url(#${u}gold)" stroke-width="1.5"/>
+    <circle r="95.8" fill="url(#${u}trk)"/>
+    <circle r="86.6" fill="none" stroke="url(#${u}gold)" stroke-width="1.1"/>
+    ${studs}
+  </svg>
+  <svg class="wl wl-rotor" ${vb}>
+    <defs>
+      <radialGradient id="${u}cone" cx="-.2" cy="-.25" r="1" >
+        <stop offset="0" stop-color="#f0c866"/><stop offset=".38" stop-color="#9a6630"/><stop offset="1" stop-color="#3a2112"/>
+      </radialGradient>
+      <radialGradient id="${u}shade" cx="0" cy="0" r="86" gradientUnits="userSpaceOnUse">
+        <stop offset=".69" stop-color="#000" stop-opacity=".5"/><stop offset=".84" stop-color="#000" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/>
+      </radialGradient>
+      <radialGradient id="${u}chrome" cx="-.3" cy="-.35" r="1">
+        <stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#c9ccd2"/><stop offset="1" stop-color="#4b4f58"/>
+      </radialGradient>
+    </defs>
+    <g class="rotor-g">
+      ${pockets}
+      <path d="M${pt(POCKET_OUT, 0)} A${POCKET_OUT},${POCKET_OUT} 0 1 1 ${pt(POCKET_OUT, Math.PI)} A${POCKET_OUT},${POCKET_OUT} 0 1 1 ${pt(POCKET_OUT, 0)} L${pt(POCKET_IN, 0)} A${POCKET_IN},${POCKET_IN} 0 1 0 ${pt(POCKET_IN, Math.PI)} A${POCKET_IN},${POCKET_IN} 0 1 0 ${pt(POCKET_IN, 0)}Z" fill="url(#${u}shade)" fill-rule="evenodd" class="ring-shade"/>
+      ${labels}
+      <circle r="60.4" fill="url(#${u}cone)"/>
+      <circle r="45" fill="none" class="cone-line"/><circle r="30" fill="none" class="cone-line"/>
+      ${arms}
+      <circle r="13.5" class="turret"/>
+      <circle r="6.2" fill="url(#${u}chrome)"/>
+    </g>
+  </svg>
+  <svg class="wl wl-ball" ${vb}>
+    ${[0, 1, 2, 3].map(() => '<circle class="trail" r="2.7" cx="0" cy="-91" style="opacity:0"/>').join('')}
+    <circle class="ball-shadow" r="2.9" cx="0" cy="-91"/>
+    <circle class="ball" r="2.9" cx="0" cy="-91"/>
+  </svg>
+</div>`;
 }
 
 function cell(spot, label, d, m, cls, view, state) {
