@@ -1,14 +1,14 @@
-import morphdom from '../vendor/morphdom-esm.js?v=24';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=24';
-import { landing, gate } from './ui/landing.js?v=24';
-import { lobby, inviteLink } from './ui/lobby.js?v=24';
-import * as HU from './ui/holdem-ui.js?v=24';
-import * as BU from './ui/blackjack-ui.js?v=24';
-import * as RU from './ui/roulette-ui.js?v=24';
-import { sound } from './ui/sound.js?v=24';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=24';
-import { WHEEL } from './games/roulette.js?v=24';
-import * as Motion from './ui/motion.js?v=24';
+import morphdom from '../vendor/morphdom-esm.js?v=25';
+import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=25';
+import { landing, gate } from './ui/landing.js?v=25';
+import { lobby, inviteLink } from './ui/lobby.js?v=25';
+import * as HU from './ui/holdem-ui.js?v=25';
+import * as BU from './ui/blackjack-ui.js?v=25';
+import * as RU from './ui/roulette-ui.js?v=25';
+import { sound } from './ui/sound.js?v=25';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=25';
+import { WHEEL } from './games/roulette.js?v=25';
+import * as Motion from './ui/motion.js?v=25';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -523,6 +523,8 @@ document.addEventListener('click', (e) => {
     case 'bj-clear': c.act({ type: 'bet', amount: 0 }); return;
     case 'bj-rebet': { const seat = game.seats.find((s) => s.pid === S.state.you); c.act({ type: 'bet', amount: seat.lastBet }); return; }
     case 'bj-ready': c.act({ type: 'ready' }); return;
+    case 'bj-insure': c.act({ type: 'insure' }); return;
+    case 'bj-decline': c.act({ type: 'decline' }); return;
     case 'bj-hit': case 'bj-stand': case 'bj-double': case 'bj-split': c.act({ type: act.slice(3) }); return;
     // roulette
     case 'rl-chip': S.ui.chip = Number(el.dataset.v); S.dockSig = null; renderTable(); return;
@@ -561,7 +563,7 @@ document.addEventListener('keydown', (e) => {
   const k = e.key.toLowerCase();
   const map = {
     holdem: { f: 'fold', c: ['check', 'call'], r: 'raise' },
-    blackjack: { h: 'bj-hit', s: 'bj-stand', d: 'bj-double', p: 'bj-split', enter: 'bj-ready' },
+    blackjack: { h: 'bj-hit', s: 'bj-stand', d: 'bj-double', p: 'bj-split', y: 'bj-insure', n: 'bj-decline', enter: 'bj-ready' },
     roulette: { enter: 'rl-ready' },
   }[S.state.game.game];
   let target = map && map[k];

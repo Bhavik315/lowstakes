@@ -545,3 +545,88 @@ test('capacity: a lobby of 12 can play roulette but is told how many to remove f
     assert.equal(v.ready.length >= 0, true);
   } finally { h.close(); }
 });
+
+// ---------------------------------------------------------------- blackjack insurance
+function insGame(draws, bet = 100, humans = 1) {
+  const room = makeRoom(humans, false);
+  const clock = { t: 0 };
+  const g = new Blackjack(room, { timer: 0, min: 10 });
+  g.now = () => clock.t;
+  g.jobs.forEach((j) => (j.at = 0));
+  g.shoe = draws.slice().reverse();
+  for (let i = 0; i < humans; i++) { g.handle('p' + i, { type: 'bet', amount: bet }); g.handle('p' + i, { type: 'ready' }); }
+  run(g, 3000, clock);
+  return { room, clock, g };
+}
+
+test('insurance: offered on an ace, costs half the bet, pays 2 to 1 on dealer blackjack', () => {
+  const { room, clock, g } = insGame(['9h', 'As', '8s', 'Kc']); // dealer A + K
+  assert.equal(g.phase, 'insurance');
+  assert.deepEqual(g.view('p0').you.insurance, { cost: 50 });
+  assert.equal(g.handle('p0', { type: 'hit' }), false, 'no playing actions during insurance');
+  assert.ok(g.handle('p0', { type: 'insure' }));
+  assert.equal(room.players[0].chips, 1000 - 100 - 50);
+  assert.equal(g.handle('p0', { type: 'decline' }), false, 'one decision only');
+  run(g, 2500, clock);
+  assert.equal(g.seats[0].insNet, 100, 'insurance nets +2x the premium');
+  untilPhase(g, clock, 'settle');
+  // main bet lost (-100), insurance +100: break even overall
+  assert.equal(room.players[0].chips, 1000);
+});
+
+test('insurance: loses the premium when the dealer has no blackjack, and play continues', () => {
+  const { room, clock, g } = insGame(['9h', 'As', '8s', '6c', 'Td']);
+  assert.equal(g.phase, 'insurance');
+  g.handle('p0', { type: 'insure' });
+  run(g, 1500, clock);
+  assert.equal(g.seats[0].insNet, -50);
+  assert.equal(g.phase, 'playing');
+  assert.equal(room.players[0].chips, 1000 - 100 - 50);
+});
+
+test('insurance: declining, timeouts, and no offer without an ace or without chips', () => {
+  const a = insGame(['9h', 'As', '8s', '6c']);
+  assert.ok(a.g.handle('p0', { type: 'decline' }));
+  run(a.g, 1500, a.clock);
+  assert.equal(a.g.phase, 'playing');
+  assert.equal(a.room.players[0].chips, 900);
+
+  const t = insGame(['9h', 'As', '8s', '6c']);
+  run(t.g, 10000, t.clock); // nobody answers: treated as no
+  assert.equal(t.g.phase, 'playing');
+  assert.equal(t.room.players[0].chips, 900);
+
+  const k = insGame(['9h', 'Ks', '8s', 'Ac']);
+  assert.notEqual(k.g.phase, 'insurance', 'a ten up does not offer insurance');
+
+  const room = makeRoom(1, false);
+  const clock = { t: 0 };
+  room.players[0].chips = 100;
+  const g = new Blackjack(room, { timer: 0, min: 10 });
+  g.now = () => clock.t; g.jobs.forEach((j) => (j.at = 0));
+  g.shoe = ['6c', '8s', 'As', '9h'];
+  g.handle('p0', { type: 'bet', amount: 100 }); g.handle('p0', { type: 'ready' });
+  run(g, 3000, clock);
+  assert.notEqual(g.phase, 'insurance', 'cannot afford the premium, so none is offered');
+});
+
+test('insurance: rounds with bots keep advancing, and bots only ever pay half their bet for it', () => {
+  let offered = 0;
+  for (let i = 0; i < 25; i++) {
+    const room = makeRoom(4, true);
+    room.players[0].bot = false;
+    const clock = { t: 0 };
+    const g = new Blackjack(room, { timer: 0, min: 10 });
+    g.now = () => clock.t;
+    let lastRound = 0;
+    for (let t = 0; t < 150000; t += 50) {
+      clock.t += 50; g.tick();
+      if (g.phase === 'betting' && !g.seats[0].ready && room.players[0].chips >= 10) { g.handle('p0', { type: 'bet', amount: 10 }); g.handle('p0', { type: 'ready' }); }
+      if (g.phase === 'playing' && g.turn && g.seats[g.turn.seat].pid === 'p0') g.handle('p0', { type: 'stand' });
+      if (g.phase === 'insurance') { offered++; for (const s of g.seats) if (s.insurance) assert.equal(s.insurance, Math.floor(s.hands.reduce((a, h) => a + h.bet, 0) / 2)); g.handle('p0', { type: 'decline' }); }
+      lastRound = g.round;
+    }
+    assert.ok(lastRound >= 5, 'rounds keep advancing');
+  }
+  assert.ok(offered > 0, 'an ace showed at least once across the runs');
+});

@@ -1539,3 +1539,9 @@ input[type=range]::-moz-range-thumb {
   .tbl.blackjack .hands { transform: translateX(calc(-50% - var(--ax, 0) * var(--ax, 0) * var(--ax, 0) * 46px)); }
   .tbl.blackjack .spot { --cwb: clamp(28px, calc(100cqw / (var(--n, 1) + 4.9)), 54px); }
 }
+
+/* Blackjack insurance status under a seat */
+.tag-ins { background: var(--cream); color: var(--ink); }
+.tag-ins.wait { opacity: .75; }
+.tag-ins.up { background: #7fd99a; }
+.tag-ins.down { background: #ef8a80; }

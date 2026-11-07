@@ -1,7 +1,7 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=24';
-import { newDeck, shuffle } from '../core/cards.js?v=24';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=24';
+import { Engine } from '../core/engine.js?v=25';
+import { newDeck, shuffle } from '../core/cards.js?v=25';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=25';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
@@ -12,6 +12,7 @@ const DOUBLE_PAUSE = 680;
 const SPLIT_PAUSE = 760; // the two cards separate and settle before anything is dealt
 const SPLIT_GAP = 540; // between the two new cards
 const PEEK_MS = 950; // dealer leans in on the hole card before turning it
+const INS_MS = 9000; // how long the table has to decide on insurance
 const FLIP_MS = 1000; // the flip itself, then a beat to read the total
 
 export class Blackjack extends Engine {
@@ -24,6 +25,7 @@ export class Blackjack extends Engine {
     this.turn = null;
     this.deadline = 0;
     this.betDeadline = 0;
+    this.insDeadline = 0;
     this.round = 0;
     this.botAt = 0;
     this.locked = false;
@@ -134,6 +136,9 @@ export class Blackjack extends Engine {
         return true;
       }
       return false;
+    }
+    if (this.phase === 'insurance' && (a.type === 'insure' || a.type === 'decline')) {
+      return this.decideInsurance(seat, a.type === 'insure');
     }
     if (this.phase === 'playing' && this.turn && this.seats[this.turn.seat] === seat && !this.locked) {
       return this.play(seat, a.type);
@@ -259,6 +264,9 @@ export class Blackjack extends Engine {
       }
       s.bet = 0;
       s.ready = false;
+      s.insurance = 0;
+      s.insNet = null;
+      s.insChoice = null;
     }
     this.dealer = { cards: [], hidden: true };
     this.emit('deal');
@@ -274,8 +282,81 @@ export class Blackjack extends Engine {
   }
 
   afterDeal() {
+    // Dealer shows an ace: offer insurance before anyone looks under the card.
+    if (this.dealer.cards[0][0] === 'A' && this.seats.some((s) => this.canInsure(s))) return this.startInsurance();
+    this.peek();
+  }
+
+  // Insurance costs half the seat's total bet (rounded down) and pays 2 to 1 if the dealer has blackjack.
+  insuranceCost(seat) {
+    return Math.floor(seat.hands.reduce((t, h) => t + h.bet, 0) / 2);
+  }
+
+  canInsure(seat) {
+    const p = this.player(seat.pid);
+    const cost = this.insuranceCost(seat);
+    return !!p && seat.hands.length > 0 && cost >= 1 && p.chips >= cost;
+  }
+
+  startInsurance() {
+    this.phase = 'insurance';
+    this.insDeadline = this.now() + INS_MS;
+    this.emit('insurance');
+    this.note('Dealer shows an ace. Insurance?');
+    for (const s of this.seats) {
+      if (!this.canInsure(s)) { s.insChoice = 'na'; continue; }
+      s.insChoice = null;
+      const p = this.player(s.pid);
+      if (p && p.bot) {
+        // Basic strategy says never; a few bots take it anyway, like real tables.
+        this.after(900 + Math.random() * 3200, () => this.decideInsurance(s, Math.random() < 0.15));
+      }
+    }
+    this.checkInsurance();
+  }
+
+  decideInsurance(seat, take) {
+    if (this.phase !== 'insurance' || seat.insChoice !== null) return false;
+    const p = this.player(seat.pid);
+    if (take) {
+      if (!this.canInsure(seat)) return false;
+      const cost = this.insuranceCost(seat);
+      p.chips -= cost;
+      seat.insurance = cost;
+      seat.insChoice = 'take';
+      this.emit('chip', { pid: seat.pid, amount: cost, insurance: true });
+      this.note(`${this.name(seat.pid)} takes insurance.`);
+    } else seat.insChoice = 'decline';
+    this.checkInsurance();
+    return true;
+  }
+
+  checkInsurance() {
+    if (this.phase !== 'insurance') return;
+    if (this.seats.every((s) => s.insChoice !== null)) this.endInsurance();
+  }
+
+  endInsurance() {
+    if (this.phase !== 'insurance') return;
+    this.insDeadline = 0;
+    for (const s of this.seats) if (s.insChoice === null) s.insChoice = 'decline';
+    this.phase = 'dealing';
+    this.after(450, () => this.peek());
+  }
+
+  peek() {
     const up = this.dealer.cards[0];
     const dealerBJ = isNatural(this.dealer.cards);
+    // Insurance settles on the peek, whether or not the dealer has it.
+    for (const s of this.seats) {
+      if (!s.insurance) continue;
+      const p = this.player(s.pid);
+      if (dealerBJ) { if (p) p.chips += s.insurance * 3; s.insNet = s.insurance * 2; }
+      else s.insNet = -s.insurance;
+    }
+    if (this.seats.some((s) => s.insurance)) {
+      this.note(dealerBJ ? 'Dealer has blackjack. Insurance pays 2 to 1.' : 'No blackjack. Insurance bets lose.');
+    }
     if ((up[0] === 'A' || cardValue(up) === 10) && dealerBJ) {
       for (const s of this.seats) for (const h of s.hands) h.done = true;
       this.emit('peek');
@@ -329,6 +410,10 @@ export class Blackjack extends Engine {
         this.deal();
       }
       return true;
+    }
+    if (this.phase === 'insurance') {
+      if (this.insDeadline && t >= this.insDeadline) { this.endInsurance(); return true; }
+      return false;
     }
     if (this.phase !== 'playing' || !this.turn || this.locked) return false;
     const seat = this.seats[this.turn.seat];
@@ -422,6 +507,9 @@ export class Blackjack extends Engine {
         ready: s.ready,
         sitOut: !!s.sitOut,
         lastBet: s.lastBet,
+        insurance: s.insurance || 0,
+        insNet: s.insNet ?? null,
+        insChoice: s.insChoice || null,
         active: this.turn && this.turn.seat === i,
         activeHand: this.turn && this.turn.seat === i ? this.turn.hand : -1,
         hands: s.hands.map((h) => {
@@ -445,7 +533,8 @@ export class Blackjack extends Engine {
         hint = basicStrategy(hand.cards, this.dealer.cards[0], options.double, options.split);
         if (!options[hint]) hint = 'stand';
       }
-      you = { seated: true, myTurn, options, hint };
+      const insurance = this.phase === 'insurance' && mine.insChoice === null ? { cost: this.insuranceCost(mine) } : null;
+      you = { seated: true, myTurn, options, hint, insurance };
     }
     return {
       game: 'blackjack',
@@ -456,6 +545,8 @@ export class Blackjack extends Engine {
       turn: this.turn ? { pid: this.seats[this.turn.seat].pid, hand: this.turn.hand } : null,
       timeLeft: this.remaining(this.deadline),
       betLeft: this.remaining(this.betDeadline),
+      insLeft: this.phase === 'insurance' ? this.remaining(this.insDeadline) : 0,
+      insMs: INS_MS,
       timer: this.s.timer,
       betTime: this.s.betTime,
       shoe: { left: this.shoe.length, total: this.s.decks * 52 },

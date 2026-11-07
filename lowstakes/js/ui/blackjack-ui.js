@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=24';
-import { lastEvent, timerRing } from './holdem-ui.js?v=24';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES } from './parts.js?v=25';
+import { lastEvent, timerRing } from './holdem-ui.js?v=25';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 
@@ -53,6 +53,7 @@ export function stage(view, state) {
         </div>
         ${view.phase === 'betting' && s.ready ? '<span class="tag tag-ready">In</span>' : ''}
         ${view.phase === 'betting' && s.sitOut ? '<span class="tag">Sitting out</span>' : ''}
+        ${insTag(view, s)}
       </div>`;
   }).join('');
 
@@ -87,6 +88,15 @@ export function stage(view, state) {
 </div>`;
 }
 
+// Small status under a seat while insurance is being decided, then what it paid.
+function insTag(view, s) {
+  if (s.insNet != null) return `<span class="tag tag-ins ${s.insNet > 0 ? 'up' : 'down'}">Insurance ${signed(s.insNet)}</span>`;
+  if (view.phase !== 'insurance') return '';
+  if (s.insChoice === 'take') return '<span class="tag tag-ins">Insured</span>';
+  if (s.insChoice === null) return '<span class="tag tag-ins wait">Deciding…</span>';
+  return '';
+}
+
 export function dock(view, state, ui) {
   const me = view.you;
   const seat = view.seats.find((s) => s.pid === state.you);
@@ -94,7 +104,7 @@ export function dock(view, state, ui) {
   if (!me || !seat) return { sig: 'watch', html: '<div class="dock-msg">All seven spots are taken, so you’re watching. You’ll get a spot when one opens up.</div>' };
   const chips = player ? player.chips : 0;
   const min = view.settings.min;
-  const sig = JSON.stringify([view.phase, seat.bet, seat.ready, seat.sitOut, chips, me.myTurn, me.options, me.hint, ui.coach, seat.lastBet, view.round]);
+  const sig = JSON.stringify([view.phase, me.insurance, seat.insChoice, seat.insurance, seat.bet, seat.ready, seat.sitOut, chips, me.myTurn, me.options, me.hint, ui.coach, seat.lastBet, view.round]);
 
   if (view.phase === 'betting') {
     if (chips + seat.bet < min) {
@@ -119,6 +129,24 @@ export function dock(view, state, ui) {
       </div>
       <div class="dock-side"><label class="toggle"><input type="checkbox" data-act="coach"${ui.coach ? ' checked' : ''}><span>Coach</span></label></div>`,
     };
+  }
+
+  if (view.phase === 'insurance') {
+    if (me.insurance) {
+      const cost = me.insurance.cost;
+      return {
+        sig,
+        html: `<div class="dock-hand"><span>Dealer shows an ace</span><b>Insurance ${fmt(cost)}</b></div>
+        <div class="dock-mid acts">
+          <button class="btn btn-primary" data-act="bj-insure">Take insurance<kbd>Y</kbd></button>
+          <button class="btn btn-dark" data-act="bj-decline">No thanks<kbd>N</kbd></button>
+        </div>
+        <div class="dock-side"><p class="dock-tip">Half your bet. Pays 2 to 1 if the dealer has blackjack.</p></div>`,
+      };
+    }
+    const note = seat.insChoice === 'take' ? `Insured for ${fmt(seat.insurance)}. Waiting for the others.`
+      : seat.insChoice === 'decline' ? 'No insurance. Waiting for the others.' : 'Waiting for the others to decide on insurance.';
+    return { sig: sig + note, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">${note}</p></div><div class="dock-side"></div>` };
   }
 
   if (me.myTurn && me.options) {
