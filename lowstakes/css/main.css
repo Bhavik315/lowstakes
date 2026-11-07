@@ -1527,3 +1527,15 @@ input[type=range]::-moz-range-thumb {
   .rl-totals .rn { max-width: 84px; }
   .rl-msg { order: -2; } .rl-totals { order: -1; margin: 0; }
 }
+
+/* Blackjack: hands of the outer seats lean toward the table centre so they clear the neighbouring plate. */
+.tbl.blackjack .hands { transform: translateX(calc(-50% - var(--ax, 0) * var(--ax, 0) * var(--ax, 0) * 84px)); }
+
+/* Narrow phones, full tables: slightly smaller opponent cards so neighbours don't touch. */
+@media (max-width: 440px) {
+  .tbl.holdem .seat:not(.me) { --cw: 26px; }
+  .tbl.holdem .seat.me { --cw: 42px; }
+  .tbl.holdem .seat.me .card + .card { margin-left: calc(var(--cw) * -.4); }
+  .tbl.blackjack .hands { transform: translateX(calc(-50% - var(--ax, 0) * var(--ax, 0) * var(--ax, 0) * 46px)); }
+  .tbl.blackjack .spot { --cwb: clamp(28px, calc(100cqw / (var(--n, 1) + 4.9)), 54px); }
+}
