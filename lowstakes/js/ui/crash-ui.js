@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, avatar, CHIP_VALUES } from './parts.js?v=28';
-import { AUTO_CHOICES } from '../games/crash.js?v=28';
+import { esc, fmt, signed, chip, avatar, CHIP_VALUES } from './parts.js?v=29';
+import { AUTO_CHOICES } from '../games/crash.js?v=29';
 
 const fx = (x) => `${x.toFixed(2)}x`;
 const tier = (x) => (x < 2 ? 'lo' : x < 10 ? 'mid' : 'hi');
@@ -173,23 +173,57 @@ function draw(canvas, view, el, m, now) {
   g.restore();
 }
 
-// Puffs of exhaust along the path already flown; they drift, grow and fade (and keep fading after a crash).
+// Exhaust: soft billowing puffs along the path already flown. Hot and bright at the engine, they
+// swell, cool to grey and drift apart as they age; after a crash the cloud keeps spreading and fades.
+const PUFF = {};
+function puffSprite(rgb) {
+  if (PUFF[rgb]) return PUFF[rgb];
+  const c = document.createElement('canvas');
+  c.width = c.height = 96;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(48, 48, 0, 48, 48, 48);
+  g.addColorStop(0, `rgba(${rgb},1)`); g.addColorStop(0.45, `rgba(${rgb},.55)`); g.addColorStop(1, `rgba(${rgb},0)`);
+  x.fillStyle = g; x.fillRect(0, 0, 96, 96);
+  return (PUFF[rgb] = c);
+}
+const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+
 function smoke(g, view, el, X, Y, size, age, now) {
-  const puffs = 34;
-  const span = Math.min(el, 7500);
+  const puffs = 70;
+  const span = Math.min(el, 8000);
+  const fade = Math.max(0, 1 - age / 2000);
+  const spread = 1 + age / 1400;
+  const hot = [255, 196, 110];
+  const cool = [214, 206, 224];
   for (let i = puffs; i >= 1; i--) {
-    const back = (i / puffs) * span;
-    const t = el - back;
+    const f = i / puffs; // 0 at the engine, 1 at the far end of the trail
+    const t = el - f * f * span; // denser near the rocket
     if (t < 0) continue;
-    const f = i / puffs;
-    const fade = Math.max(0, 1 - age / 1800);
-    const alpha = (1 - f) * 0.42 * fade;
-    if (alpha <= 0.01) continue;
-    const px = X(t) - Math.cos(0.4) * size * 0.9 + Math.sin(i * 12.9898) * size * 0.28 * f;
-    const py = Y(Math.exp((view.growth * t) / 1000)) + Math.cos(i * 78.233) * size * 0.28 * f + f * size * 0.5;
-    const r = size * (0.22 + f * 0.62);
-    g.fillStyle = `rgba(${isBoom(view) ? '255,190,170' : '255,226,170'},${alpha.toFixed(3)})`;
-    g.beginPath(); g.arc(px, py, r, 0, Math.PI * 2); g.fill();
+    const alpha = Math.pow(1 - f, 1.4) * 0.5 * fade;
+    if (alpha <= 0.008) continue;
+    const wob = Math.sin(now * 0.0016 + i * 1.7) * size * 0.3 * f + Math.sin(i * 12.9898) * size * 0.3 * f;
+    const lift = Math.cos(now * 0.0013 + i * 2.3) * size * 0.25 * f - f * f * size * 0.9;
+    const px = X(t) - size * 1.05 + wob * spread;
+    const py = Y(Math.exp((view.growth * t) / 1000)) + size * 0.2 + lift * spread;
+    const r = size * (0.5 + f * 1.7) * spread;
+    const [cr, cg, cb] = mix(hot, cool, Math.min(1, f * 2.4));
+    g.globalAlpha = alpha;
+    g.drawImage(puffSprite(`${cr},${cg},${cb}`), px - r, py - r, r * 2, r * 2);
+  }
+  g.globalAlpha = 1;
+  // a few embers streaming off the engine while it burns
+  if (!age) {
+    for (let i = 0; i < 7; i++) {
+      const k = ((now * 0.0012 + i / 7) % 1);
+      const t = el - k * Math.min(el, 700);
+      if (t < 0) continue;
+      g.globalAlpha = (1 - k) * 0.9;
+      g.fillStyle = i % 2 ? '#FFD976' : '#FF9A45';
+      g.beginPath();
+      g.arc(X(t) - size * 1.2 + Math.sin(i * 5.1 + now * 0.01) * size * 0.25, Y(Math.exp((view.growth * t) / 1000)) + size * 0.2 + Math.cos(i * 3.7) * size * 0.3, size * 0.07 * (1 - k * 0.5), 0, Math.PI * 2);
+      g.fill();
+    }
+    g.globalAlpha = 1;
   }
 }
 const isBoom = (view) => view.phase === 'crashed';
@@ -270,13 +304,16 @@ function explosion(g, x, y, size, age) {
     }
     g.globalAlpha = 1;
   }
-  if (age > 200 && age < 1700) { // dark smoke cloud left behind
-    const k = (age - 200) / 1500;
-    for (let i = 0; i < 7; i++) {
-      const a = (i / 7) * Math.PI * 2;
-      g.fillStyle = `rgba(60,48,56,${0.35 * (1 - k)})`;
-      g.beginPath(); g.arc(x + Math.cos(a) * size * (0.6 + k * 1.4), y + Math.sin(a) * size * (0.5 + k * 1.1) - k * size * 1.2, size * (0.7 + k * 0.9), 0, Math.PI * 2); g.fill();
+  if (age > 150 && age < 1900) { // dark smoke cloud left behind, built from the same soft puffs
+    const k = (age - 150) / 1750;
+    for (let i = 0; i < 9; i++) {
+      const a = (i / 9) * Math.PI * 2 + Math.sin(i * 7.7);
+      const d = size * (0.4 + k * (1.2 + (i % 3) * 0.5));
+      const r = size * (1.1 + k * 1.6);
+      g.globalAlpha = 0.5 * (1 - k);
+      g.drawImage(puffSprite('70,58,66'), x + Math.cos(a) * d - r, y + Math.sin(a) * d * 0.8 - k * size * 1.4 - r, r * 2, r * 2);
     }
+    g.globalAlpha = 1;
   }
 }
 

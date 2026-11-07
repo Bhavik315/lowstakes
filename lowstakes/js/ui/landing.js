@@ -1,5 +1,5 @@
-import { esc, card, chipStack } from './parts.js?v=28';
-import { COLORS } from '../net/room.js?v=28';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=29';
+import { COLORS } from '../net/room.js?v=29';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -75,7 +75,7 @@ export function landing(me, { error = '' } = {}) {
         <p>Single zero. Everyone stacks chips on the same layout, then watches the ball go round together.</p>
       </article>
       <article class="placard p-crash">
-        <div class="placard-art"><svg class="mini-crash" viewBox="0 0 80 60" aria-hidden="true"><path d="M4 54 C30 52 50 40 62 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="62" cy="10" r="5" fill="currentColor"/></svg></div>
+        <div class="placard-art">${ROCKET_SVG}</div>
         <h3>Crash</h3>
         <p>A multiplier climbs until it doesn't. Up to twelve of you bet, then race to cash out before the crash.</p>
       </article>

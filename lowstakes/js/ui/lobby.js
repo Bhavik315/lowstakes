@@ -1,5 +1,5 @@
-import { esc, fmt, signed, avatar, card } from './parts.js?v=28';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=28';
+import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=29';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=29';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
@@ -35,13 +35,11 @@ function settingsForm(gameId, s) {
       <label class="field sm"><span>Betting time</span><select data-set="roulette.betTime">${[[15, '15 seconds'], [20, '20 seconds'], [40, '40 seconds']].map(([v, l]) => opt(v, s.roulette.betTime, l)).join('')}</select></label>`;
 }
 
-const MINI_CRASH = '<svg class="mini-crash" viewBox="0 0 80 60" aria-hidden="true"><path d="M4 54 C30 52 50 40 62 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="62" cy="10" r="5" fill="currentColor"/></svg>';
-
 const ART = {
   holdem: () => ['Qs', 'Qd'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   blackjack: () => ['Jc', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join(''),
   roulette: () => '<div class="mini-wheel"></div>',
-  crash: () => MINI_CRASH,
+  crash: () => ROCKET_SVG,
 };
 
 export function lobby(state, ui) {
