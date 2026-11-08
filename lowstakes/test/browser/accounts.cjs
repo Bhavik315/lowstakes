@@ -205,7 +205,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   const cardsTxt = await text(pF);
   t('free coins: four packs with their amounts and refill times', ['1,000', '5,000', '15,000', '40,000'].every((n) => cardsTxt.includes(n)) && /Every 4 hours/.test(cardsTxt) && /Every 6 hours/.test(cardsTxt) && /Every 24 hours/.test(cardsTxt) && /Every 72 hours/.test(cardsTxt), cardsTxt.slice(0, 300));
   t('free coins: no pack names or sign-up explanation cluttering the cards', !/Pocket change|High roller vault|timers started/.test(cardsTxt) && await pF.locator('.cp h3').count() === 0);
-  t('free coins: Popular and Best value tags, and the balance', /Popular/.test(cardsTxt) && /Best value/.test(cardsTxt) && /Balance 20,000/.test(cardsTxt));
+  t('free coins: no Popular or Best value labels, and the balance is shown', !/Popular|Best value/.test(cardsTxt) && await pF.locator('.cp-tag').count() === 0 && /Balance 20,000/.test(cardsTxt));
   t('free coins: each pack has real coin artwork', await pF.locator('.cp .coin use[href="#coin-g"]').count() === 2 + 3 + 4 + 5);
   t('free coins: the four packs use four different card colours', (await pF.locator('.cp-art').evaluateAll((els) => new Set(els.map((e) => getComputedStyle(e).backgroundImage.match(/rgb\([^)]*\)/g).join('|'))).size)) === 4);
   const btns = await pF.locator('.cp-btn').evaluateAll((els) => els.map((e) => ({ id: e.dataset.claim, text: e.textContent.replace('◷', '').trim(), disabled: e.disabled })));
@@ -253,7 +253,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
   mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
   t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=40'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=41'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();

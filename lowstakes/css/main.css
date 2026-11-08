@@ -1704,7 +1704,6 @@ input[type=range]::-moz-range-thumb {
 .cp-art { position: relative; height: 138px; display: grid; place-items: center; border-bottom: 3px solid #061612; overflow: hidden;
   background: radial-gradient(circle at 50% 62%, color-mix(in srgb, var(--g) 70%, white 18%) 0 34%, var(--g) 70%); }
 .cp-art::before { content: ''; position: absolute; inset: -40%; background: repeating-conic-gradient(from 0deg at 50% 58%, rgba(255, 255, 255, .075) 0 9deg, transparent 9deg 18deg); pointer-events: none; }
-.cp-tag { position: absolute; top: 10px; left: 10px; z-index: 2; background: var(--mustard); color: var(--ink); border: 2.5px solid #061612; font-size: 11px; font-weight: 800; padding: 1px 9px 2px; border-radius: 999px; box-shadow: 0 2px 0 #061612; }
 .cp-body { padding: 14px 14px 16px; display: flex; flex-direction: column; }
 .ls-modal-card .cp .cp-amt { margin: 0; font-size: 38px; font-weight: 800; font-variation-settings: 'wdth' 76; line-height: 1; letter-spacing: -.01em; color: var(--cream); text-shadow: 0 3px 0 rgba(0, 0, 0, .35); font-variant-numeric: tabular-nums; display: flex; align-items: baseline; justify-content: center; gap: 6px; }
 .ls-modal-card .cp .cp-amt small { font-size: 14px; font-weight: 800; font-variation-settings: 'wdth' 90; letter-spacing: 0; color: var(--mustard); text-shadow: none; }

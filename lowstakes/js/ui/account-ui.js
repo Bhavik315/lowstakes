@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=40';
-import { esc, fmt, signed } from './parts.js?v=40';
+import { Auth, explain, usernameProblem } from '../auth.js?v=41';
+import { esc, fmt, signed } from './parts.js?v=41';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -287,7 +287,6 @@ function renderProfile(extra = {}) {
 
 // ---------------------------------------------------------------- free coins
 const hms = (n) => { const h = Math.floor(n / 3600); return [h, Math.floor((n % 3600) / 60), n % 60].map((v) => String(v).padStart(2, '0')).join(':'); };
-const TAGS = { stack: 'Popular', tower: 'Best value' };
 const COINS = { pocket: 2, stack: 3, tower: 4, vault: 5 };
 
 export async function openFreeCoins() {
@@ -306,7 +305,7 @@ function renderCoins(list, got = '') {
       <div class="cp-bal"><span>Balance</span><b id="cp-bal">${fmt(Auth.balance())}</b></div></div>
     <div class="cp-grid">${list.map((p) => `
       <article class="cp cp-${esc(p.id)}${p.id === got ? ' got' : ''}" aria-label="${esc(p.name)}: ${fmt(p.amount)} coins every ${p.every_seconds / 3600} hours">
-        <div class="cp-art">${TAGS[p.id] ? `<span class="cp-tag">${TAGS[p.id]}</span>` : ''}${stack(COINS[p.id] || 3)}</div>
+        <div class="cp-art">${stack(COINS[p.id] || 3)}</div>
         <div class="cp-body">
           <p class="cp-amt">${fmt(p.amount)}<small>coins</small></p>
           <p class="cp-every">Every ${p.every_seconds / 3600} hours</p>
