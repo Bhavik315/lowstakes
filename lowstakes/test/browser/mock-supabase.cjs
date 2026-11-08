@@ -21,7 +21,9 @@ module.exports = function makeMock() {
   const PACKS = [['pocket', 'Pocket change', 1000, 4], ['stack', 'Stack', 5000, 6], ['tower', 'Tower', 15000, 24], ['vault', 'High roller vault', 40000, 72]];
   const clock = () => Date.now() + m.shift;
   const packList = (uid) => PACKS.map(([id, name, amount, h]) => {
-    const last = (m.claims.get(uid) || {})[id]; const left = last ? Math.max(0, Math.ceil((last + h * 3600e3 - clock()) / 1000)) : 0;
+    const p = m.profiles.get(uid); if (p.created == null) p.created = clock();   // the timers start when the account was made
+    const since = (m.claims.get(uid) || {})[id] ?? p.created;
+    const left = Math.max(0, Math.ceil((since + h * 3600e3 - clock()) / 1000));
     return { id, name, amount, every_seconds: h * 3600, seconds_left: left, ready: left === 0 };
   });
   m.confirm = (email, type = 'signup') => { const u = m.users.get(email.toLowerCase()); u.confirmed = true; const t = tokensFor(u); return `#access_token=${t.access_token}&refresh_token=${t.refresh_token}&expires_in=3600&token_type=bearer&type=${type}`; };
@@ -95,7 +97,7 @@ module.exports = function makeMock() {
       const pr = problem(body.p_username); if (pr) return pg(pr);
       if ([...m.profiles.values()].some((p) => p.email === user.email)) return pg('email_in_use');
       if (taken(body.p_username)) return pg('username_taken');
-      m.profiles.set(uid, { username: body.p_username, email: user.email, balance: 0, changes: 0 });
+      m.profiles.set(uid, { username: body.p_username, email: user.email, balance: 0, changes: 0, created: clock() });
       apply(uid, 'welcome_bonus', 20000, 'welcome', 'welcome');
       return J(200, { ...acct(uid), already: false, bonus: 20000 });
     }

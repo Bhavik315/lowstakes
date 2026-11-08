@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=37';
-import { esc, fmt, signed } from './parts.js?v=37';
+import { Auth, explain, usernameProblem } from '../auth.js?v=38';
+import { esc, fmt, signed } from './parts.js?v=38';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -314,6 +314,7 @@ function renderCoins(list, got = '') {
         <button class="cp-btn" data-claim="${esc(p.id)}" data-left="${p.seconds_left}" data-name="${esc(p.name)}"></button>
       </article>`).join('')}</div>
     ${notice(got ? `Added to your balance.` : '', 'ok')}
+    ${!got && list.every((p) => !p.ready) ? '<p class="asub small cp-hint">Your timers started when you signed up. Come back when one reaches zero.</p>' : ''}
     <div class="aacts"><button class="btn btn-primary" data-x>Done</button></div>`, { title: 'Free coins' });
   card.classList.add('wide');
   const paint = () => {

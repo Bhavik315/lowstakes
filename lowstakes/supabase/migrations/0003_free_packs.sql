@@ -4,13 +4,16 @@
 -- or editing the page. Each claim is one ledger row of type 'free_pack'. The pack amounts and timers live in
 -- free_pack_defs() below: change them there (then re-run that one function) to tune the economy.
 --
+-- A pack's timer starts at REGISTRATION for a new player (so a brand-new account has to wait like everyone else), and
+-- restarts at each claim. Safe to run again (e.g. after changing the amounts or timers below).
+--
 -- Additive only: one new table, one widened CHECK constraint, new functions.
 
 alter table public.transactions drop constraint transactions_type_check;
 alter table public.transactions add constraint transactions_type_check
   check (type in ('welcome_bonus', 'wager', 'payout', 'refund', 'username_change_fee', 'adjustment', 'round_result', 'free_pack'));
 
-create table public.pack_claims (
+create table if not exists public.pack_claims (
   user_id uuid not null references public.profiles (id) on delete cascade,
   pack text not null,
   last_claimed timestamptz not null,
@@ -20,6 +23,7 @@ alter table public.pack_claims enable row level security;
 alter table public.pack_claims force row level security;
 revoke all on public.pack_claims from public, anon, authenticated;
 grant select, insert, update, delete on public.pack_claims to service_role;
+drop policy if exists service_all_pack_claims on public.pack_claims;
 create policy service_all_pack_claims on public.pack_claims for all to service_role using (true) with check (true);
 
 create or replace function public.free_pack_defs()
@@ -42,9 +46,10 @@ begin
   return coalesce((
     select jsonb_agg(jsonb_build_object(
         'id', d.id, 'name', d.name, 'amount', d.amount, 'every_seconds', extract(epoch from d.every)::bigint,
-        'seconds_left', greatest(0, ceil(extract(epoch from (c.last_claimed + d.every - now()))))::bigint,
-        'ready', c.last_claimed is null or now() >= c.last_claimed + d.every) order by d.sort)
+        'seconds_left', greatest(0, ceil(extract(epoch from (coalesce(c.last_claimed, pr.created_at) + d.every - now()))))::bigint,
+        'ready', now() >= coalesce(c.last_claimed, pr.created_at) + d.every) order by d.sort)
     from public.free_pack_defs() d
+    cross join (select created_at from public.profiles where id = v_uid) pr
     left join public.pack_claims c on c.user_id = v_uid and c.pack = d.id), '[]'::jsonb);
 end $$;
 
@@ -52,15 +57,16 @@ end $$;
 create or replace function public.claim_free_pack(p_pack text) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare
-  v_uid uuid := auth.uid(); v_def record; v_last timestamptz; v_bal bigint;
+  v_uid uuid := auth.uid(); v_def record; v_last timestamptz; v_bal bigint; v_joined timestamptz;
 begin
   if v_uid is null then raise exception 'not_authenticated' using errcode = '28000'; end if;
   select balance into v_bal from public.wallets where user_id = v_uid for update;   -- serialises this player's claims
   if not found then raise exception 'not_registered'; end if;
   select * into v_def from public.free_pack_defs() d where d.id = p_pack;
   if not found then raise exception 'bad_pack'; end if;
+  select created_at into v_joined from public.profiles where id = v_uid;
   select last_claimed into v_last from public.pack_claims where user_id = v_uid and pack = p_pack;
-  if v_last is not null and now() < v_last + v_def.every then raise exception 'not_ready'; end if;
+  if now() < coalesce(v_last, v_joined) + v_def.every then raise exception 'not_ready'; end if;
   insert into public.pack_claims (user_id, pack, last_claimed) values (v_uid, p_pack, now())
     on conflict (user_id, pack) do update set last_claimed = excluded.last_claimed;
   perform public.wallet_apply(v_uid, 'free_pack', v_def.amount, null, p_pack, 'pack:' || p_pack || ':' || floor(extract(epoch from clock_timestamp()) * 1000000)::bigint);

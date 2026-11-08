@@ -60,6 +60,7 @@ echo "RACE 40 different losing rounds of 1000 from 19000: balance=$bal (want 0, 
 W=00000000-0000-0000-0000-0000000000fd
 $P -c "insert into auth.users(id,email,email_confirmed_at) values ('$W','race3@x.com',now())" >/dev/null
 echo "set role authenticated; select set_config('request.jwt.claim.sub','$W',false); select complete_registration('Race_Three');" | $P >/dev/null
+$P -c "update profiles set created_at = now() - interval '10 hours' where id = '$W'" >/dev/null   # (tests only) the wait is over
 for i in $(seq 1 30); do ( echo "set role authenticated; select set_config('request.jwt.claim.sub','$W',false); select claim_free_pack('stack');" | $P >/dev/null 2>&1 ) & done; wait
 bal=$($P -tA -c "select balance from wallets where user_id='$W'")
 n=$($P -tA -c "select count(*) from transactions where user_id='$W' and type='free_pack'")

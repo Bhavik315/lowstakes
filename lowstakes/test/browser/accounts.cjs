@@ -200,42 +200,58 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await viaGoogle(pF, mockF, 'coins@gmail.com');
   await pF.fill('#a-user', 'Coin_Fan'); await wait(700); await pF.click('.acct-card button[type=submit]'); await wait(900);
   await pF.click('.acct-card [data-x]'); await wait(1200);
-  t('free coins: the header offers it, with a dot while packs are ready', await pF.locator('.coins-btn').count() === 1 && await pF.locator('.coins-btn .dot').count() === 1);
+  t('free coins: the header offers it', await pF.locator('.coins-btn').count() === 1);
   await pF.click('.coins-btn'); await wait(700);
   const cardsTxt = await text(pF);
   t('free coins: four packs with their amounts and refill times', ['Pocket change', 'Stack', 'Tower', 'High roller vault'].every((n) => cardsTxt.includes(n)) && ['1,000', '5,000', '15,000', '40,000'].every((n) => cardsTxt.includes(n)) && /every 4 hours/.test(cardsTxt) && /every 6 hours/.test(cardsTxt) && /every 24 hours/.test(cardsTxt) && /every 72 hours/.test(cardsTxt), cardsTxt.slice(0, 300));
   t('free coins: Popular and Best value tags, and the balance', /Popular/.test(cardsTxt) && /Best value/.test(cardsTxt) && /Balance 20,000/.test(cardsTxt));
-  t('free coins: a new account can claim all four straight away', await pF.locator('.cp-btn.ready').count() === 4);
+  const btns = await pF.locator('.cp-btn').evaluateAll((els) => els.map((e) => ({ id: e.dataset.claim, text: e.textContent.replace('◷', '').trim(), disabled: e.disabled })));
+  t('free coins: a brand-new account cannot claim anything yet (every pack is on its countdown)', btns.length === 4 && btns.every((x) => x.disabled && /^\d\d:\d\d:\d\d$/.test(x.text)) && await pF.locator('.cp-btn.ready').count() === 0, JSON.stringify(btns));
+  const want = { pocket: ['04:00:00', '03:59'], stack: ['06:00:00', '05:59'], tower: ['24:00:00', '23:59'], vault: ['72:00:00', '71:59'] };
+  t('...each counting down from its full length (4h / 6h / 24h / 72h)', btns.every((x) => x.text === want[x.id][0] || x.text.startsWith(want[x.id][1])), JSON.stringify(btns));
+  t('...with a line explaining the timers started at sign-up', /timers started when you signed up/.test(await text(pF)));
+  t('...so there is no dot on the header button yet', await pF.locator('.coins-btn .dot').count() === 0);
+  await pF.click('[data-claim=pocket]', { force: true, timeout: 2000 }).catch(() => {}); await wait(500);
+  t('clicking a waiting pack does nothing', mockF.profileOf('Coin_Fan').balance === 20000 && mockF.tx.filter((x) => x.type === 'free_pack').length === 0);
+  const tooSoon = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'pocket' });
+  t('forcing an early claim is refused by the backend and pays nothing', tooSoon.message === 'not_ready' && mockF.profileOf('Coin_Fan').balance === 20000);
+  t('an invented pack is refused', (await rpcRaw(pF, 'claim_free_pack', { p_pack: 'gold_mine' })).message === 'bad_pack');
+  await wait(2300);
+  const tick = (await pF.locator('[data-claim=pocket]').innerText()).replace('◷', '').trim();
+  t('the countdown ticks down', tick !== btns.find((x) => x.id === 'pocket').text, tick);
+  const reopen = async (hoursSinceSignup) => { mockF.shift = hoursSinceSignup * 3600e3; await pF.click('.acct-card [data-x]'); await wait(300); await pF.click('.coins-btn'); await wait(900); };
+
+  await reopen(5); // five hours after signing up: only the 4-hour pack is ready
+  t('after four hours only the first pack is ready, with the others still counting', await pF.locator('.cp-btn.ready').count() === 1 && await pF.locator('[data-claim=pocket].ready').count() === 1);
+  t('the 6-hour pack shows about an hour left', /^(01:00:00|00:59:\d\d)$/.test((await pF.locator('[data-claim=stack]').innerText()).replace('◷', '').trim()), await pF.locator('[data-claim=stack]').innerText());
   await pF.click('[data-claim=pocket]'); await wait(900);
   t('claiming adds the exact amount to the balance shown', /Balance 21,000/.test(await text(pF)) && mockF.profileOf('Coin_Fan').balance === 21000);
-  const cd = (await pF.locator('[data-claim=pocket]').innerText()).trim();
-  t('the claimed pack now shows a countdown from about 4 hours', /^(04:00:00|03:59:[0-5][0-9])$/.test(cd.replace('◷', '').trim()), cd);
-  await wait(2300);
-  const cd2 = (await pF.locator('[data-claim=pocket]').innerText()).replace('◷', '').trim();
-  t('the countdown ticks down', cd2 !== cd.replace('◷', '').trim());
+  t('...and the claimed pack counts down again from 4 hours', /^(04:00:00|03:59:\d\d)$/.test((await pF.locator('[data-claim=pocket]').innerText()).replace('◷', '').trim()));
+  t('...and the header chip shows the new balance', /21,000/.test(await pF.locator('.acct-chip').innerText()));
+
+  await reopen(6.1);
+  await pF.click('[data-claim=stack]'); await wait(900);
+  t('the 6-hour pack pays 5,000 once six hours have passed', mockF.profileOf('Coin_Fan').balance === 26000);
+
+  await reopen(25);
+  t('after a day the 24-hour pack is ready and the 72-hour one is not', await pF.locator('[data-claim=tower].ready').count() === 1 && await pF.locator('[data-claim=vault].ready').count() === 0);
   await pF.dblclick('[data-claim=tower]'); await wait(900);
-  t('a double click on a pack still pays once', mockF.profileOf('Coin_Fan').balance === 36000 && mockF.tx.filter((x) => x.type === 'free_pack' && x.ref === 'tower').length === 1, String(mockF.profileOf('Coin_Fan').balance));
-  const early = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'pocket' });
-  t('forcing an early claim is refused by the backend and pays nothing', early.message === 'not_ready' && mockF.profileOf('Coin_Fan').balance === 36000);
-  const bogus = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'gold_mine' });
-  t('an invented pack is refused', bogus.message === 'bad_pack');
-  const vaultCd = (await pF.locator('[data-claim=vault]').innerText()).trim();
-  t('a pack that has not been claimed is still ready', vaultCd === 'Claim');
-  await pF.click('[data-claim=vault]'); await wait(900);
-  t('the 72-hour pack counts down in hours beyond a day', /^(72:00:00|71:59:[0-5][0-9])$/.test((await pF.locator('[data-claim=vault]').innerText()).replace('◷', '').trim()), (await pF.locator('[data-claim=vault]').innerText()));
-  mockF.shift += (4 * 3600 + 60) * 1000; // four hours and a minute pass
+  t('a double click on a pack still pays once', mockF.profileOf('Coin_Fan').balance === 41000 && mockF.tx.filter((x) => x.type === 'free_pack' && x.ref === 'tower').length === 1, String(mockF.profileOf('Coin_Fan').balance));
+  const vEarly = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'vault' });
+  t('the 72-hour pack cannot be forced early', vEarly.message === 'not_ready' && mockF.profileOf('Coin_Fan').balance === 41000);
+  t('the 72-hour pack shows hours beyond a day', /^(4[67]:\d\d:\d\d)$/.test((await pF.locator('[data-claim=vault]').innerText()).replace('◷', '').trim()), await pF.locator('[data-claim=vault]').innerText());
+
+  await reopen(73);
+  t('after three days every pack is ready again', await pF.locator('.cp-btn.ready').count() === 4);
+  for (const id of ['vault', 'pocket', 'stack', 'tower']) { await pF.click(`[data-claim=${id}]`); await wait(900); }
+  t('claiming all four after the wait pays 40,000 + 1,000 + 5,000 + 15,000', mockF.profileOf('Coin_Fan').balance === 41000 + 61000, String(mockF.profileOf('Coin_Fan').balance));
+  t('every claim is one ledger row (7 in all)', mockF.txOf('Coin_Fan').filter((x) => x.type === 'free_pack').length === 7);
   await pF.click('.acct-card [data-x]'); await wait(300);
-  await pF.click('.coins-btn'); await wait(800);
-  t('after the timer runs out the pack can be claimed again', await pF.locator('[data-claim=pocket].ready').count() === 1 && await pF.locator('[data-claim=tower].ready').count() === 0);
-  await pF.click('[data-claim=pocket]'); await wait(800);
-  t('...and pays the same amount again', mockF.profileOf('Coin_Fan').balance === 36000 + 40000 + 1000);
-  const ledgerKinds = mockF.txOf('Coin_Fan').filter((x) => x.type === 'free_pack').length;
-  t('every claim is one ledger row', ledgerKinds === 4, String(ledgerKinds));
-  t('the header chip shows the new balance', /77,000/.test(await pF.locator('.acct-chip').innerText()), await pF.locator('.acct-chip').innerText());
-  await pF.click('[data-claim=stack]'); await wait(800);
-  await pF.click('.acct-card [data-x]'); await wait(300);
-  t('the dot disappears once nothing is ready', await pF.locator('.coins-btn .dot').count() === 0);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=37'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  t('the dot is gone once nothing is ready', await pF.locator('.coins-btn .dot').count() === 0);
+  await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
+  mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
+  t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=38'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();

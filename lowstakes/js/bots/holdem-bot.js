@@ -1,7 +1,7 @@
 // A reasonable, slightly loose Hold'em opponent: Monte Carlo equity against
 // the live field, pot odds, a little aggression and the occasional bluff.
-import { newDeck } from '../core/cards.js?v=37';
-import { evaluate } from '../core/evaluate.js?v=37';
+import { newDeck } from '../core/cards.js?v=38';
+import { evaluate } from '../core/evaluate.js?v=38';
 
 export function equity(hole, board, opponents, iters = 150) {
   const used = new Set([...hole, ...board]);

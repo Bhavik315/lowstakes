@@ -25,9 +25,33 @@ select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c3
 select pg_temp.t('an account that has not finished registering cannot claim', pg_temp.fails_with($$select claim_free_pack('pocket')$$, 'not_registered') and pg_temp.fails_with($$select get_free_packs()$$, 'not_registered'));
 select pg_temp.t('browsers cannot read the claims table or change the pack definitions', pg_temp.fails_with($$select * from pack_claims$$, 'permission denied') and pg_temp.fails_with($$select free_pack_defs()$$, 'permission denied'));
 
--- ===== listing and claiming
+-- ===== a brand-new account has to wait: the timers start at registration
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', false);
-select pg_temp.t('a new account sees four packs, all ready', (select count(*) = 4 and bool_and((p ->> 'ready')::boolean) from jsonb_array_elements(get_free_packs()) p));
+select pg_temp.t('a new account sees four packs and none is ready', (select count(*) = 4 and not bool_or((p ->> 'ready')::boolean) from jsonb_array_elements(get_free_packs()) p));
+select pg_temp.t('the timers start at full length (4h / 6h / 24h / 72h, give or take the seconds since signing up)',
+  (select bool_and((p ->> 'seconds_left')::int between (p ->> 'every_seconds')::int - 60 and (p ->> 'every_seconds')::int) from jsonb_array_elements(get_free_packs()) p));
+select pg_temp.t('claiming straight after signing up is refused for every pack, and pays nothing',
+  pg_temp.fails_with($$select claim_free_pack('pocket')$$, 'not_ready') and pg_temp.fails_with($$select claim_free_pack('stack')$$, 'not_ready')
+  and pg_temp.fails_with($$select claim_free_pack('tower')$$, 'not_ready') and pg_temp.fails_with($$select claim_free_pack('vault')$$, 'not_ready'));
+reset role;
+select pg_temp.t('...and nothing was written', pg_temp.bal('00000000-0000-0000-0000-0000000000c1') = 20000 and not exists (select 1 from transactions where type = 'free_pack') and not exists (select 1 from pack_claims));
+-- time passes (the test moves the registration time back; a player cannot do this)
+update profiles set created_at = now() - interval '3 hours 59 minutes' where id = '00000000-0000-0000-0000-0000000000c1';
+set role authenticated; select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', false);
+select pg_temp.t('one minute short of four hours after signing up: the first pack is still not ready', pg_temp.fails_with($$select claim_free_pack('pocket')$$, 'not_ready'));
+reset role;
+update profiles set created_at = now() - interval '4 hours 1 minute' where id = '00000000-0000-0000-0000-0000000000c1';
+set role authenticated; select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', false);
+select pg_temp.t('four hours after signing up only the first pack is ready', (select count(*) = 1 and bool_or(p ->> 'id' = 'pocket') from jsonb_array_elements(get_free_packs()) p where (p ->> 'ready')::boolean));
+select pg_temp.t('the 6-hour timer shows about two hours left', (select (p ->> 'seconds_left')::int between 7100 and 7200 from jsonb_array_elements(get_free_packs()) p where p ->> 'id' = 'stack'));
+reset role;
+-- enough time for everything, for the claiming tests below
+update profiles set created_at = now() - interval '100 hours' where id = '00000000-0000-0000-0000-0000000000c1';
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', false);
+-- ===== listing and claiming
+
+select pg_temp.t('after the wait, all four packs are ready', (select count(*) = 4 and bool_and((p ->> 'ready')::boolean) from jsonb_array_elements(get_free_packs()) p));
 select pg_temp.t('the packs are 1,000 / 5,000 / 15,000 / 40,000 on 4h / 6h / 24h / 72h timers',
   (select array_agg(((p ->> 'amount') || '/' || ((p ->> 'every_seconds')::int / 3600))) from jsonb_array_elements(get_free_packs()) p) = array['1000/4','5000/6','15000/24','40000/72']);
 select claim_free_pack('pocket') \gset
@@ -39,7 +63,7 @@ select pg_temp.t('an unknown pack is refused', pg_temp.fails_with($$select claim
 select claim_free_pack('vault') \gset
 select pg_temp.t('the big pack pays 40,000', pg_temp.bal('00000000-0000-0000-0000-0000000000c1') = 61000);
 reset role;
-select pg_temp.t('another player is unaffected', pg_temp.bal('00000000-0000-0000-0000-0000000000c2') = 20000);
+select pg_temp.t('another (brand-new) player is unaffected and still has to wait', pg_temp.bal('00000000-0000-0000-0000-0000000000c2') = 20000 and not exists (select 1 from pack_claims where user_id = '00000000-0000-0000-0000-0000000000c2'));
 
 -- ===== time passing (the test moves the stored claim time back; a player cannot do this)
 update pack_claims set last_claimed = now() - interval '3 hours 59 minutes' where pack = 'pocket' and user_id = '00000000-0000-0000-0000-0000000000c1';
