@@ -25,6 +25,10 @@ they can never send a coin amount to credit.
 5. Copy the Worker address (`https://lowstakes-server.<you>.workers.dev`), change `https` to `wss`, and put it in `lowstakes/js/config.js` as `serverUrl`.
 6. Add your site to `ALLOWED_ORIGINS` in `wrangler.toml` if it is not `https://lowstakes.pages.dev`.
 
+## Keep-alive
+A daily trigger (05:17 UTC, set under `[triggers]` in `wrangler.toml`) makes one harmless database call (`round_gain_cap('roulette')`), so the free Supabase
+project is not idle for a week. Check it under the Worker's **Settings, Triggers** (Cron Triggers) and in its logs (`[keepalive]`).
+
 ## Tests
 - `npm test`: table logic with a fake wallet (15 tests).
 - `bash test/sql-integration.sh`: the same logic against the real SQL migrations in a throwaway Postgres (needs postgresql-16, run as root).

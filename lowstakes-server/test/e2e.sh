@@ -5,7 +5,7 @@ here=$(cd "$(dirname "$0")/.." && pwd); cd "$here"
 SB_PORT=${SB_PORT:-54399}; WPORT=${WPORT:-8788}
 node scripts/sync-engines.mjs >/dev/null
 pkill -f workerd 2>/dev/null || true; pkill -f 'wrangler dev' 2>/dev/null || true; sleep 1
-npx wrangler dev --local --port "$WPORT" --ip 127.0.0.1 \
+npx wrangler dev --local --test-scheduled --port "$WPORT" --ip 127.0.0.1 \
   --var SUPABASE_URL:http://127.0.0.1:$SB_PORT --var SUPABASE_PUBLISHABLE_KEY:pub --var SUPABASE_SECRET_KEY:test-secret \
   --var ALLOWED_ORIGINS:http://localhost:8080 > /tmp/wrangler-dev.log 2>&1 &
 WP=$!

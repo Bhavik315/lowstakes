@@ -1,5 +1,6 @@
 // Worker entry point: sends each WebSocket to the Durable Object for its table code.
 export { Table } from './table.js';
+import { keepAlive } from './keepalive.js';
 
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
@@ -21,5 +22,10 @@ export default {
     const headers = new Headers(request.headers);
     headers.set('x-table-code', m[1]);
     return stub.fetch(new Request(request, { headers }));
+  },
+
+  // Runs once a day (see [triggers] in wrangler.toml).
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(keepAlive(env).then((r) => console.log('[keepalive]', JSON.stringify(r))));
   },
 };

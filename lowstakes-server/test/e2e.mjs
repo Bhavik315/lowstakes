@@ -12,7 +12,7 @@ const wallet = new FakeWallet();
 wallet.add('11111111-1111-1111-1111-111111111111', 'Alice_1', 20000);
 wallet.add('22222222-2222-2222-2222-222222222222', 'Bob_22', 20000);
 const TOKENS = { 'tok-alice': '11111111-1111-1111-1111-111111111111', 'tok-bob': '22222222-2222-2222-2222-222222222222' };
-const seen = { secretHeaderOnRpc: 0, rpcCalls: 0, userCalls: 0 };
+const seen = { secretHeaderOnRpc: 0, rpcCalls: 0, userCalls: 0, keepAlive: 0 };
 
 const sb = http.createServer((req, res) => {
   let body = ''; req.on('data', (c) => (body += c));
@@ -34,6 +34,7 @@ const sb = http.createServer((req, res) => {
       if (m[1] === 'leave_table') { await wallet.leave(a.p_user, a.p_code); return send(200, null); }
       if (m[1] === 'touch_table') { await wallet.touch(a.p_user, a.p_code); return send(200, null); }
       if (m[1] === 'settle_round') return send(200, await wallet.settle(a.p_items));
+      if (m[1] === 'round_gain_cap') { seen.keepAlive++; return send(200, 35); }
       if (m[1] === 'account_json') return send(200, { balance: await wallet.balance(a.p_user) });
     } catch (e) { return send(400, { message: e.code || 'error' }); }
     send(404, {});
@@ -142,6 +143,14 @@ test('a free pack claimed while seated is added to the table stack through a rea
   assert.equal(a.last('state').room.players[0].net, 0, 'not counted as a table win');
   a.send({ t: 'bye' });
   await wait(500);
+});
+
+test('the daily keep-alive trigger runs inside the Workers runtime and pings the database', async () => {
+  const before = seen.keepAlive;
+  const r = await fetch(WORKER.replace('ws', 'http') + '/__scheduled?cron=17+5+*+*+*');
+  assert.equal(r.status, 200);
+  for (let i = 0; i < 40 && seen.keepAlive === before; i++) await wait(100);
+  assert.equal(seen.keepAlive, before + 1, 'exactly one ping');
 });
 
 test('the secret key reaches the database only from the server, never to a browser', async () => {

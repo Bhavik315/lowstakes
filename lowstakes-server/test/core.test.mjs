@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setup, fakeConn, FakeWallet } from './helpers.mjs';
 import { held, GAME_LIMITS, TableCore } from '../src/core.js';
+import { keepAlive } from '../src/keepalive.js';
 
 const inv = (t) => t.assert; // (placeholder to keep imports tidy)
 
@@ -317,4 +318,20 @@ test('a refresh that arrives while a result is being saved waits, then applies',
   assert.equal(s.wallet.bal('u1'), 20000 + 3500 + 1000);
   assert.equal(s.core.player('u1').chips, 24500, 'saved first, then the top-up: nothing lost, nothing counted twice');
   synced(s);
+});
+
+test('keep-alive: one harmless database call with the secret key, and it never throws', async () => {
+  const calls = [];
+  const ok = await keepAlive({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'sb_secret_test' }, {
+    fetchFn: async (url, opts) => { calls.push({ url, key: opts.headers.apikey, body: opts.body }); return { ok: true, json: async () => 35 }; },
+  });
+  assert.deepEqual(ok, { ok: true });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, 'https://x.supabase.co/rest/v1/rpc/round_gain_cap');
+  assert.equal(calls[0].key, 'sb_secret_test');
+  assert.ok(!/user|balance|username/i.test(calls[0].body), 'it asks about no player');
+  const down = await keepAlive({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'k' }, { fetchFn: async () => { throw new Error('offline'); } });
+  assert.deepEqual(down, { ok: false, why: 'network' });
+  const unset = await keepAlive({});
+  assert.deepEqual(unset, { ok: false, why: 'not configured' });
 });
