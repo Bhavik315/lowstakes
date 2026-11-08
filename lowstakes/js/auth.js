@@ -3,7 +3,7 @@
 // The browser only ever holds a session token. Username and balance are read from the database,
 // and every change (registration bonus, username fee, later game payouts) happens in database
 // functions that check who is asking. Nothing here is trusted by the backend.
-import { CONFIG } from './config.js?v=33';
+import { CONFIG } from './config.js?v=34';
 
 const STORE = 'ls.auth';
 const FEE = 5000;
@@ -137,6 +137,13 @@ export const Auth = {
 
   // Sends the player to Google (via Supabase). They come back to this page with tokens in the address,
   // which consumeLink() picks up.
+  // A valid access token for the game server (refreshed first if it is about to expire).
+  async accessToken() {
+    if (!session) throw new AuthError(401, 'not_authenticated');
+    if (session.expires_at - Date.now() < 60000) await refresh();
+    return session.access_token;
+  },
+
   signInWithGoogle() {
     const back = encodeURIComponent(location.origin + location.pathname);
     location.href = `${CONFIG.supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${back}`;

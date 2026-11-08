@@ -6,6 +6,9 @@ export const CONFIG = {
   supabaseKey: 'sb_publishable_COgy0nfCPaaPLH1CRWpuWg_pNf-_PO-',
   // Sign-in is Google only (no passwords, no email sign-up). It needs Google switched on in Supabase
   // (Authentication > Providers > Google), and the Email provider switched off.
+  // The game server (Cloudflare Worker), as wss://... . Empty = tables run in the browser as before, with free chips.
+  // Set it once the server is deployed (see lowstakes-server/README.md). Signed-in players then play for wallet coins.
+  serverUrl: '',
   // When true, nobody can use the site without an account. Keep false until the games run on the
   // server and use the wallet; until then game chips are separate from the wallet.
   requireLogin: false,

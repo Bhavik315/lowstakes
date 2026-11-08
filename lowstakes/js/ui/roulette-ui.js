@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, CHIP_VALUES, refillLabel } from './parts.js?v=33';
-import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=33';
+import { esc, fmt, signed, chip, CHIP_VALUES, outOfChips } from './parts.js?v=34';
+import { WHEEL, colorOf, spotInfo } from '../games/roulette.js?v=34';
 
 const SEG = 360 / 37;
 
@@ -160,7 +160,7 @@ export function dock(view, state, ui) {
     return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">${note}</p></div><div class="dock-side"></div>` };
   }
   if (chips < view.settings.min && !me.total) {
-    return { sig, html: `<div class="dock-hand"></div><div class="dock-mid"><p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">${refillLabel(state.room.settings.start)}</button></div><div class="dock-side"></div>` };
+    return { sig, html: `<div class="dock-hand"></div><div class="dock-mid">${outOfChips(state)}</div><div class="dock-side"></div>` };
   }
   if (me.ready) {
     return { sig, html: `<div class="dock-hand"><span>On the table</span><b>${fmt(me.total)}</b></div><div class="dock-mid"><p class="dock-note">You're done. Spinning when everyone else is.</p><button class="btn btn-quiet btn-sm" data-act="rl-unready">Change my bets</button></div><div class="dock-side"></div>` };

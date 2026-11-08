@@ -1,5 +1,5 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=33';
-import { COLORS } from '../net/room.js?v=33';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=34';
+import { COLORS } from '../net/room.js?v=34';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 

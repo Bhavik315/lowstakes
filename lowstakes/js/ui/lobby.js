@@ -1,5 +1,5 @@
-import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=33';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=33';
+import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=34';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=34';
 
 const BLURB = {
   holdem: 'No-limit. Two to nine players.',
@@ -51,7 +51,7 @@ export function lobby(state, ui) {
   const have = room.players.length;
   const over = Math.max(0, have - limit);
   const full = have >= limit;
-  const link = inviteLink(room.code);
+  const link = inviteLink(room.code, room.server);
   const offline = room.status === 'offline' || room.status === 'taken';
 
   const players = room.players.map((p) => `
@@ -96,7 +96,7 @@ export function lobby(state, ui) {
     ${isHost ? `
     <div class="settings">
       ${settingsForm(pick, room.settings)}
-      <label class="field sm"><span>Chips per buy-in</span><select data-set="start">${[500, 1000, 2500, 10000].map((v) => opt(v, room.settings.start, fmt(v))).join('')}</select></label>
+      ${room.walletMode ? '<p class="asub small wallet-note">Everyone plays with their own wallet coins here.</p>' : `      <label class="field sm"><span>Chips per buy-in</span><select data-set="start">${[500, 1000, 2500, 10000].map((v) => opt(v, room.settings.start, fmt(v))).join('')}</select></label>`}
     </div>
     <button class="btn btn-primary btn-wide" data-act="start-game"${over ? ' disabled' : ''}>Deal ${GAME_NAMES[pick]}</button>
     ${over ? `<p class="lobby-hint cap-note" role="status">${GAME_NAMES[pick]} seats ${limit}, but ${have} are at the table. Remove ${over} ${over === 1 ? 'player or bot' : 'players or bots'} to deal it.</p>` : ''}
@@ -106,8 +106,8 @@ export function lobby(state, ui) {
 </div>`;
 }
 
-export function inviteLink(code) {
+export function inviteLink(code, server = false) {
   const url = new URL(location.href);
-  url.hash = `#/t/${code}`;
+  url.hash = `#/${server ? 's' : 't'}/${code}`;
   return url.toString();
 }

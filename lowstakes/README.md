@@ -15,6 +15,8 @@ Supabase setup is in `supabase/README.md` (switch the Email provider off, switch
 `requireLogin` is `false` on purpose: the four games still run in the host's browser with their own table chips, so they do not use the wallet yet.
 Turning it on, and moving the games onto a server so payouts can be trusted, is the next stage. Account deletion is not built yet (it is a manual step in Supabase).
 
+The game server (`lowstakes-server/`) runs tables for signed-in players and settles each round into the wallet; see its README. Until `serverUrl` is set in `js/config.js`, tables run in the browser as before.
+
 Tests: `supabase/test/run.sh` (SQL rules and races on a local Postgres) and `test/browser/accounts.cjs` (screens against a stand-in backend).
 
 ## Ads

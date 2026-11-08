@@ -18,7 +18,7 @@ const MAX_PLAYERS = 12;
 const BOT_START = 1000; // bots play with free chips; they have no wallet
 const COLORS = ['#E0472F', '#2A55C9', '#E8A825', '#1E8C7E', '#8A3B78', '#EE7B30', '#E86A92', '#4BA3D9', '#7FA83A', '#5B4B8A', '#C2563A', '#2F7D57'];
 const BOTS = [['Marguerite', 0.2], ['Big Sal', 0.85], ['Dottie', 0.4], ['Vinnie', 0.7], ['Professor', 0.3], ['June', 0.55], ['Otis', 0.65], ['Lola', 0.9], ['Hank', 0.15], ['Rosa', 0.5], ['Teddy', 0.75]];
-const REACTIONS = ['nice', 'ha', 'ouch', 'gg', 'bluff', 'wow'];
+const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
 const AWAY_MS = 60_000; // a disconnected player's seat is released after this, once nothing is staked
 
 const DEFAULT_SETTINGS = {

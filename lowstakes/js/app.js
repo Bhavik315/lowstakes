@@ -1,19 +1,20 @@
-import { Ads } from './ads.js?v=33';
-import { Auth } from './auth.js?v=33';
-import { CONFIG } from './config.js?v=33';
-import * as AU from './ui/account-ui.js?v=33';
-import morphdom from '../vendor/morphdom-esm.js?v=33';
-import { Host, Guest, cleanCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=33';
-import { landing, gate } from './ui/landing.js?v=33';
-import { lobby, inviteLink } from './ui/lobby.js?v=33';
-import * as HU from './ui/holdem-ui.js?v=33';
-import * as BU from './ui/blackjack-ui.js?v=33';
-import * as RU from './ui/roulette-ui.js?v=33';
-import * as CU from './ui/crash-ui.js?v=33';
-import { sound } from './ui/sound.js?v=33';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=33';
-import { WHEEL } from './games/roulette.js?v=33';
-import * as Motion from './ui/motion.js?v=33';
+import { Ads } from './ads.js?v=34';
+import { Auth } from './auth.js?v=34';
+import { CONFIG } from './config.js?v=34';
+import * as AU from './ui/account-ui.js?v=34';
+import morphdom from '../vendor/morphdom-esm.js?v=34';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=34';
+import { landing, gate } from './ui/landing.js?v=34';
+import { lobby, inviteLink } from './ui/lobby.js?v=34';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=34';
+import * as HU from './ui/holdem-ui.js?v=34';
+import * as BU from './ui/blackjack-ui.js?v=34';
+import * as RU from './ui/roulette-ui.js?v=34';
+import * as CU from './ui/crash-ui.js?v=34';
+import { sound } from './ui/sound.js?v=34';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=34';
+import { WHEEL } from './games/roulette.js?v=34';
+import * as Motion from './ui/motion.js?v=34';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -55,6 +56,19 @@ const S = {
 function route() {
   const h = location.hash;
   if (S.screen === 'landing' && h && !h.startsWith('#/')) return; // in-page anchors
+  const sm = h.match(/^#\/s\/([A-Za-z0-9]{5})/);
+  if (sm) {
+    const code = cleanCode(sm[1]);
+    if (S.client && S.client.code === code) { if (S.screen !== 'table' && S.state) showTable(); return; }
+    if (S.client) leave(false);
+    if (!serverEnabled()) { showLanding('Wallet tables are not switched on yet.'); return; }
+    if (!Auth.ready()) {
+      // A returning player's account is still loading at start-up: wait for it before deciding they are signed out.
+      if (Auth.signedIn() && !S.authSettled) { showGate(code, { status: 'connecting' }); S.authReady.then(() => route()); return; }
+      showLanding('Sign in with Google to join this table.'); AU.openAuth('signin'); return;
+    }
+    return joinServerTable(code, false);
+  }
   const m = h.match(/^#\/t\/([A-Za-z0-9]{5})/);
   if (m) {
     const code = cleanCode(m[1]);
@@ -85,6 +99,8 @@ function hostSnapshot(code) {
 
 // ---------------------------------------------------------------- landing + gate
 function showLanding(error = '') {
+  if (!error && S.flash) error = S.flash;
+  S.flash = '';
   S.screen = 'landing';
   document.body.className = 'on-landing';
   document.title = 'Low Stakes';
@@ -100,12 +116,14 @@ function showLanding(error = '') {
     e.preventDefault();
     sound.unlock();
     if (!readMe(form)) return;
+    const server = serverEnabled() && Auth.ready();
     if (mode === 'join') {
       const c = cleanCode(code.value);
       if (c.length !== 5) { formError('Table codes are five letters and numbers, like K7QXM.'); code.focus(); return; }
-      location.hash = `#/t/${c}`;
+      location.hash = `#/${server ? 's' : 't'}/${c}`; // a signed-in player tries a wallet table first, then a friend's browser table
       return;
     }
+    if (mode === 'host' && server) { startServerTable(); return; }
     startHost({ bots: mode === 'bots' });
   });
 }
@@ -174,6 +192,21 @@ function startHost({ code, snapshot, bots } = {}) {
   if (snapshot) toast('Table restored. Your friends will reconnect automatically.');
 }
 
+// A table on the game server: the coins are the player's wallet.
+function startServerTable() {
+  const code = newCode();
+  const client = new ServerClient({ code, create: true });
+  wire(client);
+  location.hash = `#/s/${code}`;
+}
+
+function joinServerTable(code, create) {
+  const client = new ServerClient({ code, create });
+  client.fromLink = true;
+  wire(client);
+  showGate(code, { status: 'connecting' });
+}
+
 function joinTable(code) {
   try { sessionStorage.setItem('ls.room', code); } catch {}
   const guest = new Guest({ name: S.me.name, color: S.me.color, code });
@@ -189,12 +222,14 @@ function wire(client) {
   client.on('state', (msg) => { if (S.client === client) onState(msg); });
   client.on('status', (st) => { if (S.client === client) onStatus(st); });
   client.on('react', (msg) => { if (S.client === client) showReaction(msg); });
+  client.on('notice', (n) => { if (S.client === client && n && n.text) toast(n.text); });
   client.on('stage', (st) => { if (S.client === client && S.screen === 'gate') gateStage(st); });
 }
 
 function onStatus(st) {
   const c = S.client;
   if (!c) return;
+  if (c.isServer) return onServerStatus(c, st);
   if (!c.isHost) {
     if (st === 'notfound' && S.screen !== 'table') {
       const code = c.code;
@@ -225,8 +260,35 @@ function onStatus(st) {
   if (S.screen === 'table') renderBanner();
 }
 
+function onServerStatus(c, st) {
+  const code = c.code;
+  // Leave the table, go home, and show the reason on the landing page (the message survives the navigation).
+  const back = (msg) => { leave(false); S.flash = msg || ''; if (location.hash === '#/') showLanding(); else location.hash = '#/'; };
+  if (st === 'notfound') {
+    // No wallet table has this code: it may be a friend's table running in their browser.
+    leave(false);
+    location.hash = `#/t/${code}`;
+    return;
+  }
+  if (st === 'signin') { leave(false); location.hash = '#/'; AU.openAuth('signin', { message: 'Please sign in again to join a table.' }); return; }
+  if (st === 'unregistered') { leave(false); location.hash = '#/'; AU.openProfile(); return; }
+  if (st === 'elsewhere') { back('You are already at another table. Leave it first (or wait about a minute if you just closed it), then try again.'); return; }
+  if (st === 'full') {
+    const info = c.fullInfo || {};
+    back(info.game ? `That ${GAME_NAMES[info.game]} table is full (${info.limit} players).` : `That table is full (${info.limit || 12} players).`);
+    return;
+  }
+  if (st === 'noserver' || st === 'rejected') { back('Could not reach the game server. Check your connection and try again.'); return; }
+  if (st === 'kicked') { leave(false); location.hash = '#/'; toast('The table owner removed you from the table.'); return; }
+  if (st === 'closed') { if (S.screen === 'table') renderClosed(); return; }
+  if (S.screen === 'table') renderBanner();
+}
+
 function leave(navigate = true) {
+  const wasServer = !!(S.client && S.client.isServer);
   if (S.client) S.client.close();
+  // coins won or lost at a wallet table are saved by the server; pick up the new balance once it has had a moment
+  if (wasServer && Auth.signedIn()) setTimeout(() => Auth.loadAccount().catch(() => {}), 900);
   try { sessionStorage.removeItem('ls.room'); } catch {}
   S.client = null;
   S.state = null;
@@ -429,7 +491,8 @@ function renderBanner() {
   if (!el || !S.client) return;
   const st = S.client.status;
   let msg = '';
-  if (!S.client.isHost && st === 'reconnecting') msg = 'Lost the connection to the host. Reconnecting…';
+  if (S.client.isServer && st === 'reconnecting') msg = 'Lost the connection to the game server. Reconnecting…';
+  else if (!S.client.isHost && st === 'reconnecting') msg = 'Lost the connection to the host. Reconnecting…';
   if (S.client.isHost && st === 'reconnecting') msg = 'Lost the matchmaking server. Players already here can keep playing; reconnecting…';
   if (S.client.isHost && st === 'offline' && S.state && S.state.room.gameId) msg = 'Offline: friends can’t join right now, but bots can still play.';
   el.textContent = msg;
@@ -613,7 +676,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 async function copyInvite() {
-  const link = inviteLink(S.state.room.code);
+  const link = inviteLink(S.state.room.code, S.state.room.server);
   if (navigator.share && matchMedia('(pointer: coarse)').matches) {
     try { await navigator.share({ title: 'Low Stakes', text: `Pull up a chair: table ${S.state.room.code}`, url: link }); return; } catch {}
   }
@@ -1186,6 +1249,7 @@ AU.setToast(toast);
 ageGate(async () => {
   const link = Auth.consumeLink(); // must run before route() reads the address
   const starting = Auth.init();
+  S.authReady = starting.catch(() => {}).then(() => { S.authSettled = true; });
   if (CONFIG.requireLogin) {
     await starting;
     if (!Auth.ready()) { if (link) await AU.handleLink(link); else AU.openAuth('signin', { required: true }); }

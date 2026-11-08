@@ -61,6 +61,8 @@ export class Table {
           if (!msg || msg.t !== 'hello') return;
           const u = await verifyUser(msg.token, { url: this.env.SUPABASE_URL, publishableKey: this.env.SUPABASE_PUBLISHABLE_KEY });
           if (!u) { conn.send({ t: 'reject', why: 'auth' }); setTimeout(() => conn.close(), 200); return; }
+          // A table exists only while someone is at it. Opening an unknown code is an error unless the player is creating it.
+          if ((!this.core || this.core.closed) && msg.create !== true) { conn.send({ t: 'reject', why: 'notfound' }); setTimeout(() => conn.close(), 300); return; }
           const core = this.getCore(code);
           const r = await core.connect(conn, u);
           if (!r.ok) { conn.send({ t: 'reject', why: r.why, game: r.game, limit: r.limit }); setTimeout(() => conn.close(), 300); return; }

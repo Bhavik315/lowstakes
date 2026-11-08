@@ -1,5 +1,5 @@
 // Small markup builders shared by every screen.
-import { Ads } from '../ads.js?v=33';
+import { Ads } from '../ads.js?v=34';
 
 export const ROCKET_SVG = `<svg class="mini-crash" viewBox="0 0 90 90" aria-hidden="true"><g transform="rotate(45 45 45)">
 <path d="M45 70 C37 78 40 88 45 92 C50 88 53 78 45 70Z" fill="#FFB43C"/><path d="M45 70 C41 75 42 82 45 85 C48 82 49 75 45 70Z" fill="#FFF3B0"/>
@@ -10,6 +10,10 @@ export const ROCKET_SVG = `<svg class="mini-crash" viewBox="0 0 90 90" aria-hidd
 <circle cx="45" cy="40" r="7.500" fill="#10302A"/><circle cx="43.500" cy="38.500" r="4.800" fill="#6FC3E8"/></g></svg>`;
 // The out-of-chips button: a rewarded ad when a network is connected, otherwise the free rebuy.
 export const refillLabel = (n) => (Ads.enabled() ? `Watch an ad to refill ${fmt(n)}` : `Buy back in for ${fmt(n)}`);
+// The "out of chips" part of the dock. At a server table the chips are wallet coins, so there is no free rebuy.
+export const outOfChips = (state) => (state.room.walletMode
+  ? '<p class="dock-note">You\'re out of coins.</p>'
+  : `<p class="dock-note">You're out of chips.</p><button class="btn btn-primary" data-act="rebuy">${refillLabel(state.room.settings.start)}</button>`);
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 export const fmt = (n) => Math.round(n).toLocaleString('en-US');
 export const signed = (n) => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n));

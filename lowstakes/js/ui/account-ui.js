@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=33';
-import { esc, fmt, signed } from './parts.js?v=33';
+import { Auth, explain, usernameProblem } from '../auth.js?v=34';
+import { esc, fmt, signed } from './parts.js?v=34';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -188,6 +188,8 @@ export function openProfile() {
   if (!Auth.signedIn()) return openAuth('signin');
   if (!Auth.ready()) return afterAuth('');
   renderProfile();
+  // the balance may have changed at a table since the page loaded: refresh it, then redraw if the profile is still open
+  Auth.loadAccount().then(() => { if (root && root.querySelector('.aname')) { const open = root.querySelector('#a-new'); if (!open || !open.value) renderProfile(); } }).catch(() => {});
 }
 
 function renderProfile(extra = {}) {
