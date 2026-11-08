@@ -1,7 +1,7 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=32';
-import { newDeck, shuffle } from '../core/cards.js?v=32';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=32';
+import { Engine } from '../core/engine.js?v=33';
+import { newDeck, shuffle } from '../core/cards.js?v=33';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=33';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
@@ -83,7 +83,9 @@ export class Blackjack extends Engine {
 
   setBet(seat, amount) {
     const p = this.player(seat.pid);
-    amount = Math.max(0, Math.floor(amount));
+    amount = Math.floor(Number(amount));
+    if (!Number.isFinite(amount)) amount = 0;
+    amount = Math.max(0, amount);
     const bank = p.chips + seat.bet;
     amount = Math.min(amount, bank);
     p.chips = bank - amount;

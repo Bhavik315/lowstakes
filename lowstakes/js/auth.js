@@ -3,7 +3,7 @@
 // The browser only ever holds a session token. Username and balance are read from the database,
 // and every change (registration bonus, username fee, later game payouts) happens in database
 // functions that check who is asking. Nothing here is trusted by the backend.
-import { CONFIG } from './config.js?v=32';
+import { CONFIG } from './config.js?v=33';
 
 const STORE = 'ls.auth';
 const FEE = 5000;

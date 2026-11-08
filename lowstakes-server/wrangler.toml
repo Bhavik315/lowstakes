@@ -1,0 +1,27 @@
+# Low Stakes game server: one Durable Object per table, speaking WebSocket to the browser and
+# settling each finished round into the player's wallet in Supabase.
+name = "lowstakes-server"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# The browser copies of the game engines are the single source of truth; this step copies them in
+# (dropping the ?v= cache-busting suffix from import paths, which bundlers cannot resolve).
+[build]
+command = "node scripts/sync-engines.mjs"
+
+[durable_objects]
+bindings = [{ name = "TABLE", class_name = "Table" }]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Table"]
+
+[vars]
+SUPABASE_URL = "https://pupyykzrfbuimvuwohya.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "sb_publishable_COgy0nfCPaaPLH1CRWpuWg_pNf-_PO-"
+# Browsers allowed to open a table. Add your own domain here once you have one.
+ALLOWED_ORIGINS = "https://lowstakes.pages.dev,http://localhost:8080"
+
+# SECRET (never put it in this file): SUPABASE_SECRET_KEY
+#   Set it in the Cloudflare dashboard: Workers & Pages > lowstakes-server > Settings > Variables and Secrets,
+#   or with: npx wrangler secret put SUPABASE_SECRET_KEY

@@ -1,8 +1,8 @@
 // Crash: a multiplier climbs from 1.00x until it crashes at a point decided before launch.
 // Everyone bets, then tries to cash out before the crash. Cash out in time and you get
 // bet x multiplier; miss it and the bet is gone. Players can also set an auto cash-out.
-import { Engine } from '../core/engine.js?v=32';
-import { randInt } from '../core/cards.js?v=32';
+import { Engine } from '../core/engine.js?v=33';
+import { randInt } from '../core/cards.js?v=33';
 
 // The multiplier is exp(GROWTH * seconds): 2x at ~8s, 10x at ~27s, 100x at ~54s.
 export const GROWTH = 0.085;
@@ -48,7 +48,8 @@ export class Crash extends Engine {
   setAmount(pid, amount) {
     const p = this.player(pid);
     if (!p) return false;
-    amount = Math.max(0, Math.floor(amount) || 0);
+    amount = Math.floor(Number(amount));
+    amount = Number.isFinite(amount) ? Math.max(0, amount) : 0;
     const cur = this.bet(pid);
     const was = cur ? cur.amount : 0;
     if (amount - was > p.chips) return false;

@@ -1,0 +1,14 @@
+{
+  "name": "lowstakes-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-engines.mjs",
+    "test": "node scripts/sync-engines.mjs && node --test test/*.test.mjs",
+    "dev": "node scripts/sync-engines.mjs && wrangler dev",
+    "deploy": "node scripts/sync-engines.mjs && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

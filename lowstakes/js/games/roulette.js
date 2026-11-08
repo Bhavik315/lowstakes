@@ -1,6 +1,6 @@
 // Single-zero roulette on a shared layout.
-import { Engine } from '../core/engine.js?v=32';
-import { randInt } from '../core/cards.js?v=32';
+import { Engine } from '../core/engine.js?v=33';
+import { randInt } from '../core/cards.js?v=33';
 
 export const WHEEL = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
 export const REDS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
@@ -57,8 +57,8 @@ export class Roulette extends Engine {
   place(pid, spot, amount) {
     const p = this.player(pid);
     if (!p || !spotInfo(spot)) return false;
-    amount = Math.floor(amount);
-    if (amount < 1 || amount > p.chips) return false;
+    amount = Math.floor(Number(amount));
+    if (!Number.isFinite(amount) || amount < 1 || amount > p.chips) return false;
     p.chips -= amount;
     const existing = this.bets.find((b) => b.pid === pid && b.spot === spot);
     if (existing) existing.amount += amount;
