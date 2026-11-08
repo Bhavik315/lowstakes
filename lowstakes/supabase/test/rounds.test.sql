@@ -61,6 +61,25 @@ select pg_temp.t('one bad item does not block the others in a batch',
      '[{"user":"00000000-0000-0000-0000-0000000000a1","table":"ABCDE","game":"roulette","ref":"20","delta":-9999999},
        {"user":"00000000-0000-0000-0000-0000000000a2","table":"ABCDE","game":"roulette","ref":"20","delta":-1000},
        {"user":"00000000-0000-0000-0000-0000000000a1","table":"ABCDE","game":"roulette","ref":"21","delta":-1}]') r) q));
+
+-- ===== renaming is refused while seated, and allowed after leaving
+select join_table('00000000-0000-0000-0000-0000000000a2', 'ABCDE', 'roulette');
+reset role;
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a2', false);
+select pg_temp.t('renaming while seated is refused and charges nothing', pg_temp.fails_with($$select change_username('Two_Renamed','req-seated-0001')$$, 'leave_table_first')
+  and (select balance from wallets where user_id = '00000000-0000-0000-0000-0000000000a2') = (select balance from wallets where user_id = '00000000-0000-0000-0000-0000000000a2'));
+reset role;
+select balance as before_rename from wallets where user_id = '00000000-0000-0000-0000-0000000000a2' \gset
+set role service_role;
+select leave_table('00000000-0000-0000-0000-0000000000a2', 'ABCDE');
+reset role;
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a2', false);
+select change_username('Two_Renamed', 'req-seated-0002') \gset
+reset role;
+select pg_temp.t('after leaving the table the rename works and costs exactly 5000', (select balance from wallets where user_id = '00000000-0000-0000-0000-0000000000a2') = :before_rename - 5000);
+set role service_role;
 select pg_temp.t('ledger rows are round_result with the table reference', exists (select 1 from transactions where type = 'round_result' and game = 'roulette' and ref = 'ABCDE:7' and amount = -500));
 select pg_temp.t('wallet equals the sum of its ledger, for both players', not exists (select 1 from wallets w where w.balance <> (select coalesce(sum(amount),0) from transactions t where t.user_id = w.user_id)));
 select pg_temp.t('the wallet balance never went negative', not exists (select 1 from wallets where balance < 0));

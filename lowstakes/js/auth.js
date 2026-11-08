@@ -217,6 +217,7 @@ export function explain(e) {
     username_reserved: 'That username is reserved. Pick another.',
     username_taken: 'That username is taken. Try another.',
     same_username: 'That is already your username.',
+    leave_table_first: 'Leave your table first, then change your username. Your coins are in play while you are seated.',
     insufficient_balance: `You need ${FEE.toLocaleString('en-US')} coins to change your username.`,
     email_not_verified: 'Verify your email first, then choose your username.',
     email_in_use: 'That email already has a Low Stakes account. Sign in with it instead.',

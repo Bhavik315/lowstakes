@@ -107,3 +107,40 @@ revoke all on function public.round_gain_cap(text), public.join_table(uuid, text
   public.leave_table(uuid, text), public.settle_round(jsonb) from public, anon, authenticated;
 grant execute on function public.round_gain_cap(text), public.join_table(uuid, text, text), public.touch_table(uuid, text),
   public.leave_table(uuid, text), public.settle_round(jsonb) to service_role;
+
+-- Renaming costs coins, so it must not happen while a table is playing with this wallet (the table would be
+-- working from a stale balance). The rename is refused until the player has left their table.
+create or replace function public.change_username(p_new text, p_request_id text) returns jsonb
+language plpgsql security definer set search_path = public, auth as $$
+declare
+  v_uid uuid := auth.uid(); v_key text; v_bal bigint; v_cur text; v_problem text;
+begin
+  if v_uid is null then raise exception 'not_authenticated' using errcode = '28000'; end if;
+  if p_request_id is null or length(p_request_id) < 8 or length(p_request_id) > 80 then raise exception 'bad_request'; end if;
+  v_key := 'username:' || p_request_id;
+
+  select balance into v_bal from public.wallets where user_id = v_uid for update;   -- serialises this player's requests
+  if not found then raise exception 'not_registered'; end if;
+
+  if exists (select 1 from public.transactions where user_id = v_uid and idempotency_key = v_key) then
+    return public.account_json(v_uid) || jsonb_build_object('already', true);       -- a retry: never charge twice
+  end if;
+
+  if exists (select 1 from public.table_presence where user_id = v_uid and last_seen > now() - interval '2 minutes') then
+    raise exception 'leave_table_first';
+  end if;
+
+  v_problem := public.username_problem(p_new);
+  if v_problem is not null then raise exception '%', v_problem; end if;
+  select username into v_cur from public.profiles where id = v_uid;
+  if lower(p_new) = lower(v_cur) then raise exception 'same_username'; end if;
+  if v_bal < 5000 then raise exception 'insufficient_balance'; end if;
+
+  begin
+    update public.profiles set username = p_new, username_changes = username_changes + 1, username_changed_at = now() where id = v_uid;
+  exception when unique_violation then
+    raise exception 'username_taken';
+  end;
+  perform public.wallet_apply(v_uid, 'username_change_fee', -5000, null, 'username:' || v_cur || '>' || p_new, v_key);
+  return public.account_json(v_uid) || jsonb_build_object('already', false, 'fee', 5000);
+end $$;
