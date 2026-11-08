@@ -40,4 +40,19 @@ for i in $(seq 1 30); do ( echo "$S select settle_wager('$w', 36000);" | $P >/de
 bal=$($P -tA -c "select balance from wallets where user_id='$U'")
 echo "RACE settle x30: balance=$bal (want 36000)"
 [ "$bal" = 36000 ] || exit 1
+
+# 6. round settlement under load (migration 0002): seat the player, then hammer settle_round
+$P -c "select complete_registration" >/dev/null 2>&1 || true
+V=00000000-0000-0000-0000-0000000000fe
+$P -c "insert into auth.users(id,email,email_confirmed_at) values ('$V','race2@x.com',now())" >/dev/null
+echo "set role authenticated; select set_config('request.jwt.claim.sub','$V',false); select complete_registration('Race_Two');" | $P >/dev/null
+echo "set role service_role; select join_table('$V','RACE1','crash');" | $P >/dev/null
+for i in $(seq 1 30); do ( echo "set role service_role; select settle_round('[{\"user\":\"$V\",\"table\":\"RACE1\",\"game\":\"crash\",\"ref\":\"same\",\"delta\":-1000}]');" | $P >/dev/null 2>&1 ) & done; wait
+bal=$($P -tA -c "select balance from wallets where user_id='$V'")
+echo "RACE settle same round x30: balance=$bal (want 19000)"
+[ "$bal" = 19000 ] || exit 1
+for i in $(seq 1 40); do ( echo "set role service_role; select settle_round('[{\"user\":\"$V\",\"table\":\"RACE1\",\"game\":\"crash\",\"ref\":\"r$i\",\"delta\":-1000}]');" | $P >/dev/null 2>&1 ) & done; wait
+bal=$($P -tA -c "select balance from wallets where user_id='$V'")
+echo "RACE 40 different losing rounds of 1000 from 19000: balance=$bal (want 0, never negative)"
+[ "$bal" = 0 ] || exit 1
 echo "RACE ALL OK"
