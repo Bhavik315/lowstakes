@@ -192,6 +192,54 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   t('no secret key is present in the shipped config', !/sb_secret_[A-Za-z0-9]|eyJ[A-Za-z0-9_-]{20,}/.test(require('fs').readFileSync(require('path').join(__dirname, '../../js/config.js'), 'utf8')));
   await ctx.close();
 
+  // ---- free coins
+  const mockF = makeMock();
+  const ctxF = await newCtx(b, mockF);
+  const pF = await ctxF.newPage(); pF.on('pageerror', e => errs.push(e.message));
+  await pF.goto(BASE); await wait(600); await pF.click('[data-acct=signin]'); await wait(200);
+  await viaGoogle(pF, mockF, 'coins@gmail.com');
+  await pF.fill('#a-user', 'Coin_Fan'); await wait(700); await pF.click('.acct-card button[type=submit]'); await wait(900);
+  await pF.click('.acct-card [data-x]'); await wait(1200);
+  t('free coins: the header offers it, with a dot while packs are ready', await pF.locator('.coins-btn').count() === 1 && await pF.locator('.coins-btn .dot').count() === 1);
+  await pF.click('.coins-btn'); await wait(700);
+  const cardsTxt = await text(pF);
+  t('free coins: four packs with their amounts and refill times', ['Pocket change', 'Stack', 'Tower', 'High roller vault'].every((n) => cardsTxt.includes(n)) && ['1,000', '5,000', '15,000', '40,000'].every((n) => cardsTxt.includes(n)) && /every 4 hours/.test(cardsTxt) && /every 6 hours/.test(cardsTxt) && /every 24 hours/.test(cardsTxt) && /every 72 hours/.test(cardsTxt), cardsTxt.slice(0, 300));
+  t('free coins: Popular and Best value tags, and the balance', /Popular/.test(cardsTxt) && /Best value/.test(cardsTxt) && /Balance 20,000/.test(cardsTxt));
+  t('free coins: a new account can claim all four straight away', await pF.locator('.cp-btn.ready').count() === 4);
+  await pF.click('[data-claim=pocket]'); await wait(900);
+  t('claiming adds the exact amount to the balance shown', /Balance 21,000/.test(await text(pF)) && mockF.profileOf('Coin_Fan').balance === 21000);
+  const cd = (await pF.locator('[data-claim=pocket]').innerText()).trim();
+  t('the claimed pack now shows a countdown from about 4 hours', /^(04:00:00|03:59:[0-5][0-9])$/.test(cd.replace('◷', '').trim()), cd);
+  await wait(2300);
+  const cd2 = (await pF.locator('[data-claim=pocket]').innerText()).replace('◷', '').trim();
+  t('the countdown ticks down', cd2 !== cd.replace('◷', '').trim());
+  await pF.dblclick('[data-claim=tower]'); await wait(900);
+  t('a double click on a pack still pays once', mockF.profileOf('Coin_Fan').balance === 36000 && mockF.tx.filter((x) => x.type === 'free_pack' && x.ref === 'tower').length === 1, String(mockF.profileOf('Coin_Fan').balance));
+  const early = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'pocket' });
+  t('forcing an early claim is refused by the backend and pays nothing', early.message === 'not_ready' && mockF.profileOf('Coin_Fan').balance === 36000);
+  const bogus = await rpcRaw(pF, 'claim_free_pack', { p_pack: 'gold_mine' });
+  t('an invented pack is refused', bogus.message === 'bad_pack');
+  const vaultCd = (await pF.locator('[data-claim=vault]').innerText()).trim();
+  t('a pack that has not been claimed is still ready', vaultCd === 'Claim');
+  await pF.click('[data-claim=vault]'); await wait(900);
+  t('the 72-hour pack counts down in hours beyond a day', /^(72:00:00|71:59:[0-5][0-9])$/.test((await pF.locator('[data-claim=vault]').innerText()).replace('◷', '').trim()), (await pF.locator('[data-claim=vault]').innerText()));
+  mockF.shift += (4 * 3600 + 60) * 1000; // four hours and a minute pass
+  await pF.click('.acct-card [data-x]'); await wait(300);
+  await pF.click('.coins-btn'); await wait(800);
+  t('after the timer runs out the pack can be claimed again', await pF.locator('[data-claim=pocket].ready').count() === 1 && await pF.locator('[data-claim=tower].ready').count() === 0);
+  await pF.click('[data-claim=pocket]'); await wait(800);
+  t('...and pays the same amount again', mockF.profileOf('Coin_Fan').balance === 36000 + 40000 + 1000);
+  const ledgerKinds = mockF.txOf('Coin_Fan').filter((x) => x.type === 'free_pack').length;
+  t('every claim is one ledger row', ledgerKinds === 4, String(ledgerKinds));
+  t('the header chip shows the new balance', /77,000/.test(await pF.locator('.acct-chip').innerText()), await pF.locator('.acct-chip').innerText());
+  await pF.click('[data-claim=stack]'); await wait(800);
+  await pF.click('.acct-card [data-x]'); await wait(300);
+  t('the dot disappears once nothing is ready', await pF.locator('.coins-btn .dot').count() === 0);
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=37'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
+  t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
+  await ctxF.close();
+
   // ---- login required mode
   const mock2 = makeMock();
   ctx = await newCtx(b, mock2, { requireLogin: true });
@@ -224,6 +272,9 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
     await p.fill('#a-user', 'Mobile_Man'); await wait(700); await p.click('.acct-card button[type=submit]'); await wait(900); await check('welcome');
     await p.screenshot({ path: `${SP}/acct-welcome-${w}.png` });
     await p.click('.acct-card [data-x]'); await wait(200);
+    await p.click('.coins-btn'); await wait(800); await check('free coins');
+    await p.screenshot({ path: `${SP}/acct-coins-${w}.png` });
+    await p.keyboard.press('Escape'); await wait(200);
     await p.click('.acct-chip'); await wait(700); await check('profile');
     await p.screenshot({ path: `${SP}/acct-profile-${w}.png` });
     const bad = rows.filter(([, r]) => r.over || !r.inside || r.small.length);

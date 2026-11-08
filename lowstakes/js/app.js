@@ -1,20 +1,20 @@
-import { Ads } from './ads.js?v=36';
-import { Auth } from './auth.js?v=36';
-import { CONFIG } from './config.js?v=36';
-import * as AU from './ui/account-ui.js?v=36';
-import morphdom from '../vendor/morphdom-esm.js?v=36';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=36';
-import { landing, gate } from './ui/landing.js?v=36';
-import { lobby, inviteLink } from './ui/lobby.js?v=36';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=36';
-import * as HU from './ui/holdem-ui.js?v=36';
-import * as BU from './ui/blackjack-ui.js?v=36';
-import * as RU from './ui/roulette-ui.js?v=36';
-import * as CU from './ui/crash-ui.js?v=36';
-import { sound } from './ui/sound.js?v=36';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=36';
-import { WHEEL } from './games/roulette.js?v=36';
-import * as Motion from './ui/motion.js?v=36';
+import { Ads } from './ads.js?v=37';
+import { Auth } from './auth.js?v=37';
+import { CONFIG } from './config.js?v=37';
+import * as AU from './ui/account-ui.js?v=37';
+import morphdom from '../vendor/morphdom-esm.js?v=37';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=37';
+import { landing, gate } from './ui/landing.js?v=37';
+import { lobby, inviteLink } from './ui/lobby.js?v=37';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=37';
+import * as HU from './ui/holdem-ui.js?v=37';
+import * as BU from './ui/blackjack-ui.js?v=37';
+import * as RU from './ui/roulette-ui.js?v=37';
+import * as CU from './ui/crash-ui.js?v=37';
+import { sound } from './ui/sound.js?v=37';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=37';
+import { WHEEL } from './games/roulette.js?v=37';
+import * as Motion from './ui/motion.js?v=37';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -577,6 +577,7 @@ document.addEventListener('click', (e) => {
     case 'scores': case 'menu': case 'more': S.ui.pop = S.ui.pop === act ? null : act; S.ui.pop ? renderPop() : closePop(); return;
     case 'close-pop': closePop(); return;
     case 'react': c.emote(el.dataset.r); return;
+    case 'free-coins': AU.openFreeCoins(); return;
     case 'rebuy': {
       // With an ad network connected the refill is a rewarded ad; otherwise it is the free rebuy.
       if (!Ads.enabled()) { c.requestRebuy(); return; }
@@ -1246,6 +1247,12 @@ window.addEventListener('hashchange', () => {
 });
 Auth.onChange(() => { AU.bindSlot(); if (S.screen === 'landing') syncAccountName(); });
 AU.setToast(toast);
+// free coins claimed while sitting at a wallet table: ask the table to add them to the stack
+AU.setCoinsHook(() => { if (S.client && S.client.isServer) S.client.send({ t: 'refresh' }); });
+const pollPacks = () => { if (Auth.ready()) Auth.freePacks().catch(() => {}); };
+setInterval(pollPacks, 60000);
+setInterval(() => AU.bindSlot(), 15000);
+Auth.onChange(() => { if (Auth.ready() && !Auth.packs && !S.packsAsked) { S.packsAsked = true; pollPacks(); } });
 ageGate(async () => {
   const link = Auth.consumeLink(); // must run before route() reads the address
   const starting = Auth.init();

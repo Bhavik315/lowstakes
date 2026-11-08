@@ -33,7 +33,7 @@ async function newCtx(b, mock, tok, { w = 1280, h = 800 } = {}) {
     const r = mock.handle(req.method(), req.url(), req.headers(), req.postData());
     return route.fulfill({ status: r.status, headers: { ...cors, ...(r.headers || {}), 'content-type': 'application/json' }, body: r.body === null ? '' : JSON.stringify(r.body) });
   });
-  await ctx.route('**/js/config.js*', async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace("serverUrl: ''", `serverUrl: '${WORKER}'`) }); });
+  await ctx.route('**/js/config.js*', async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace(/serverUrl: '[^']*'/, `serverUrl: '${WORKER}'`) }); });
   return ctx;
 }
 const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return s && s.room.players.find((x) => x.id === s.you); });

@@ -13,7 +13,7 @@ they can never send a coin amount to credit.
 - Bots have no wallet: they play with free chips, so coins won from bots are new coins.
 
 ## Deploy (all free tiers)
-1. **Supabase**: SQL Editor, run `lowstakes/supabase/migrations/0002_table_rounds.sql` (after 0001, which you already ran).
+1. **Supabase**: SQL Editor, run `lowstakes/supabase/migrations/0002_table_rounds.sql`, then `0003_free_packs.sql` (after 0001, which you already ran).
 2. **Supabase secret key**: Project Settings, API Keys, create or copy the **Secret key** (`sb_secret_...`). Keep it private.
 3. **Cloudflare**: Workers & Pages, **Create**, **Import a repository** (Workers, not Pages), choose `Bhavik315/lowstakes`.
    - Project name: `lowstakes-server`

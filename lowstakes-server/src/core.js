@@ -187,6 +187,7 @@ export class TableCore {
       case 'act': { const a = cleanAction(msg.a); if (this.engine && a && this.engine.handle(pid, a)) this.changed(); break; }
       case 'chat': this.chat(pid, msg.text); break;
       case 'react': if (REACTIONS.includes(msg.r)) this.broadcast({ t: 'react', pid, r: msg.r, id: uid() }); break;
+      case 'refresh': this.resync(pid); break;
       case 'rebuy': this.notify(pid, 'Free rebuys are off at wallet tables. Your coins are your wallet.', 'warn'); break;
       case 'bye': this.leave(pid); break;
       case 'cmd': this.command(pid, msg); break;
@@ -208,6 +209,23 @@ export class TableCore {
     this.systemMsg(`${p.name} left the table.`);
     this.assignOwner();
     this.changed();
+  }
+
+  // A player's wallet grew outside the table (a free pack). Bring the table up to date; never mid-save, never downwards.
+  // Credits only: a rename (the one thing that spends) is refused while seated, and round results go through settle.
+  async resync(pid) {
+    const p = this.player(pid);
+    if (!p || p.bot) return;
+    if (p.saving || this.settling) { p.resyncLater = true; return; }
+    let bal;
+    try { bal = await this.wallet.balance(p.id); } catch { return; }
+    if (p.saving || this.settling) { p.resyncLater = true; return; }
+    const diff = bal - p.base;
+    if (diff > 0) {
+      p.chips += diff; p.base = bal; p.joinBalance += diff; // a top-up is not a table win, so the scoreboard ignores it
+      this.notify(pid, `${diff.toLocaleString('en-US')} coins added to your stack.`, 'info');
+      this.changed();
+    }
   }
 
   // ---- owner commands --------------------------------------------------------
@@ -322,6 +340,7 @@ export class TableCore {
     if (this.closed) return;
     if (this.engine && this.engine.tick()) this.dirty = true;
     this.settleDue();
+    for (const p of this.humans()) if (p.resyncLater && !p.saving && !this.settling) { p.resyncLater = false; this.resync(p.id); }
     this.releaseSeats();
     if (this.dirty) { this.dirty = false; this.flush(); }
   }

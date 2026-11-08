@@ -132,6 +132,18 @@ test('a second account cannot sit at two tables, and bad input never reaches the
   await wait(500);
 });
 
+test('a free pack claimed while seated is added to the table stack through a real websocket', async () => {
+  const a = client(code5('F1'), 'tok-bob'); await a.until((x) => x.last('state'));
+  const before = a.last('state').room.players[0].chips;
+  wallet.users.get('22222222-2222-2222-2222-222222222222').balance += 5000; // the claim, done by the website in the database
+  a.send({ t: 'refresh' });
+  assert.ok(await a.until((x) => x.last('state').room.players[0].chips === before + 5000), 'stack grew by the claimed amount');
+  assert.ok(a.msgs.some((m) => m.t === 'notice' && /5,000 coins added/.test(m.text)));
+  assert.equal(a.last('state').room.players[0].net, 0, 'not counted as a table win');
+  a.send({ t: 'bye' });
+  await wait(500);
+});
+
 test('the secret key reaches the database only from the server, never to a browser', async () => {
   assert.ok(seen.rpcCalls > 0 && seen.secretHeaderOnRpc === seen.rpcCalls);
   assert.ok(seen.userCalls > 0);

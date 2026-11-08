@@ -55,4 +55,14 @@ for i in $(seq 1 40); do ( echo "set role service_role; select settle_round('[{\
 bal=$($P -tA -c "select balance from wallets where user_id='$V'")
 echo "RACE 40 different losing rounds of 1000 from 19000: balance=$bal (want 0, never negative)"
 [ "$bal" = 0 ] || exit 1
+
+# 7. free packs under load (migration 0003): thirty simultaneous claims of one pack pay once
+W=00000000-0000-0000-0000-0000000000fd
+$P -c "insert into auth.users(id,email,email_confirmed_at) values ('$W','race3@x.com',now())" >/dev/null
+echo "set role authenticated; select set_config('request.jwt.claim.sub','$W',false); select complete_registration('Race_Three');" | $P >/dev/null
+for i in $(seq 1 30); do ( echo "set role authenticated; select set_config('request.jwt.claim.sub','$W',false); select claim_free_pack('stack');" | $P >/dev/null 2>&1 ) & done; wait
+bal=$($P -tA -c "select balance from wallets where user_id='$W'")
+n=$($P -tA -c "select count(*) from transactions where user_id='$W' and type='free_pack'")
+echo "RACE free pack x30: balance=$bal claims=$n (want 25000 / 1)"
+[ "$bal" = 25000 ] && [ "$n" = 1 ] || exit 1
 echo "RACE ALL OK"

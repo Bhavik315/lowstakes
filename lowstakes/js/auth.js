@@ -3,7 +3,7 @@
 // The browser only ever holds a session token. Username and balance are read from the database,
 // and every change (registration bonus, username fee, later game payouts) happens in database
 // functions that check who is asking. Nothing here is trusted by the backend.
-import { CONFIG } from './config.js?v=36';
+import { CONFIG } from './config.js?v=37';
 
 const STORE = 'ls.auth';
 const FEE = 5000;
@@ -190,6 +190,30 @@ export const Auth = {
     return r;
   },
 
+  // Free coin packs: four timers, decided by the database clock.
+  async freePacks() {
+    const packs = await rpc('get_free_packs');
+    this.packs = { list: packs, at: Date.now() };
+    emit();
+    return packs;
+  },
+
+  async claimFreePack(id) {
+    const r = await rpc('claim_free_pack', { p_pack: id });
+    account = { ...r };
+    delete account.packs;
+    this.packs = { list: r.packs, at: Date.now() };
+    emit();
+    return r;
+  },
+
+  // How many packs could be claimed right now, from the last time we asked (null = not asked yet).
+  packsReady() {
+    if (!this.packs) return null;
+    const waited = (Date.now() - this.packs.at) / 1000;
+    return this.packs.list.filter((p) => p.ready || p.seconds_left - waited <= 0).length;
+  },
+
   async transactions(limit = 30) {
     return authed(`/rest/v1/transactions?select=id,type,amount,balance_after,game,ref,created_at&order=created_at.desc&limit=${limit}`);
   },
@@ -217,6 +241,8 @@ export function explain(e) {
     username_reserved: 'That username is reserved. Pick another.',
     username_taken: 'That username is taken. Try another.',
     same_username: 'That is already your username.',
+    not_ready: 'That pack is not ready yet.',
+    bad_pack: 'That pack does not exist.',
     leave_table_first: 'Leave your table first, then change your username. Your coins are in play while you are seated.',
     insufficient_balance: `You need ${FEE.toLocaleString('en-US')} coins to change your username.`,
     email_not_verified: 'Verify your email first, then choose your username.',

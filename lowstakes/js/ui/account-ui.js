@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=36';
-import { esc, fmt, signed } from './parts.js?v=36';
+import { Auth, explain, usernameProblem } from '../auth.js?v=37';
+import { esc, fmt, signed } from './parts.js?v=37';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -11,16 +11,22 @@ let checkSeq = 0;
 let ctx = {}; // small per-screen memory (email typed, pending rename request id...)
 
 export function setToast(fn) { toastFn = fn; }
+let coinsHook = () => {};
+// Called after coins are added to the wallet, so a table the player is sitting at can pick them up.
+export function setCoinsHook(fn) { coinsHook = fn; }
+let coinsTimer = 0;
 
 // ---------------------------------------------------------------- frame
 function close() {
   if (required && !Auth.ready()) return;
+  clearInterval(coinsTimer);
   if (root) { root.remove(); root = null; }
   document.removeEventListener('keydown', onKey, true);
 }
 function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); close(); } }
 
 function mount(html, { title }) {
+  clearInterval(coinsTimer);
   if (!root) {
     root = document.createElement('div');
     root.className = 'ls-modal ls-acct';
@@ -209,7 +215,7 @@ function renderProfile(extra = {}) {
       <h3>Recent transactions</h3>
       <ul class="txs" id="txs"><li class="tx-empty">Loading…</li></ul>
     </section>
-    <div class="aacts"><button class="btn btn-quiet" data-go="out">Sign out</button><button class="btn btn-primary" data-x>Done</button></div>`, { title: 'Your account' });
+    <div class="aacts"><button class="btn btn-quiet" data-go="out">Sign out</button><button class="btn btn-quiet" data-go="coins">Free coins</button><button class="btn btn-primary" data-x>Done</button></div>`, { title: 'Your account' });
 
   const rn = card.querySelector('#rn');
   const poor = acc.balance < fee;
@@ -249,6 +255,7 @@ function renderProfile(extra = {}) {
   wire(card, {
     go: async (g, btn) => {
       if (g === 'out') { await Auth.signOut(); required = false; close(); toastFn('Signed out.'); return; }
+      if (g === 'coins') { openFreeCoins(); return; }
       if (g === 'cancel-rn') { showEdit(); return; }
       if (g === 'do-rn') {
         if (busyRn) return;
@@ -278,9 +285,72 @@ function renderProfile(extra = {}) {
   });
 }
 
+// ---------------------------------------------------------------- free coins
+const hms = (n) => { const h = Math.floor(n / 3600); return [h, Math.floor((n % 3600) / 60), n % 60].map((v) => String(v).padStart(2, '0')).join(':'); };
+const TAGS = { stack: 'Popular', tower: 'Best value' };
+const COINS = { pocket: 2, stack: 3, tower: 4, vault: 5 };
+
+export async function openFreeCoins() {
+  if (!Auth.signedIn()) return openAuth('signin');
+  if (!Auth.ready()) return afterAuth('');
+  mount('<h2>Free coins</h2><p class="asub">Loading your packs…</p>', { title: 'Free coins' });
+  try { renderCoins(await Auth.freePacks()); }
+  catch (e) { const card = mount(`<h2>Free coins</h2>${notice(explain(e))}<div class="aacts"><button class="btn btn-primary" data-x>Close</button></div>`, { title: 'Free coins' }); wire(card); }
+}
+
+function renderCoins(list, got = '') {
+  const t0 = performance.now();
+  const stack = (n) => `<span class="cstack n${n}" aria-hidden="true">${'<i class="coin"></i>'.repeat(n)}</span>`;
+  const card = mount(`
+    <div class="cp-head"><div><h2>Free coins</h2><p class="asub">Four free packs, each on its own refill timer.</p></div>
+      <div class="cp-bal"><span>Balance</span><b id="cp-bal">${fmt(Auth.balance())}</b></div></div>
+    <div class="cp-grid">${list.map((p) => `
+      <article class="cp cp-${esc(p.id)}${p.id === got ? ' got' : ''}">
+        ${TAGS[p.id] ? `<span class="cp-tag">${TAGS[p.id]}</span>` : ''}
+        ${stack(COINS[p.id] || 3)}
+        <h3>${esc(p.name)}</h3>
+        <p class="cp-amt"><i class="coin sm" aria-hidden="true"></i>${fmt(p.amount)}</p>
+        <p class="cp-every">Refills every ${p.every_seconds / 3600} hours</p>
+        <button class="cp-btn" data-claim="${esc(p.id)}" data-left="${p.seconds_left}" data-name="${esc(p.name)}"></button>
+      </article>`).join('')}</div>
+    ${notice(got ? `Added to your balance.` : '', 'ok')}
+    <div class="aacts"><button class="btn btn-primary" data-x>Done</button></div>`, { title: 'Free coins' });
+  card.classList.add('wide');
+  const paint = () => {
+    const el = (performance.now() - t0) / 1000;
+    card.querySelectorAll('.cp-btn').forEach((b) => {
+      const left = Math.max(0, Math.ceil(Number(b.dataset.left) - el));
+      if (left > 0) { b.disabled = true; b.className = 'cp-btn wait'; b.textContent = hms(left); b.setAttribute('aria-label', `${b.dataset.name}: ready in ${hms(left)}`); }
+      else if (!b.dataset.busy) { b.disabled = false; b.className = 'cp-btn ready'; b.textContent = 'Claim'; b.setAttribute('aria-label', `Claim ${b.dataset.name}`); }
+    });
+  };
+  paint();
+  coinsTimer = setInterval(paint, 1000);
+  wire(card, {
+    submit: () => {},
+    go: () => {},
+  });
+  card.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-claim]');
+    if (!b || b.disabled || b.dataset.busy) return;
+    b.dataset.busy = '1'; b.disabled = true; b.textContent = 'Claiming…';
+    try {
+      const r = await Auth.claimFreePack(b.dataset.claim);
+      coinsHook();
+      toastFn(`+${fmt(r.claimed)} coins added.`);
+      if (root) renderCoins(r.packs, b.dataset.claim);
+    } catch (err) {
+      delete b.dataset.busy;
+      if (err.code === 'not_ready') { try { renderCoins(await Auth.freePacks()); } catch {} return; }
+      setMsg(card, explain(err));
+      paint();
+    }
+  });
+}
+
 // ---------------------------------------------------------------- nav slot
 export function slotHtml() {
-  if (Auth.ready()) return `<button class="acct-chip" data-acct="profile" aria-label="Your account"><span class="an">${esc(Auth.username())}</span><span class="ab">${fmt(Auth.balance())}</span></button>`;
+  if (Auth.ready()) return `<button class="btn btn-primary btn-sm coins-btn" data-acct="coins">Free coins${Auth.packsReady() > 0 ? '<i class="dot" aria-label="ready to claim"></i>' : ''}</button><button class="acct-chip" data-acct="profile" aria-label="Your account"><span class="an">${esc(Auth.username())}</span><span class="ab">${fmt(Auth.balance())}</span></button>`;
   if (Auth.signedIn()) return '<button class="acct-chip" data-acct="profile">Finish sign-up</button>';
   return '<button class="btn btn-dark btn-sm" data-acct="signin">Sign in with Google</button>';
 }
@@ -294,5 +364,6 @@ document.addEventListener('click', (e) => {
   if (!b) return;
   const a = b.dataset.acct;
   if (a === 'profile') openProfile();
+  else if (a === 'coins') openFreeCoins();
   else openAuth(a);
 });

@@ -273,3 +273,48 @@ test('views never leak other players hidden information or the crash point', asy
   assert.ok(!('crash' in v2) && !/crashPoint/.test(JSON.stringify(s.conns.u2.last('state'))), 'the crash point is not in anything sent to a player');
   assert.ok(v2.mult <= s.core.engine.crash, 'the multiplier shown never passes the hidden crash point');
 });
+
+test('a free pack claimed while seated is added to the stack, between rounds or mid-round, and is not counted as a table win', async () => {
+  const s = setup();
+  await s.join('u1');
+  s.core.setGame('roulette');
+  // mid-round: a bet is in play, then coins arrive in the wallet from outside the table
+  s.core.receive('u1', { t: 'act', a: { type: 'bet', spot: 'n:9', amount: 100 } });
+  s.wallet.users.get('u1').balance += 5000; // the claim (done by the website, in the database)
+  s.core.receive('u1', { t: 'refresh' });
+  await s.advance(300);
+  assert.equal(s.core.player('u1').chips, 20000 - 100 + 5000, 'the new coins are on the table and the bet is untouched');
+  assert.equal(s.core.roomView().players[0].net, 0, 'a top-up is not a winning');
+  assert.match(s.conns.u1.notices().join(' '), /5,000 coins added/);
+  // the round then settles normally and the wallet matches
+  s.core.receive('u1', { t: 'act', a: { type: 'ready' } });
+  await s.advance(100);
+  s.core.engine.result = 1;
+  await s.advance(8300);
+  assert.equal(s.wallet.bal('u1'), 25000 - 100);
+  synced(s);
+  // a refresh with nothing new changes nothing; a refresh can never lower a stack
+  s.core.receive('u1', { t: 'refresh' });
+  s.wallet.users.get('u1').balance -= 3000;
+  s.core.receive('u1', { t: 'refresh' });
+  await s.advance(300);
+  assert.equal(s.core.player('u1').chips, 24900);
+});
+
+test('a refresh that arrives while a result is being saved waits, then applies', async () => {
+  const s = setup();
+  await s.join('u1');
+  s.core.setGame('roulette');
+  s.core.receive('u1', { t: 'act', a: { type: 'bet', spot: 'n:9', amount: 100 } });
+  s.core.receive('u1', { t: 'act', a: { type: 'ready' } });
+  await s.advance(100);
+  s.core.engine.result = 9; // +3500 at the end
+  s.wallet.fail = { times: 2, code: 'network' }; // saving is slow: it needs retries
+  await s.advance(8000);
+  s.wallet.users.get('u1').balance += 1000;
+  s.core.receive('u1', { t: 'refresh' });
+  await s.advance(3000);
+  assert.equal(s.wallet.bal('u1'), 20000 + 3500 + 1000);
+  assert.equal(s.core.player('u1').chips, 24500, 'saved first, then the top-up: nothing lost, nothing counted twice');
+  synced(s);
+});

@@ -17,6 +17,9 @@ Turning it on, and moving the games onto a server so payouts can be trusted, is 
 
 The game server (`lowstakes-server/`) runs tables for signed-in players and settles each round into the wallet; see its README. Until `serverUrl` is set in `js/config.js`, tables run in the browser as before.
 
+Free coins: four packs (1,000 / 5,000 / 15,000 / 40,000 every 4 / 6 / 24 / 72 hours) can be claimed by anyone with an account. The database clock decides when a pack is ready, and each claim is a ledger row.
+The amounts and timers live in `free_pack_defs()` in `supabase/migrations/0003_free_packs.sql`. At a wallet table the "out of coins" message offers them.
+
 Tests: `supabase/test/run.sh` (SQL rules and races on a local Postgres) and `test/browser/accounts.cjs` (screens against a stand-in backend).
 
 ## Ads

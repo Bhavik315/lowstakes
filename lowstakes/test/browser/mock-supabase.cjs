@@ -16,6 +16,14 @@ module.exports = function makeMock() {
   const J = (status, body) => ({ status, body });
   const gt = (code, msg, status = 400) => J(status, { code: status, error_code: code, msg });
   const pg = (message, status = 400) => J(status, { code: 'P0001', message, details: null, hint: null });
+  // free packs (mirrors migration 0003); m.shift moves this stand-in's clock forward, like waiting does
+  m.shift = 0; m.claims = new Map();
+  const PACKS = [['pocket', 'Pocket change', 1000, 4], ['stack', 'Stack', 5000, 6], ['tower', 'Tower', 15000, 24], ['vault', 'High roller vault', 40000, 72]];
+  const clock = () => Date.now() + m.shift;
+  const packList = (uid) => PACKS.map(([id, name, amount, h]) => {
+    const last = (m.claims.get(uid) || {})[id]; const left = last ? Math.max(0, Math.ceil((last + h * 3600e3 - clock()) / 1000)) : 0;
+    return { id, name, amount, every_seconds: h * 3600, seconds_left: left, ready: left === 0 };
+  });
   m.confirm = (email, type = 'signup') => { const u = m.users.get(email.toLowerCase()); u.confirmed = true; const t = tokensFor(u); return `#access_token=${t.access_token}&refresh_token=${t.refresh_token}&expires_in=3600&token_type=bearer&type=${type}`; };
   m.recovery = (email) => { const u = m.users.get(email.toLowerCase()); const t = tokensFor(u); return `#access_token=${t.access_token}&refresh_token=${t.refresh_token}&expires_in=3600&token_type=bearer&type=recovery`; };
   m.expireAccess = () => m.access.clear();
@@ -103,6 +111,20 @@ module.exports = function makeMock() {
       if (taken(body.p_new)) return pg('username_taken');
       const old = p.username; p.username = body.p_new; p.changes++; apply(uid, 'username_change_fee', -5000, `username:${old}>${body.p_new}`, key);
       return J(200, { ...acct(uid), already: false, fee: 5000 });
+    }
+    if (path === '/rest/v1/rpc/get_free_packs') {
+      const e = needUser(); if (e) return e;
+      if (!m.profiles.has(uid)) return pg('not_registered');
+      return J(200, packList(uid));
+    }
+    if (path === '/rest/v1/rpc/claim_free_pack') {
+      const e = needUser(); if (e) return e;
+      if (!m.profiles.has(uid)) return pg('not_registered');
+      const def = PACKS.find((p) => p[0] === body.p_pack); if (!def) return pg('bad_pack');
+      const cur = packList(uid).find((p) => p.id === def[0]); if (!cur.ready) return pg('not_ready');
+      const c = m.claims.get(uid) || {}; c[def[0]] = clock(); m.claims.set(uid, c);
+      apply(uid, 'free_pack', def[2], def[0], 'pack:' + def[0] + ':' + clock());
+      return J(200, { ...acct(uid), claimed: def[2], pack: def[0], packs: packList(uid) });
     }
     if (path === '/rest/v1/transactions') {
       const e = needUser(); if (e) return e;
