@@ -120,7 +120,7 @@ kbd {
   display: flex; justify-content: space-between; align-items: center;
   max-width: 1240px; margin: 0 auto; padding: 22px 28px;
 }
-.l-nav { display: flex; gap: 22px; font-weight: 600; font-size: 15px; }
+.l-nav { display: flex; gap: 22px; font-weight: 600; font-size: 15px; margin-left: auto; }
 .l-nav a { text-decoration: none; border-bottom: 2px solid transparent; }
 .l-nav a:hover { border-color: var(--ink); }
 
@@ -1680,3 +1680,7 @@ input[type=range]::-moz-range-thumb {
 .g-logo { width: 22px; height: 22px; flex: none; }
 /* The decorative felt in the hero is meant to bleed off the right edge; never let it widen the page on phones. */
 .landing { overflow-x: clip; }
+
+/* Landing header: logo on the left; Games and the account button grouped on the right. */
+.l-top { gap: 20px; }
+.l-top .acct-slot { margin-left: 8px; }

@@ -1,5 +1,5 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=35';
-import { COLORS } from '../net/room.js?v=35';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=36';
+import { COLORS } from '../net/room.js?v=36';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -14,7 +14,7 @@ export function landing(me, { error = '' } = {}) {
 <div class="landing">
   <header class="l-top">
     <a class="wordmark" href="#/" aria-label="Low Stakes home"><span>Low</span><span>Stakes</span></a>
-    <nav class="l-nav"><a href="#how">How it works</a><a href="#games">Games</a></nav>
+    <nav class="l-nav" aria-label="Site"><a href="#games">Games</a></nav>
     <div class="acct-slot"></div>
   </header>
 
