@@ -1,8 +1,8 @@
-import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=41';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=41';
+import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=42';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=42';
 
 const BLURB = {
-  holdem: 'No-limit. Two to nine players.',
+  holdem: 'Texas Hold’em, no-limit. Two to nine players.',
   blackjack: 'Everyone against the dealer. Up to seven.',
   roulette: 'Single zero. Everyone bets together. Up to twelve.',
   crash: 'Cash out before it crashes. Up to twelve.',

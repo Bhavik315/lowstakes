@@ -13,7 +13,7 @@ import { Crash } from './engine/games/crash.js';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 export const GAME_LIMITS = { holdem: 9, blackjack: 7, roulette: 12, crash: 12 };
-export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
+export const GAME_NAMES = { holdem: 'Poker', blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
 const MAX_PLAYERS = 12;
 const BOT_START = 1000; // bots play with free chips; they have no wallet
 const COLORS = ['#E0472F', '#2A55C9', '#E8A825', '#1E8C7E', '#8A3B78', '#EE7B30', '#E86A92', '#4BA3D9', '#7FA83A', '#5B4B8A', '#C2563A', '#2F7D57'];
@@ -152,7 +152,7 @@ export class TableCore {
     if (!p) {
       if (this.room.players.length >= this.capacity()) { try { await this.wallet.leave(user.id, this.code); } catch {} return { ok: false, why: 'full', game: this.gameId, limit: this.capacity() }; }
       p = {
-        id: user.id, name: acc.username, color: COLORS[this.room.players.length % COLORS.length], bot: false, connected: true,
+        id: user.id, name: acc.username, color: COLORS[0], bot: false, connected: true,
         chips: Number(acc.balance), base: Number(acc.balance), joinBalance: Number(acc.balance), buyins: 1, done: new Set(),
       };
       this.room.players.push(p);

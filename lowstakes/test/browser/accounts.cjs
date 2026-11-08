@@ -47,7 +47,8 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   // ---- signed out
   t('signed-out landing has one button: Sign in with Google', await p.locator('.acct-slot [data-acct=signin]').innerText() === 'Sign in with Google' && await p.locator('.acct-slot button').count() === 1);
   t('no email sign-up anywhere on the page', await p.locator('input[type=email], input[type=password], [data-acct=signup]').count() === 0 && !/create account/i.test(await p.locator('.acct-slot').innerText()));
-  t('site is still usable signed out (login gate is off)', await p.locator('#name').count() === 1 && (await p.locator('#name').getAttribute('readonly')) === null);
+  t('site is still usable signed out (login gate is off)', await p.locator('#start-form').count() === 1);
+  t('no name box and no chip colour picker (name comes from the account)', await p.locator('#name, .swatch, .swatches').count() === 0 && !/Texas/.test(await p.locator('.placard h3').allInnerTexts().then(a => a.join(' '))) && /Poker/.test(await p.locator('.placard h3').first().innerText()));
   await p.click('[data-acct=signin]'); await wait(300);
   t('sign-in dialog offers only Continue with Google', /Continue with Google/.test(await text(p)) && await p.locator('.acct-card input').count() === 0);
   t('dialog explains the free username and one-time bonus', /free/.test(await text(p)) && /20,000/.test(await text(p)));
@@ -77,7 +78,6 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   t('exactly one welcome bonus of 20,000', mock.txOf('Lucky_Player').filter(x => x.type === 'welcome_bonus').length === 1 && mock.profileOf('Lucky_Player').balance === 20000);
   await p.click('.acct-card [data-x]'); await wait(200);
   t('nav chip shows username and balance', /Lucky_Player/.test(await p.locator('.acct-chip').innerText()) && /20,000/.test(await p.locator('.acct-chip').innerText()));
-  t('name box is locked to the username', await p.locator('#name').inputValue() === 'Lucky_Player' && (await p.locator('#name').getAttribute('readonly')) !== null);
 
   // ---- persistence
   await p.reload(); await wait(1200);
@@ -89,7 +89,6 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   t('profile shows username, balance and the welcome transaction', /Lucky_Player/.test(await text(p)) && /Welcome bonus/.test(await text(p)) && /\+20,000/.test(await text(p)));
   await p.click('[data-go=out]'); await wait(500);
   t('sign out clears the session and the chip', await p.locator('.acct-slot [data-acct=signin]').count() === 1 && await p.evaluate(() => !localStorage.getItem('ls.auth')));
-  t('signed out, the name box is editable again', (await p.locator('#name').getAttribute('readonly')) === null);
 
   // ---- signing in again is the same account, with no new bonus
   await p.click('[data-acct=signin]'); await wait(300);
@@ -137,7 +136,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await p.fill('#a-new', 'Lucky7'); await wait(700); await p.click('#rn button[type=submit]'); await wait(300);
   await p.dblclick('[data-go=do-rn]'); await wait(800);
   t('rename charges exactly 5,000 once, even on a double click', !!mock.profileOf('Lucky7') && mock.profileOf('Lucky7').balance === 15000 && mock.txOf('Lucky7').filter(x => x.type === 'username_change_fee').length === 1);
-  t('profile, nav chip and name box update at once', /Lucky7/.test(await p.locator('.aname').innerText()) && /15,000/.test(await p.locator('.abig').innerText()) && /Lucky7/.test(await p.locator('.acct-chip').innerText()) && await p.locator('#name').inputValue() === 'Lucky7');
+  t('profile, nav chip and name box update at once', /Lucky7/.test(await p.locator('.aname').innerText()) && /15,000/.test(await p.locator('.abig').innerText()) && /Lucky7/.test(await p.locator('.acct-chip').innerText()));
   const lastCall = [...mock.log].reverse().find(l => l.path === '/rest/v1/rpc/change_username');
   const again = await rpcRaw(p, 'change_username', lastCall.body);
   t('replaying the same rename request charges nothing', again.already === true && mock.profileOf('Lucky7').balance === 15000);
@@ -253,7 +252,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
   mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
   t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=41'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=42'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();
@@ -263,7 +262,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   ctx = await newCtx(b, mock2, { requireLogin: true });
   p = await ctx.newPage(); p.on('pageerror', e => errs.push(e.message));
   await p.goto(BASE); await wait(1000);
-  t('login required: signed-out visitors cannot reach the games', await p.locator('.ls-acct').count() === 1 && await p.locator('#name').count() === 0 && await p.locator('.acct-x').count() === 0);
+  t('login required: signed-out visitors cannot reach the games', await p.locator('.ls-acct').count() === 1 && await p.locator('#start-form').count() === 0 && await p.locator('.acct-x').count() === 0);
   await p.keyboard.press('Escape'); await wait(200);
   t('login required: Escape cannot dismiss it', await p.locator('.ls-acct').count() === 1);
   await p.locator('.ls-acct').click({ position: { x: 5, y: 5 } }); await wait(200);
@@ -271,7 +270,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await viaGoogle(p, mock2, 'req@gmail.com');
   await p.fill('#a-user', 'Req_User'); await wait(700); await p.click('.acct-card button[type=submit]'); await wait(900);
   await p.click('.acct-card [data-x]'); await wait(800);
-  t('login required: after claiming a username the site unlocks', await p.locator('#name').count() === 1 && /Req_User/.test(await p.locator('#name').inputValue()));
+  t('login required: after claiming a username the site unlocks', await p.locator('#start-form').count() === 1 && /Req_User/.test(await p.locator('.acct-chip').innerText()));
   await ctx.close();
 
   // ---- phones

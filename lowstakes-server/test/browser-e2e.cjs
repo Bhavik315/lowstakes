@@ -104,7 +104,7 @@ const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return 
   const ctxC = await newCtx(b, mock, null);
   const pC = await ctxC.newPage(); pC.on('pageerror', (e) => errs.push(e.message));
   await pC.goto(BASE); await wait(800);
-  await pC.fill('#name', 'Guesty'); await pC.click('button[data-mode=host]'); await pC.waitForFunction(() => location.hash.startsWith('#/t/'), null, { timeout: 8000 });
+  await pC.click('button[data-mode=host]'); await pC.waitForFunction(() => location.hash.startsWith('#/t/'), null, { timeout: 8000 });
   await pC.waitForSelector('.lobby', { timeout: 15000 });
   t('signed out, "Start a table" still opens a browser table with free chips', (await mine(pC)).chips === 1000);
   console.log(`\npage errors: ${errs.length} ${errs.slice(0, 3)}`);

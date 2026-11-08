@@ -146,20 +146,6 @@ kbd {
 .field input::placeholder { color: rgba(16, 48, 42, .45); }
 .field.sm input, .field.sm select { height: 42px; font-size: 15px; border-radius: 11px; padding: 0 12px; }
 
-.swatches { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.swatches legend { font-size: 14px; font-weight: 700; margin-bottom: 6px; padding: 0; }
-.swatch { position: relative; width: 34px; height: 34px; cursor: pointer; }
-.swatch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.swatch span {
-  display: block; width: 100%; height: 100%; border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--c) 0 50%, transparent 51%),
-    repeating-conic-gradient(var(--c) 0 30deg, rgba(255, 255, 255, .92) 30deg 45deg);
-  box-shadow: 0 2px 0 rgba(16, 48, 42, .55);
-  transition: transform .12s;
-}
-.swatch input:checked + span { transform: translateY(-3px); box-shadow: 0 0 0 3px var(--box), 0 0 0 5px var(--ink); }
-.swatch input:focus-visible + span { outline: 3px solid var(--cobalt); outline-offset: 3px; }
 
 .form-error { min-height: 0; font-size: 14px; font-weight: 700; color: #8C1D10; }
 .form-error:empty { display: none; }
@@ -273,7 +259,6 @@ kbd {
   line-height: .9; color: var(--g-holdem); margin-top: -8px;
 }
 .gate-foot { font-size: 14px; color: var(--ink-soft); text-align: center; }
-.gate .swatch input:checked + span { box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink); }
 
 /* ------------------------------------------------------------ cards */
 .card {
@@ -1403,9 +1388,6 @@ input[type=range]::-moz-range-thumb {
   .toggle input::after { width: 22px; height: 22px; left: 3px; top: 3px; }
   .toggle input:checked::after { transform: translateX(20px); }
   input[type=range] { height: 44px; }
-  .swatches { gap: 0; }
-  .swatch { width: 44px; height: 44px; display: grid; place-items: center; }
-  .swatch span { width: 34px; height: 34px; }
   .field input, .field select, .field.sm input, .field.sm select { min-height: 48px; }
   .gate-foot a, .l-foot a { display: inline-block; padding: 12px 6px; }
   .l-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; }

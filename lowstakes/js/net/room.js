@@ -1,10 +1,10 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=41';
-import { Blackjack } from '../games/blackjack.js?v=41';
-import { Roulette } from '../games/roulette.js?v=41';
-import { Crash } from '../games/crash.js?v=41';
+import { Holdem } from '../games/holdem.js?v=42';
+import { Blackjack } from '../games/blackjack.js?v=42';
+import { Roulette } from '../games/roulette.js?v=42';
+import { Crash } from '../games/crash.js?v=42';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 const PREFIX = 'lowstakes-v1-';
@@ -573,7 +573,7 @@ export class Guest extends Emitter {
 }
 
 export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
-export const GAME_NAMES = { holdem: "Texas Hold'em", blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
+export const GAME_NAMES = { holdem: 'Poker', blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
 
 function cleanName(n) {
   return String(n || '').replace(/\s+/g, ' ').trim().slice(0, 16);

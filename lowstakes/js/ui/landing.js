@@ -1,13 +1,6 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=41';
-import { COLORS } from '../net/room.js?v=41';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=42';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
-
-export function colorPicker(selected, name = 'color') {
-  return `<fieldset class="swatches"><legend>Chip colour</legend>${COLORS.slice(0, 10).map((c, i) => `
-    <label class="swatch" style="--c:${c}"><input type="radio" name="${name}" value="${c}"${c === selected ? ' checked' : ''} aria-label="Colour ${i + 1}"><span></span></label>`).join('')}
-  </fieldset>`;
-}
 
 export function landing(me, { error = '' } = {}) {
   return `
@@ -21,14 +14,9 @@ export function landing(me, { error = '' } = {}) {
   <section class="hero">
     <div class="hero-copy">
       <h1>Game night, minus the&nbsp;cash.</h1>
-      <p class="lede">Hold'em, blackjack, roulette and crash with your friends, right in the browser. Start a table, send the link, deal. Everyone gets 1,000 chips that are worth exactly nothing.</p>
+      <p class="lede">Poker, blackjack, roulette and crash with your friends, right in the browser. Sign in with Google, start a table, send the link, deal. Everyone plays with free coins that are worth exactly nothing.</p>
 
       <form class="sit" id="start-form" autocomplete="off" novalidate>
-        <label class="field">
-          <span>Your name</span>
-          <input id="name" name="name" maxlength="16" value="${esc(me.name)}" placeholder="What should the table call you?" autocomplete="nickname" spellcheck="false">
-        </label>
-        ${colorPicker(me.color)}
         <p class="form-error" id="form-error" role="alert">${esc(error)}</p>
         <div class="sit-actions">
           <button class="btn btn-primary" type="submit" data-mode="host">Start a table</button>
@@ -62,8 +50,8 @@ export function landing(me, { error = '' } = {}) {
     <div class="game-row">
       <article class="placard p-holdem">
         <div class="placard-art">${['As', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
-        <h3>Texas Hold'em</h3>
-        <p>No-limit, two to nine players. Proper side pots, all-in run-outs, and a timer so nobody stalls forever.</p>
+        <h3>Poker</h3>
+        <p>Texas Hold'em, no-limit, two to nine players. Proper side pots, all-in run-outs, and a timer so nobody stalls forever.</p>
       </article>
       <article class="placard p-bj">
         <div class="placard-art">${['Kc', 'Ah'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
@@ -86,16 +74,16 @@ export function landing(me, { error = '' } = {}) {
   <section class="how" id="how">
     <h2>How a game night goes</h2>
     <ol class="steps">
-      <li><b>Start a table.</b> You're the host. Your browser runs the game, so there's nothing to install and no account to make.</li>
-      <li><b>Send the link.</b> Paste it in the group chat. Friends open it, type a name and sit down. Up to twelve at a table.</li>
-      <li><b>Pick a game and deal.</b> Switch between hold'em, blackjack, roulette and crash whenever you like. Chip counts carry over.</li>
+      <li><b>Sign in and start a table.</b> One tap with Google and you're in. You get a username and a starting stash of free coins. Our servers run the game, so there's nothing to install.</li>
+      <li><b>Send the link.</b> Paste it in the group chat. Friends sign in, open it and sit down. Up to twelve at a table.</li>
+      <li><b>Pick a game and deal.</b> Switch between poker, blackjack, roulette and crash whenever you like. Your coins go with you, and you can claim free top-ups when you run low.</li>
     </ol>
     <p class="how-note">Short a player? Add bots. They play a sensible game and don't mind losing.</p>
   </section>
 
   <footer class="l-foot">
     <p>Play money only. There's nothing to buy and nothing to cash out.</p>
-    <p>Tables are peer-to-peer: the host's browser deals, and guests connect to it directly. Keep the host tab open.</p>
+    <p>Tables run on our game server, so the table stays open even if the person who started it closes their tab.</p>
     <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · For adults (18+) only</p>
   </footer>
 </div>`;
@@ -108,11 +96,6 @@ export function gate(me, code, { error = '', status = '' } = {}) {
   <form class="gate-card" id="gate-form" autocomplete="off" novalidate>
     <p class="gate-kicker">You're invited to table</p>
     <p class="gate-code">${esc(code)}</p>
-    <label class="field">
-      <span>Your name</span>
-      <input id="name" name="name" maxlength="16" value="${esc(me.name)}" placeholder="What should the table call you?" autocomplete="nickname" spellcheck="false">
-    </label>
-    ${colorPicker(me.color)}
     <p class="form-error" id="form-error" role="alert">${esc(error)}</p>
     <button class="btn btn-primary btn-wide" type="submit"${status === 'connecting' ? ' disabled' : ''}>${status === 'connecting' ? 'Finding the table…' : 'Take a seat'}</button>
     <p class="gate-foot">Play money only. <a href="#/">Start your own table</a></p>

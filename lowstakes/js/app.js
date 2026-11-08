@@ -1,20 +1,20 @@
-import { Ads } from './ads.js?v=41';
-import { Auth } from './auth.js?v=41';
-import { CONFIG } from './config.js?v=41';
-import * as AU from './ui/account-ui.js?v=41';
-import morphdom from '../vendor/morphdom-esm.js?v=41';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=41';
-import { landing, gate } from './ui/landing.js?v=41';
-import { lobby, inviteLink } from './ui/lobby.js?v=41';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=41';
-import * as HU from './ui/holdem-ui.js?v=41';
-import * as BU from './ui/blackjack-ui.js?v=41';
-import * as RU from './ui/roulette-ui.js?v=41';
-import * as CU from './ui/crash-ui.js?v=41';
-import { sound } from './ui/sound.js?v=41';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=41';
-import { WHEEL } from './games/roulette.js?v=41';
-import * as Motion from './ui/motion.js?v=41';
+import { Ads } from './ads.js?v=42';
+import { Auth } from './auth.js?v=42';
+import { CONFIG } from './config.js?v=42';
+import * as AU from './ui/account-ui.js?v=42';
+import morphdom from '../vendor/morphdom-esm.js?v=42';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=42';
+import { landing, gate } from './ui/landing.js?v=42';
+import { lobby, inviteLink } from './ui/lobby.js?v=42';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=42';
+import * as HU from './ui/holdem-ui.js?v=42';
+import * as BU from './ui/blackjack-ui.js?v=42';
+import * as RU from './ui/roulette-ui.js?v=42';
+import * as CU from './ui/crash-ui.js?v=42';
+import { sound } from './ui/sound.js?v=42';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=42';
+import { WHEEL } from './games/roulette.js?v=42';
+import * as Motion from './ui/motion.js?v=42';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -31,7 +31,7 @@ const store = {
 const S = {
   me: {
     name: store.get('ls.name') || '',
-    color: store.get('ls.color') || COLORS[Math.floor(Math.random() * 6)],
+    color: COLORS[0], // everyone's chips are red for now
   },
   client: null,
   state: null,
@@ -106,7 +106,6 @@ function showLanding(error = '') {
   document.title = 'Low Stakes';
   app.innerHTML = landing(S.me, { error });
   AU.bindSlot();
-  syncAccountName();
   const form = document.getElementById('start-form');
   const code = document.getElementById('code');
   code.addEventListener('input', () => { code.value = cleanCode(code.value); });
@@ -128,14 +127,6 @@ function showLanding(error = '') {
   });
 }
 
-// A signed-in player has one username, used everywhere: lock the name box to it.
-function syncAccountName() {
-  const n = document.getElementById('name');
-  if (!n) return;
-  if (Auth.ready()) { n.value = Auth.username(); n.readOnly = true; n.title = 'Your Low Stakes username'; }
-  else if (n.readOnly) { n.readOnly = false; n.title = ''; }
-}
-
 function showGate(code, opts = {}) {
   S.screen = 'gate';
   document.body.className = 'on-gate';
@@ -149,7 +140,6 @@ function showGate(code, opts = {}) {
     joinTable(code);
     showGate(code, { status: 'connecting' });
   });
-  if (!opts.status) form.querySelector('#name').focus();
 }
 
 function gateStage({ stage, slow }) {
@@ -160,17 +150,18 @@ function gateStage({ stage, slow }) {
     note.classList.add('gate-wait');
     note.textContent = stage === 'server'
       ? 'This is taking a while. A VPN, ad blocker or school network can block the connection.'
-      : 'Found the table. Still connecting to the host’s browser. Make sure the host still has the table open.';
+      : 'Found the table. Still connecting. Make sure the person who started it still has the table open.';
   }
 }
 
-function readMe(form) {
-  const name = form.querySelector('#name').value.replace(/\s+/g, ' ').trim().slice(0, 16);
-  const color = (form.querySelector('input[name=color]:checked') || {}).value || S.me.color;
-  if (!name) { formError('Add your name so the table knows who you are.'); form.querySelector('#name').focus(); return false; }
-  S.me = { name, color };
-  store.set('ls.name', name);
-  store.set('ls.color', color);
+// The name at the table is the account username. Signed-out players (practice tables) get a stable guest name.
+function readMe() {
+  let name = Auth.ready() ? Auth.username() : '';
+  if (!name) {
+    name = store.get('ls.name');
+    if (!name || !/^Guest \d+$/.test(name)) { name = `Guest ${10 + Math.floor(Math.random() * 90)}`; store.set('ls.name', name); }
+  }
+  S.me = { name, color: COLORS[0] };
   return true;
 }
 
@@ -1245,7 +1236,7 @@ window.addEventListener('hashchange', () => {
   }
   if (accountsOk()) route();
 });
-Auth.onChange(() => { AU.bindSlot(); if (S.screen === 'landing') syncAccountName(); });
+Auth.onChange(() => { AU.bindSlot(); });
 AU.setToast(toast);
 // free coins claimed while sitting at a wallet table: ask the table to add them to the stack
 AU.setCoinsHook(() => { if (S.client && S.client.isServer) S.client.send({ t: 'refresh' }); });

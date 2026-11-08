@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=41';
-import { esc, fmt, signed } from './parts.js?v=41';
+import { Auth, explain, usernameProblem } from '../auth.js?v=42';
+import { esc, fmt, signed } from './parts.js?v=42';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -188,7 +188,7 @@ const TYPE_LABEL = {
   welcome_bonus: 'Welcome bonus', wager: 'Bet', payout: 'Winnings', refund: 'Refund',
   username_change_fee: 'Username change', adjustment: 'Adjustment',
 };
-const GAME_LABEL = { blackjack: 'Blackjack', holdem: "Hold'em", roulette: 'Roulette', crash: 'Crash' };
+const GAME_LABEL = { blackjack: 'Blackjack', holdem: 'Poker', roulette: 'Roulette', crash: 'Crash' };
 
 export function openProfile() {
   if (!Auth.signedIn()) return openAuth('signin');

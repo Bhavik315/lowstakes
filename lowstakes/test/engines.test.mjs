@@ -521,7 +521,7 @@ test('capacity: a poker table stops at 9, and the game will not start with more'
   try {
     fill(h, 9);
     assert.equal(h.addBot('holdem').ok, false);
-    assert.match(h.addBot('holdem').message, /Texas Hold'em seats 9/);
+    assert.match(h.addBot('holdem').message, /Poker seats 9/);
     assert.ok(h.setGame('holdem').ok);
     const v = h.engine.view(h.id);
     assert.equal(v.seats.length, 9, 'all nine are seated and visible');
