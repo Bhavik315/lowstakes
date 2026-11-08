@@ -45,7 +45,7 @@ test.after(() => sb.close());
 const RUN = Math.random().toString(36).replace(/[^a-z0-9]/g, '').toUpperCase().slice(0, 3).padEnd(3, 'X');
 const code5 = (n) => `${n}${RUN}`.slice(0, 5); // a fresh table code per run (5 characters)
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-function client(code, token, origin = ORIGIN) {
+function client(code, token, { origin = ORIGIN, create = true } = {}) {
   const ws = new WebSocket(`${WORKER}/ws/${code}`, { headers: { Origin: origin } });
   const c = { ws, msgs: [], closed: false, closeCode: 0 };
   ws.addEventListener('message', (e) => c.msgs.push(JSON.parse(e.data)));
@@ -54,7 +54,7 @@ function client(code, token, origin = ORIGIN) {
   c.send = (m) => ws.send(JSON.stringify(m));
   c.last = (t) => [...c.msgs].reverse().find((m) => m.t === t);
   c.until = async (fn, ms = 15000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (fn(c)) return true; await wait(50); } return false; };
-  if (token !== null) c.opened.then(() => c.send({ t: 'hello', token }));
+  if (token !== null) c.opened.then(() => c.send({ t: 'hello', token, create }));
   return c;
 }
 
@@ -72,6 +72,13 @@ test('a bad token is rejected and nothing is seated', async () => {
   await c.until((x) => x.last('reject'));
   assert.equal(c.last('reject').why, 'auth');
   assert.equal(wallet.presence.size, 0);
+});
+
+test('opening a table code that does not exist is refused unless you are creating it', async () => {
+  const c = client(code5('N1'), 'tok-alice', { create: false });
+  await c.until((x) => x.last('reject'));
+  assert.equal(c.last('reject').why, 'notfound');
+  assert.equal(wallet.presence.size, 0, 'nothing was seated');
 });
 
 test('a signed-in player sits down with their real username and balance', async () => {
