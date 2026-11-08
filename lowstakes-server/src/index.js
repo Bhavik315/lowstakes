@@ -6,7 +6,7 @@ const json = (status, body) => new Response(JSON.stringify(body), { status, head
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/health') return json(200, { ok: true });
+    if (url.pathname === '/health') return json(200, { ok: true, service: 'lowstakes-server', configured: !!env.SUPABASE_SECRET_KEY });
     const m = /^\/ws\/([A-Z0-9]{5})$/.exec(url.pathname);
     if (!m) return json(404, { error: 'not found' });
     if (request.headers.get('Upgrade') !== 'websocket') return json(426, { error: 'expected a websocket' });
