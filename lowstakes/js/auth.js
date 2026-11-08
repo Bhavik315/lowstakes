@@ -1,8 +1,9 @@
-// Accounts: talks to Supabase Auth (GoTrue) and the wallet functions over plain fetch, no SDK.
+// Accounts: Google sign-in through Supabase Auth (GoTrue), plus the wallet functions, over plain fetch (no SDK).
+// There are no passwords and no email sign-up: Google has already verified the address.
 // The browser only ever holds a session token. Username and balance are read from the database,
 // and every change (registration bonus, username fee, later game payouts) happens in database
 // functions that check who is asking. Nothing here is trusted by the backend.
-import { CONFIG } from './config.js?v=31';
+import { CONFIG } from './config.js?v=32';
 
 const STORE = 'ls.auth';
 const FEE = 5000;
@@ -102,13 +103,22 @@ export const Auth = {
   // Reads tokens left in the URL by email links (verification, password reset) and tidies the address bar.
   // Returns { type, error } or null.
   consumeLink() {
+    // Errors can come back in the query string (Google cancelled or failed) or in the fragment.
+    const qs = new URLSearchParams(location.search);
+    if (qs.get('error') && (qs.get('error_code') || qs.get('error_description'))) {
+      const code = qs.get('error_code') || qs.get('error');
+      ['error', 'error_code', 'error_description'].forEach((k) => qs.delete(k));
+      const rest = qs.toString();
+      history.replaceState(null, '', location.pathname + (rest ? `?${rest}` : '') + location.hash);
+      return { error: code, type: '' };
+    }
     const h = location.hash.replace(/^#/, '');
     if (!/(^|&)(access_token|error)=/.test(h)) return null;
     const q = new URLSearchParams(h);
     history.replaceState(null, '', location.pathname + location.search + '#/');
     if (q.get('error')) return { error: q.get('error_code') || q.get('error'), type: q.get('type') || '' };
     setSession({ access_token: q.get('access_token'), refresh_token: q.get('refresh_token'), expires_in: q.get('expires_in') });
-    return { type: q.get('type') || 'signup', error: '' };
+    return { type: q.get('type') || 'oauth', error: '' };
   },
 
   async init() {
@@ -125,6 +135,13 @@ export const Auth = {
     emit();
   },
 
+  // Sends the player to Google (via Supabase). They come back to this page with tokens in the address,
+  // which consumeLink() picks up.
+  signInWithGoogle() {
+    const back = encodeURIComponent(location.origin + location.pathname);
+    location.href = `${CONFIG.supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${back}`;
+  },
+
   async refreshUser() {
     const user = await authed('/auth/v1/user');
     session.user = user; save();
@@ -137,34 +154,10 @@ export const Auth = {
     return account;
   },
 
-  async signUp(email, password, username) {
-    const data = await call(`/auth/v1/signup?redirect_to=${encodeURIComponent(location.origin + location.pathname)}`, {
-      method: 'POST', body: { email, password, data: { username } },
-    });
-    // With "Confirm email" on there is no session yet. An existing email comes back with no identities.
-    const existing = !!(data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0);
-    if (data && data.access_token) { setSession(data, data.user); await this.loadAccount(); }
-    return { existing, needsVerification: !(data && data.access_token) };
-  },
 
-  async signIn(email, password) {
-    const t = await call('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password } });
-    setSession(t, t.user);
-    await this.loadAccount();
-    return account;
-  },
 
-  async resend(email) {
-    await call(`/auth/v1/resend?redirect_to=${encodeURIComponent(location.origin + location.pathname)}`, { method: 'POST', body: { type: 'signup', email } });
-  },
 
-  async forgot(email) {
-    await call(`/auth/v1/recover?redirect_to=${encodeURIComponent(location.origin + location.pathname)}`, { method: 'POST', body: { email } });
-  },
 
-  async setPassword(password) {
-    await authed('/auth/v1/user', { method: 'PUT', body: { password } });
-  },
 
   async signOut() {
     const tok = session && session.access_token;

@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=31';
-import { esc, fmt, signed } from './parts.js?v=31';
+import { Auth, explain, usernameProblem } from '../auth.js?v=32';
+import { esc, fmt, signed } from './parts.js?v=32';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -38,12 +38,6 @@ function mount(html, { title }) {
   return root.querySelector('.acct-card');
 }
 
-const pwField = (id, label, auto) => `
-  <label class="afield"><span>${label}</span>
-    <span class="pw"><input id="${id}" type="password" autocomplete="${auto}" minlength="8" required>
-    <button type="button" class="pw-toggle" data-pw="${id}" aria-label="Show password" aria-pressed="false">Show</button></span>
-  </label>`;
-
 const notice = (t, kind = 'err') => (t ? `<p class="anote ${kind}" role="${kind === 'err' ? 'alert' : 'status'}">${esc(t)}</p>` : '<p class="anote" aria-live="polite"></p>');
 
 function setMsg(card, text, kind = 'err') {
@@ -64,16 +58,6 @@ function busy(card, on, label) {
 function wire(card, handlers = {}) {
   card.addEventListener('click', (e) => {
     if (e.target.closest('[data-x]')) { close(); return; }
-    const pw = e.target.closest('[data-pw]');
-    if (pw) {
-      const input = card.querySelector(`#${pw.dataset.pw}`);
-      const show = input.type === 'password';
-      input.type = show ? 'text' : 'password';
-      pw.textContent = show ? 'Hide' : 'Show';
-      pw.setAttribute('aria-pressed', String(show));
-      pw.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
-      return;
-    }
     const go = e.target.closest('[data-go]');
     if (go && handlers.go) handlers.go(go.dataset.go, go);
   });
@@ -105,147 +89,27 @@ function watchUsername(card, input, hint, onResult = () => {}) {
 }
 
 // ---------------------------------------------------------------- screens
+const GOOGLE_G = '<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';
+
 export function openAuth(mode = 'signin', opts = {}) {
   if (opts.required !== undefined) required = !!opts.required;
-  if (mode === 'signup') return showSignUp(opts.message);
-  return showSignIn(opts.message, opts.kind);
+  showSignIn(opts.message, opts.kind);
 }
 
-function tabs(active) {
-  return `<div class="atabs" role="tablist"><button role="tab" aria-selected="${active === 'signin'}" data-go="signin">Sign in</button><button role="tab" aria-selected="${active === 'signup'}" data-go="signup">Create account</button></div>`;
-}
-
+// Google is the only way in. There are no passwords and no email sign-up.
 function showSignIn(message = '', kind = 'err') {
   const card = mount(`
-    ${tabs('signin')}
-    <h2>Welcome back</h2>
-    <form novalidate>
-      <label class="afield"><span>Email</span><input id="a-email" type="email" autocomplete="email" inputmode="email" value="${esc(ctx.email || '')}" required></label>
-      ${pwField('a-pass', 'Password', 'current-password')}
-      ${notice(message, kind)}
-      <button class="btn btn-primary" type="submit">Sign in</button>
-      <p class="alinks"><button type="button" class="linkish" data-go="forgot">Forgot your password?</button></p>
-    </form>`, { title: 'Sign in' });
+    <h2>Sign in to Low Stakes</h2>
+    <p class="asub">Use your Google account. New here? Signing in creates your account: you'll pick a username (free), then get a one-time <b>20,000 coin</b> welcome bonus.</p>
+    ${notice(message, kind)}
+    <button class="btn btn-google" type="button" data-go="google">${GOOGLE_G}<span>Continue with Google</span></button>
+    <p class="asub small">We only receive your email address from Google, and never your password. Play money only.</p>`, { title: 'Sign in' });
   wire(card, {
-    go: (g) => (g === 'signup' ? showSignUp() : g === 'forgot' ? showForgot() : 0),
-    submit: async () => {
-      const email = card.querySelector('#a-email').value.trim();
-      const pass = card.querySelector('#a-pass').value;
-      ctx.email = email;
-      if (!/^\S+@\S+\.\S+$/.test(email)) return setMsg(card, 'Enter a valid email address.');
-      if (!pass) return setMsg(card, 'Enter your password.');
-      busy(card, true, 'Signing in…');
-      try { await Auth.signIn(email, pass); await afterAuth('Signed in.'); }
-      catch (e) {
-        busy(card, false);
-        if (e.code === 'email_not_confirmed') { showCheckEmail(email, 'Please verify your email first.'); return; }
-        setMsg(card, explain(e));
-      }
-    },
-  });
-}
-
-function showSignUp(message = '') {
-  let nameOk = null;
-  const card = mount(`
-    ${tabs('signup')}
-    <h2>Create your account</h2>
-    <p class="asub">Pick your username now. It's free, and it's the name everyone sees. You get <b>20,000 coins</b> once, after you verify your email.</p>
-    <form novalidate>
-      <label class="afield"><span>Email</span><input id="a-email" type="email" autocomplete="email" inputmode="email" value="${esc(ctx.email || '')}" required></label>
-      <label class="afield"><span>Username</span><input id="a-user" maxlength="16" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="3 to 16 letters, numbers, _" required></label>
-      <p class="ahint" id="a-hint" aria-live="polite"></p>
-      ${pwField('a-pass', 'Password', 'new-password')}
-      <p class="asub small">At least 8 characters.</p>
-      ${notice(message)}
-      <button class="btn btn-primary" type="submit">Create account</button>
-    </form>`, { title: 'Create account' });
-  watchUsername(card, card.querySelector('#a-user'), card.querySelector('#a-hint'), (ok) => { nameOk = ok; });
-  wire(card, {
-    go: (g) => (g === 'signin' ? showSignIn() : 0),
-    submit: async () => {
-      const email = card.querySelector('#a-email').value.trim();
-      const username = card.querySelector('#a-user').value.trim();
-      const pass = card.querySelector('#a-pass').value;
-      ctx.email = email;
-      if (!/^\S+@\S+\.\S+$/.test(email)) return setMsg(card, 'Enter a valid email address.');
-      const bad = usernameProblem(username);
-      if (bad) return setMsg(card, bad);
-      if (nameOk === false) return setMsg(card, 'Pick a username that is available.');
-      if (pass.length < 8) return setMsg(card, 'Use at least 8 characters for your password.');
-      busy(card, true, 'Creating…');
-      try {
-        // Check once more right before registering, so a taken name is caught now rather than after the email.
-        const r = await Auth.checkUsername(username);
-        if (!r.available) { busy(card, false); return setMsg(card, explain({ code: r.valid ? 'username_taken' : r.reason })); }
-        const out = await Auth.signUp(email, pass, username);
-        if (!out.needsVerification) await afterAuth('Account created.');
-        else showCheckEmail(email, '', out.existing);
-      } catch (e) { busy(card, false); setMsg(card, explain(e)); }
-    },
-  });
-}
-
-function showCheckEmail(email, message = '', existing = false) {
-  const card = mount(`
-    <h2>Check your email</h2>
-    <p class="asub">We sent a link to <b>${esc(email)}</b>. Open it to verify your address${existing ? '' : ', and your 20,000 coins will be waiting'}.</p>
-    ${existing ? '<p class="asub small">If that address already has a Low Stakes account, sign in with it instead.</p>' : ''}
-    ${notice(message)}
-    <div class="aacts"><button class="btn btn-quiet" data-go="resend">Send it again</button><button class="btn btn-primary" data-go="signin">Back to sign in</button></div>`, { title: 'Check your email' });
-  wire(card, {
-    go: async (g, btn) => {
-      if (g === 'signin') return showSignIn();
-      if (g === 'resend') {
-        btn.disabled = true;
-        try { await Auth.resend(email); setMsg(card, 'Sent. It can take a minute, so check spam too.', 'ok'); }
-        catch (e) { setMsg(card, explain(e)); }
-        setTimeout(() => { btn.disabled = false; }, 30000);
-      }
-    },
-  });
-}
-
-function showForgot(message = '', kind = 'err') {
-  const card = mount(`
-    <h2>Reset your password</h2>
-    <p class="asub">Enter your email and we'll send a link to choose a new password.</p>
-    <form novalidate>
-      <label class="afield"><span>Email</span><input id="a-email" type="email" autocomplete="email" inputmode="email" value="${esc(ctx.email || '')}" required></label>
-      ${notice(message, kind)}
-      <button class="btn btn-primary" type="submit">Send reset link</button>
-      <p class="alinks"><button type="button" class="linkish" data-go="signin">Back to sign in</button></p>
-    </form>`, { title: 'Reset password' });
-  wire(card, {
-    go: (g) => (g === 'signin' ? showSignIn() : 0),
-    submit: async () => {
-      const email = card.querySelector('#a-email').value.trim();
-      ctx.email = email;
-      if (!/^\S+@\S+\.\S+$/.test(email)) return setMsg(card, 'Enter a valid email address.');
-      busy(card, true, 'Sending…');
-      try { await Auth.forgot(email); setMsg(card, 'If that address has an account, a reset link is on its way.', 'ok'); }
-      catch (e) { setMsg(card, explain(e)); }
-      busy(card, false);
-    },
-  });
-}
-
-function showReset() {
-  const card = mount(`
-    <h2>Choose a new password</h2>
-    <form novalidate>
-      ${pwField('a-pass', 'New password', 'new-password')}
-      <p class="asub small">At least 8 characters.</p>
-      ${notice('')}
-      <button class="btn btn-primary" type="submit">Save password</button>
-    </form>`, { title: 'New password' });
-  wire(card, {
-    submit: async () => {
-      const pass = card.querySelector('#a-pass').value;
-      if (pass.length < 8) return setMsg(card, 'Use at least 8 characters.');
-      busy(card, true, 'Saving…');
-      try { await Auth.setPassword(pass); await Auth.refreshUser(); await Auth.loadAccount(); await afterAuth('Password updated.'); }
-      catch (e) { busy(card, false); setMsg(card, explain(e)); }
+    go: (g, btn) => {
+      if (g !== 'google') return;
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Opening Google…';
+      Auth.signInWithGoogle();
     },
   });
 }
@@ -254,7 +118,7 @@ function showChooseUsername(message = '', suggestion = '') {
   let ok = null;
   const card = mount(`
     <h2>Choose your username</h2>
-    <p class="asub">Your email is verified. Pick the username everyone will see. It's free this time, and every change after costs ${fmt(Auth.FEE)} coins. You'll get <b>20,000 coins</b> right after.</p>
+    <p class="asub">You're signed in with Google${Auth.email() ? ` as ${esc(Auth.email())}` : ''}. Pick the username everyone will see. It's free this time, and every change after costs ${fmt(Auth.FEE)} coins. You'll get <b>20,000 coins</b> right after.</p>
     <form novalidate>
       <label class="afield"><span>Username</span><input id="a-user" maxlength="16" autocapitalize="off" spellcheck="false" value="${esc(suggestion)}" placeholder="3 to 16 letters, numbers, _" required></label>
       <p class="ahint" id="a-hint" aria-live="polite"></p>
@@ -286,35 +150,31 @@ function welcome(r) {
   wire(card);
 }
 
-// After any successful sign-in or email link: finish registration if needed, otherwise just say hello.
-async function afterAuth(msg) {
+// After coming back from Google: sign the player in, or finish registering if they are new.
+async function afterAuth() {
   if (!Auth.account()) await Auth.loadAccount();
   const acc = Auth.account();
   if (acc && acc.registered) { required = false; close(); toastFn(`Signed in as ${acc.username}.`); return; }
-  if (acc && acc.email_verified === false) { showCheckEmail(Auth.email(), 'Verify your email to continue.'); return; }
-  // Verified but no username yet. Try the one chosen at sign-up; fall back to asking.
-  const chosen = (Auth.user() && Auth.user().user_metadata && Auth.user().user_metadata.username) || '';
-  if (chosen) {
-    try { const r = await Auth.completeRegistration(chosen); required = false; welcome(r); return; }
-    catch (e) { showChooseUsername(explain(e), ''); return; }
+  if (acc && acc.email_verified === false) {
+    showSignIn('Google did not give us a verified email address, so we cannot create an account. Try another Google account.');
+    await Auth.signOut();
+    return;
   }
   showChooseUsername('');
 }
 
-// Called once at start-up with whatever the email link carried.
+// Called once at start-up with whatever Google's redirect carried.
 export async function handleLink(link) {
   if (!link) return;
   if (link.error) {
-    ctx.email = ctx.email || '';
-    openAuth('signin', { message: `${explain({ code: link.error })} Sign in, or use "Forgot your password?" for a fresh link.`, kind: 'err' });
+    openAuth('signin', { message: link.error === 'access_denied' ? 'Google sign-in was cancelled. Try again when you are ready.' : 'Google sign-in did not work. Please try again.' });
     return;
   }
   try {
     await Auth.refreshUser();
     await Auth.loadAccount();
   } catch (e) { openAuth('signin', { message: explain(e) }); return; }
-  if (link.type === 'recovery') { showReset(); return; }
-  await afterAuth('Email verified.');
+  await afterAuth();
 }
 
 // ---------------------------------------------------------------- profile
@@ -420,7 +280,7 @@ function renderProfile(extra = {}) {
 export function slotHtml() {
   if (Auth.ready()) return `<button class="acct-chip" data-acct="profile" aria-label="Your account"><span class="an">${esc(Auth.username())}</span><span class="ab">${fmt(Auth.balance())}</span></button>`;
   if (Auth.signedIn()) return '<button class="acct-chip" data-acct="profile">Finish sign-up</button>';
-  return '<button class="btn btn-quiet btn-sm" data-acct="signin">Sign in</button><button class="btn btn-dark btn-sm" data-acct="signup">Create account</button>';
+  return '<button class="btn btn-dark btn-sm" data-acct="signin">Sign in with Google</button>';
 }
 
 export function bindSlot() {

@@ -24,10 +24,23 @@ module.exports = function makeMock() {
   m.profileOf = (name) => [...m.profiles.values()].find((v) => v.username === name);
   m.setBalance = (name, n) => { const p = m.profileOf(name); p.balance = n; };
 
+  // Google sign-in: the test sets m.google = { email } (or m.googleError) before the player clicks the button.
+  m.google = null; m.googleError = null; m.forceNewUser = false;
+  function authorize(u) {
+    const back = u.searchParams.get('redirect_to');
+    if (m.googleError) return { status: 302, headers: { location: `${back}#error=access_denied&error_code=${m.googleError}&error_description=Access+denied` }, body: null };
+    const email = m.google.email.toLowerCase();
+    let user = m.users.get(email);
+    if (!user || m.forceNewUser) { user = { id: id(), email, confirmed: true, meta: undefined }; m.users.set(email + (m.forceNewUser ? ':' + user.id : ''), user); if (!m.forceNewUser) m.users.set(email, user); m.byId.set(user.id, user); }
+    const t = tokensFor(user);
+    return { status: 302, headers: { location: `${back}#access_token=${t.access_token}&refresh_token=${t.refresh_token}&expires_in=3600&token_type=bearer&provider_token=pt` }, body: null };
+  }
+
   function handle(method, url, headers, bodyText) {
     const u = new URL(url); const path = u.pathname; let body = {}; try { body = bodyText ? JSON.parse(bodyText) : {}; } catch {}
     const auth = (headers.authorization || '').replace(/^Bearer /, ''); const uid = m.access.get(auth);
     m.log.push({ method, path, hasBearer: !!auth, body });
+    if (path === '/auth/v1/authorize') return authorize(u);
     if (m.rateLimit && path.startsWith('/auth/v1')) return gt('over_request_rate_limit', 'rate', 429);
     const needUser = () => (uid ? null : J(401, { code: 'PGRST301', message: 'JWT expired' }));
     if (path === '/auth/v1/signup') {

@@ -4,8 +4,8 @@
 export const CONFIG = {
   supabaseUrl: 'https://pupyykzrfbuimvuwohya.supabase.co',
   supabaseKey: 'sb_publishable_COgy0nfCPaaPLH1CRWpuWg_pNf-_PO-',
-  // Turn on once Google sign-in is configured in Supabase (Authentication > Providers > Google).
-  google: false,
+  // Sign-in is Google only (no passwords, no email sign-up). It needs Google switched on in Supabase
+  // (Authentication > Providers > Google), and the Email provider switched off.
   // When true, nobody can use the site without an account. Keep false until the games run on the
   // server and use the wallet; until then game chips are separate from the wallet.
   requireLogin: false,
