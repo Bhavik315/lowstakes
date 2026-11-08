@@ -8,7 +8,7 @@ export const CONFIG = {
   // (Authentication > Providers > Google), and the Email provider switched off.
   // The game server (Cloudflare Worker), as wss://... . Empty = tables run in the browser as before, with free chips.
   // Set it once the server is deployed (see lowstakes-server/README.md). Signed-in players then play for wallet coins.
-  serverUrl: '',
+  serverUrl: 'wss://lowstakes-server.bhavikjain315.workers.dev',
   // When true, nobody can use the site without an account. Keep false until the games run on the
   // server and use the wallet; until then game chips are separate from the wallet.
   requireLogin: false,
