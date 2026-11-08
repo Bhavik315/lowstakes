@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=38';
-import { esc, fmt, signed } from './parts.js?v=38';
+import { Auth, explain, usernameProblem } from '../auth.js?v=39';
+import { esc, fmt, signed } from './parts.js?v=39';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed
@@ -300,29 +300,28 @@ export async function openFreeCoins() {
 
 function renderCoins(list, got = '') {
   const t0 = performance.now();
-  const stack = (n) => `<span class="cstack n${n}" aria-hidden="true">${'<i class="coin"></i>'.repeat(n)}</span>`;
+  const stack = (n) => `<span class="cstack n${n}" aria-hidden="true">${'<svg class="coin"><use href="#coin-g"/></svg>'.repeat(n)}</span>`;
   const card = mount(`
     <div class="cp-head"><div><h2>Free coins</h2><p class="asub">Four free packs, each on its own refill timer.</p></div>
       <div class="cp-bal"><span>Balance</span><b id="cp-bal">${fmt(Auth.balance())}</b></div></div>
     <div class="cp-grid">${list.map((p) => `
-      <article class="cp cp-${esc(p.id)}${p.id === got ? ' got' : ''}">
-        ${TAGS[p.id] ? `<span class="cp-tag">${TAGS[p.id]}</span>` : ''}
-        ${stack(COINS[p.id] || 3)}
-        <h3>${esc(p.name)}</h3>
-        <p class="cp-amt"><i class="coin sm" aria-hidden="true"></i>${fmt(p.amount)}</p>
-        <p class="cp-every">Refills every ${p.every_seconds / 3600} hours</p>
-        <button class="cp-btn" data-claim="${esc(p.id)}" data-left="${p.seconds_left}" data-name="${esc(p.name)}"></button>
+      <article class="cp cp-${esc(p.id)}${p.id === got ? ' got' : ''}" aria-label="${esc(p.name)}: ${fmt(p.amount)} coins every ${p.every_seconds / 3600} hours">
+        <div class="cp-art">${TAGS[p.id] ? `<span class="cp-tag">${TAGS[p.id]}</span>` : ''}${stack(COINS[p.id] || 3)}</div>
+        <div class="cp-body">
+          <p class="cp-amt">${fmt(p.amount)}<small>coins</small></p>
+          <p class="cp-every">Every ${p.every_seconds / 3600} hours</p>
+          <button class="cp-btn btn" data-claim="${esc(p.id)}" data-left="${p.seconds_left}" data-name="${esc(p.name)}"></button>
+        </div>
       </article>`).join('')}</div>
-    ${notice(got ? `Added to your balance.` : '', 'ok')}
-    ${!got && list.every((p) => !p.ready) ? '<p class="asub small cp-hint">Your timers started when you signed up. Come back when one reaches zero.</p>' : ''}
+    ${notice(got ? 'Added to your balance.' : '', 'ok')}
     <div class="aacts"><button class="btn btn-primary" data-x>Done</button></div>`, { title: 'Free coins' });
   card.classList.add('wide');
   const paint = () => {
     const el = (performance.now() - t0) / 1000;
     card.querySelectorAll('.cp-btn').forEach((b) => {
       const left = Math.max(0, Math.ceil(Number(b.dataset.left) - el));
-      if (left > 0) { b.disabled = true; b.className = 'cp-btn wait'; b.textContent = hms(left); b.setAttribute('aria-label', `${b.dataset.name}: ready in ${hms(left)}`); }
-      else if (!b.dataset.busy) { b.disabled = false; b.className = 'cp-btn ready'; b.textContent = 'Claim'; b.setAttribute('aria-label', `Claim ${b.dataset.name}`); }
+      if (left > 0) { b.disabled = true; b.className = 'cp-btn btn btn-dark wait'; b.textContent = hms(left); b.setAttribute('aria-label', `${b.dataset.name}: ready in ${hms(left)}`); }
+      else if (!b.dataset.busy) { b.disabled = false; b.className = 'cp-btn btn btn-primary ready'; b.textContent = 'Claim'; b.setAttribute('aria-label', `Claim ${b.dataset.name}`); }
     });
   };
   paint();

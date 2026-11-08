@@ -203,13 +203,15 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   t('free coins: the header offers it', await pF.locator('.coins-btn').count() === 1);
   await pF.click('.coins-btn'); await wait(700);
   const cardsTxt = await text(pF);
-  t('free coins: four packs with their amounts and refill times', ['Pocket change', 'Stack', 'Tower', 'High roller vault'].every((n) => cardsTxt.includes(n)) && ['1,000', '5,000', '15,000', '40,000'].every((n) => cardsTxt.includes(n)) && /every 4 hours/.test(cardsTxt) && /every 6 hours/.test(cardsTxt) && /every 24 hours/.test(cardsTxt) && /every 72 hours/.test(cardsTxt), cardsTxt.slice(0, 300));
+  t('free coins: four packs with their amounts and refill times', ['1,000', '5,000', '15,000', '40,000'].every((n) => cardsTxt.includes(n)) && /Every 4 hours/.test(cardsTxt) && /Every 6 hours/.test(cardsTxt) && /Every 24 hours/.test(cardsTxt) && /Every 72 hours/.test(cardsTxt), cardsTxt.slice(0, 300));
+  t('free coins: no pack names or sign-up explanation cluttering the cards', !/Pocket change|High roller vault|timers started/.test(cardsTxt) && await pF.locator('.cp h3').count() === 0);
   t('free coins: Popular and Best value tags, and the balance', /Popular/.test(cardsTxt) && /Best value/.test(cardsTxt) && /Balance 20,000/.test(cardsTxt));
+  t('free coins: each pack has real coin artwork', await pF.locator('.cp .coin use[href="#coin-g"]').count() === 2 + 3 + 4 + 5);
+  t('free coins: the four packs use four different card colours', (await pF.locator('.cp-art').evaluateAll((els) => new Set(els.map((e) => getComputedStyle(e).backgroundImage.match(/rgb\([^)]*\)/g).join('|'))).size)) === 4);
   const btns = await pF.locator('.cp-btn').evaluateAll((els) => els.map((e) => ({ id: e.dataset.claim, text: e.textContent.replace('◷', '').trim(), disabled: e.disabled })));
   t('free coins: a brand-new account cannot claim anything yet (every pack is on its countdown)', btns.length === 4 && btns.every((x) => x.disabled && /^\d\d:\d\d:\d\d$/.test(x.text)) && await pF.locator('.cp-btn.ready').count() === 0, JSON.stringify(btns));
   const want = { pocket: ['04:00:00', '03:59'], stack: ['06:00:00', '05:59'], tower: ['24:00:00', '23:59'], vault: ['72:00:00', '71:59'] };
   t('...each counting down from its full length (4h / 6h / 24h / 72h)', btns.every((x) => x.text === want[x.id][0] || x.text.startsWith(want[x.id][1])), JSON.stringify(btns));
-  t('...with a line explaining the timers started at sign-up', /timers started when you signed up/.test(await text(pF)));
   t('...so there is no dot on the header button yet', await pF.locator('.coins-btn .dot').count() === 0);
   await pF.click('[data-claim=pocket]', { force: true, timeout: 2000 }).catch(() => {}); await wait(500);
   t('clicking a waiting pack does nothing', mockF.profileOf('Coin_Fan').balance === 20000 && mockF.tx.filter((x) => x.type === 'free_pack').length === 0);
@@ -251,7 +253,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
   mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
   t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=38'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=39'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();
