@@ -226,6 +226,24 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await ctx.close();
   }
 
+  // phone poker: opponents' cards are visible, and the dealing animation still runs when the phone asks for reduced motion
+  for (const reduced of [false, true]) {
+    const ctx = await b.newContext({ viewport: { width: 840, height: 285 }, hasTouch: true, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+    await ctx.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
+    const p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
+    await p.goto(BASE); await wait(600);
+    await p.addStyleTag({ content: '#banner{display:none!important}' });
+    await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(300);
+    await p.evaluate(() => { const c = window.lowstakes.client; for (let i = 0; i < 8; i++) c.addBot(); c.setGame('holdem'); });
+    await wait(1700);
+    const anim = await p.evaluate(() => { const c = document.querySelector('.seat:not(.me) .card'); const a = c && getComputedStyle(c); return a ? parseFloat(a.animationDuration) : -1; });
+    t(`phone poker${reduced ? ' (reduced motion)' : ''}: the cards are dealt with the flying animation`, anim > 0.3, String(anim));
+    await wait(5500);
+    const vis = await p.evaluate(() => [...document.querySelectorAll('.seat:not(.me):not(.folded):not(.out) .card')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 8 && r.height > 8 && r.left >= 0 && r.right <= innerWidth && getComputedStyle(e).opacity !== '0'; }).length);
+    t(`phone poker${reduced ? ' (reduced motion)' : ''}: opponents' face-down cards are visible beside their names`, vis >= 12, String(vis));
+    await ctx.close();
+  }
+
   // Coming back from Google lands you on the invite you were opening, not the home page
   {
     const { ctx, p } = await open(b, { width: 1280, height: 800 });

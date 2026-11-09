@@ -68,8 +68,11 @@
   html .seat.side .plate-text, html .spot .plate-text { display: flex; }
   html .seat .pname, html .seat.side .pname, html .spot .pname { display: block; font-size: 10.5px; max-width: 6.5ch; }
   html .seat .pchips, html .spot .pchips { font-size: 10.5px; }
-  html .seat:not(.me) .card.down { display: none; }           /* face-down cards say little; folded plates already dim */
-  html .seat:not(.me) .seat-cards { height: auto; margin: 0; }
+  /* Opponents' cards peek out from behind their plate (above it; below it for the seats along the top edge). */
+  html .seat:not(.me) { --cw: 24px; }
+  html .seat:not(.me) .seat-cards { position: absolute; z-index: 1; left: 50%; margin: 0 0 0 calc(var(--cw) * -.8); bottom: calc(100% - 12px); height: calc(var(--cw) * 1.4); }
+  html .seat.top:not(.side):not(.me) .seat-cards { bottom: auto; top: calc(100% - 12px); }
+  html .seat:not(.me) .plate { z-index: 2; }
   html .tag { font-size: 9.5px; padding: 1px 6px; margin-top: 2px; }
   html .seat.top .tag { margin: 0 0 2px; }
   html .bet { gap: 3px; }
@@ -185,4 +188,15 @@
   html .l-top .acct-chip { flex: 1 1 auto; min-width: 0; max-width: none; display: flex; justify-content: space-between; gap: 10px; }
   html .acct-chip .an { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   html .acct-chip .ab { flex: none; }
+}
+
+/* The cards flying out from the dealer is how you follow a hand, so it stays on even when the phone asks for reduced motion
+   (Android turns that on with battery saver / "remove animations"). Everything else still respects the setting. */
+@media (prefers-reduced-motion: reduce) {
+  html .tbl.holdem .seat .card { animation-duration: .66s !important; }
+  html .tbl.holdem .seat.me .card-in { animation-duration: .55s !important; }
+  html .tbl.holdem .slot .card.flop .card-in { animation-duration: .55s !important; }
+  html .tbl.holdem .slot .card.late .card-in { animation-duration: .7s !important; }
+  html .tbl.holdem .seat-cards { transition-duration: .75s !important; }
+  html .tbl.holdem .seat .plate { transition-duration: .2s !important; }
 }
