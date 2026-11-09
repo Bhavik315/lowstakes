@@ -12,7 +12,8 @@ async function open(b, size, touch = false) {
   await p.goto(BASE); await wait(700);
   return { ctx, p };
 }
-const practice = async (p, game) => { await p.locator('button[data-mode=bots]').dispatchEvent('click'); await wait(1200); if (game) { await p.evaluate((g) => window.lowstakes.client.setGame(g), game); await wait(1200); } };
+// A browser table with three bots at it, playing `game` (poker unless told otherwise). The bots are added by the test; the site has no "play against bots" button for now.
+const practice = async (p, game) => { await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(400); await p.evaluate((g) => { const c = window.lowstakes.client; c.addBot(); c.addBot(); c.addBot(); c.setGame(g); }, game || 'holdem'); await wait(1400); };
 const rect = (p, sel) => p.evaluate((s) => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height }; }, sel);
 const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b - 1 && b.t < a.b - 1;
 

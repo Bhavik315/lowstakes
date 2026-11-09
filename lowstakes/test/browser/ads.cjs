@@ -13,7 +13,8 @@ async function openPractice(p) {
   await wait(200);
 }
 async function toTable(p) {
-  await p.click('button[data-mode=bots]'); await wait(1400);
+  await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(500);
+  await p.evaluate(() => { const c = window.lowstakes.client; c.addBot(); c.addBot(); c.addBot(); c.setGame('holdem'); }); await wait(1400);
 }
 
 (async () => {
@@ -25,6 +26,7 @@ async function toTable(p) {
   let p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   const reqs = []; p.on('request', (r) => reqs.push(r.url()));
   await openPractice(p);
+  t('home page: there is no "Practise against bots" button, just Start a table and Join', await p.locator('[data-mode=bots]').count() === 0 && !/practi[sc]e/i.test(await p.locator('body').innerText()) && await p.locator('[data-mode=host]').count() === 1 && await p.locator('[data-mode=join]').count() === 1);
   t('home page, preview on, no ad code: one highlighted placeholder, no real ad, no consent bar', await p.locator('.ad-ph:visible').count() === 1 && await p.locator('#ad-consent').count() === 0 && await p.locator('iframe').count() === 0);
   await toTable(p);
   t('table chat is there: a typing box and a Send button', await p.locator('#chat-input').count() === 1 && await p.locator('.chat-form button').count() === 1);
@@ -52,7 +54,7 @@ async function toTable(p) {
   await openPractice(p);
   t('phone portrait: the home page nudges you to turn the phone', await p.locator('.rotate-tip').isVisible());
   t('phone portrait: home page ad slot uses the small 320x50 size', /320×50/.test(await p.locator('.ad-slot[data-slot=landing]').innerText()));
-  await p.locator('button[data-mode=bots]').dispatchEvent('click'); await wait(1400);
+  await toTable(p);
   t('phone portrait: the table is covered by "Turn your phone sideways"', await p.locator('.rotate-gate').isVisible() && /sideways/i.test(await p.locator('.rotate-gate').innerText()));
   const hit = await p.evaluate(() => { const e = document.elementFromPoint(195, 780); return !!(e && e.closest('.rotate-gate')); });
   t('phone portrait: nothing under it can be tapped', hit);
