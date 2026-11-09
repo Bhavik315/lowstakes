@@ -1,4 +1,4 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=42';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=43';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -80,6 +80,8 @@ export function landing(me, { error = '' } = {}) {
     </ol>
     <p class="how-note">Short a player? Add bots. They play a sensible game and don't mind losing.</p>
   </section>
+
+  <div class="ad-slot" data-slot="landing" data-static hidden></div>
 
   <footer class="l-foot">
     <p>Play money only. There's nothing to buy and nothing to cash out.</p>

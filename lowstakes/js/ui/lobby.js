@@ -1,5 +1,5 @@
-import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=42';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=42';
+import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=43';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=43';
 
 const BLURB = {
   holdem: 'Texas Hold’em, no-limit. Two to nine players.',
@@ -103,6 +103,7 @@ export function lobby(state, ui) {
     ${pick === 'holdem' && room.players.length < 2 ? '<p class="lobby-hint">Hold\'em needs at least two players. Add a bot or wait for a friend.</p>' : ''}`
     : '<p class="lobby-hint">You’re in. The game starts when the host deals.</p>'}
   </section>
+  <div class="ad-slot" data-slot="lobby" data-static hidden></div>
 </div>`;
 }
 

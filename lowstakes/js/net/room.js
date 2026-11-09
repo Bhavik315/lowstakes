@@ -1,10 +1,10 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=42';
-import { Blackjack } from '../games/blackjack.js?v=42';
-import { Roulette } from '../games/roulette.js?v=42';
-import { Crash } from '../games/crash.js?v=42';
+import { Holdem } from '../games/holdem.js?v=43';
+import { Blackjack } from '../games/blackjack.js?v=43';
+import { Roulette } from '../games/roulette.js?v=43';
+import { Crash } from '../games/crash.js?v=43';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 const PREFIX = 'lowstakes-v1-';
@@ -195,7 +195,6 @@ export class Host extends Emitter {
     if (!p) return;
     switch (msg.t) {
       case 'act': if (this.engine && this.engine.handle(pid, msg.a || {})) this.changed(); break;
-      case 'chat': this.chat(pid, msg.text); break;
       case 'react': this.react(pid, msg.r); break;
       case 'rebuy': this.rebuy(pid, true); break;
       case 'bye':
@@ -210,7 +209,6 @@ export class Host extends Emitter {
 
   // ---- local API (same shape as Guest) ----
   act(a) { if (this.engine && this.engine.handle(this.id, a)) this.changed(); }
-  say(text) { this.chat(this.id, text); }
   emote(r) { this.react(this.id, r); }
   requestRebuy() { this.rebuy(this.id, true); }
 
@@ -338,13 +336,6 @@ export class Host extends Emitter {
     this.changed(true);
   }
 
-  chat(pid, text) {
-    const p = this.player(pid);
-    text = String(text || '').trim().slice(0, 240);
-    if (!p || !text) return;
-    this.pushChat({ pid, name: p.name, color: p.color, text });
-  }
-
   system(text) { this.pushChat({ pid: null, text }); }
 
   pushChat(m) {
@@ -357,6 +348,10 @@ export class Host extends Emitter {
 
   react(pid, r) {
     if (!REACTIONS.includes(r)) return;
+    const me = this.player(pid);
+    const t = Date.now();
+    if (me && t - (me.lastReact || 0) < 1200) return; // no spamming
+    if (me) me.lastReact = t;
     const msg = { t: 'react', pid, r, id: uid() };
     this.broadcastRaw(msg);
     this.fire('react', msg);
@@ -560,7 +555,6 @@ export class Guest extends Emitter {
 
   send(msg) { if (this.conn && this.conn.open) try { this.conn.send(msg); } catch {} }
   act(a) { this.send({ t: 'act', a }); }
-  say(text) { this.send({ t: 'chat', text }); }
   emote(r) { this.send({ t: 'react', r }); }
   requestRebuy() { this.send({ t: 'rebuy' }); }
 
@@ -572,7 +566,7 @@ export class Guest extends Emitter {
   }
 }
 
-export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
+export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'wow'];
 export const GAME_NAMES = { holdem: 'Poker', blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
 
 function cleanName(n) {

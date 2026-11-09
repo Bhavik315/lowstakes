@@ -1,5 +1,5 @@
-import { esc, fmt, signed, chip, avatar, CHIP_VALUES, outOfChips } from './parts.js?v=42';
-import { AUTO_CHOICES } from '../games/crash.js?v=42';
+import { esc, fmt, signed, chip, avatar, CHIP_VALUES, outOfChips } from './parts.js?v=43';
+import { AUTO_CHOICES } from '../games/crash.js?v=43';
 
 const fx = (x) => `${x.toFixed(2)}x`;
 const tier = (x) => (x < 2 ? 'lo' : x < 10 ? 'mid' : 'hi');

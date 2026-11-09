@@ -12,4 +12,12 @@ export const CONFIG = {
   // When true, nobody can use the site without an account. Keep false until the games run on the
   // server and use the wallet; until then game chips are separate from the wallet.
   requireLogin: false,
+  // Ad slots. Each one stays hidden until it has ad code (and the visitor has allowed ads). Paste the network's
+  // banner snippet into `html` and set the size it was made for. Slots: rail (beside live tables, wide screens only),
+  // landing (home page), lobby (before a game starts). Ads load inside a sandboxed frame, away from the game.
+  ads: {
+    rail: { w: 300, h: 250, html: '' },
+    landing: { w: 728, h: 90, html: '' },
+    lobby: { w: 300, h: 250, html: '' },
+  },
 };
