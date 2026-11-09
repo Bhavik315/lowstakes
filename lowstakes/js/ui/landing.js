@@ -1,4 +1,4 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=45';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=46';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -34,7 +34,6 @@ export function landing(me, { error = '' } = {}) {
 
     <div class="hero-table" aria-hidden="true">
       <div class="hero-felt">
-        <div class="hero-print">Low Stakes card room</div>
         <div class="hero-hand">${HERO_HAND.map((c, i) => card(c, { cls: 'hero-card', style: `--i:${i}` })).join('')}</div>
         <div class="hero-chips">
           <div class="hero-stack" style="--d:0">${chipStack(1340)}</div>
@@ -71,19 +70,7 @@ export function landing(me, { error = '' } = {}) {
     </div>
   </section>
 
-  <div class="ad-slot" data-slot="landing" data-static hidden></div>
-
-  <section class="how" id="how">
-    <h2>How a game night goes</h2>
-    <ol class="steps">
-      <li><b>Sign in and start a table.</b> One tap with Google and you're in. You get a username and a starting stash of free coins. Our servers run the game, so there's nothing to install.</li>
-      <li><b>Send the link.</b> Paste it in the group chat. Friends sign in, open it and sit down. Up to twelve at a table.</li>
-      <li><b>Pick a game and deal.</b> Switch between poker, blackjack, roulette and crash whenever you like. Your coins go with you, and you can claim free top-ups when you run low.</li>
-    </ol>
-    <p class="how-note">Short a player? Add bots. They play a sensible game and don't mind losing.</p>
-  </section>
-
-  <div class="ad-slot" data-slot="landing2" data-static hidden></div>
+  <div class="ad-slot ad-landing" data-slot="landing" data-static hidden></div>
 
   <footer class="l-foot">
     <p>Play money only. There's nothing to buy and nothing to cash out.</p>

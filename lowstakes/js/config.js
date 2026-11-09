@@ -19,7 +19,6 @@ export const CONFIG = {
   ads: {
     rail: { w: 300, h: 250, html: '' },
     landing: { w: 728, h: 90, html: '', mobile: { w: 320, h: 100, html: '' } },
-    landing2: { w: 728, h: 90, html: '', mobile: { w: 320, h: 100, html: '' } },
     lobby: { w: 300, h: 250, html: '' },
   },
   // While true, every empty slot shows a bright dashed "ad goes here" box so you can see the layout. Set to false

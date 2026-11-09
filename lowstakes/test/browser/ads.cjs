@@ -25,7 +25,7 @@ async function toTable(p) {
   let p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   const reqs = []; p.on('request', (r) => reqs.push(r.url()));
   await openPractice(p);
-  t('home page, preview on, no ad code: two highlighted placeholders, no real ad, no consent bar', await p.locator('.ad-ph:visible').count() === 2 && await p.locator('#ad-consent').count() === 0 && await p.locator('iframe').count() === 0);
+  t('home page, preview on, no ad code: one highlighted placeholder, no real ad, no consent bar', await p.locator('.ad-ph:visible').count() === 1 && await p.locator('#ad-consent').count() === 0 && await p.locator('iframe').count() === 0);
   await toTable(p);
   t('table chat is there: a typing box and a Send button', await p.locator('#chat-input').count() === 1 && await p.locator('.chat-form button').count() === 1);
   t('quick reactions are plain words, no emoji', (await p.locator('.chat .reacts button').allInnerTexts()).every((x) => /^[A-Za-z!' ]+$/.test(x)) && await p.locator('.chat .reacts button').count() >= 5);
