@@ -1,14 +1,18 @@
 // Banner ad slots. Nothing here does anything until js/config.js has ad code for a slot AND the visitor has said yes
 // to ads. Ad code runs inside a sandboxed frame (no access to the game, the sign-in session or local storage).
-import { CONFIG } from './config.js?v=44';
+import { CONFIG } from './config.js?v=45';
 
 const KEY = 'ls.adconsent'; // 'yes' | 'no' | unset
 const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
 const write = (v) => { try { localStorage.setItem(KEY, v); } catch {} };
-const slotCfg = (name) => { const c = (CONFIG.ads || {})[name]; return c && typeof c.html === 'string' && c.html.trim() ? c : null; };
+const narrow = () => matchMedia('(max-width: 759px)').matches;
+// The size/code for this slot on this screen (phones use `mobile` when a slot has one).
+const pickCfg = (name) => { const c = (CONFIG.ads || {})[name]; return c ? (narrow() && c.mobile ? c.mobile : c) : null; };
+const slotCfg = (name) => { const c = pickCfg(name); return c && typeof c.html === 'string' && c.html.trim() ? c : null; };
+const hasCode = (c) => !!(c && ((typeof c.html === 'string' && c.html.trim()) || (c.mobile && typeof c.mobile.html === 'string' && c.mobile.html.trim())));
 
 export const Slots = {
-  configured() { return Object.keys(CONFIG.ads || {}).some((n) => slotCfg(n)); },
+  configured() { return Object.values(CONFIG.ads || {}).some(hasCode); },
   consent() { return read(); },
 
   // Fill every empty slot under `root` that has ad code, if the visitor allowed ads. Safe to call again and again.
@@ -16,9 +20,18 @@ export const Slots = {
     const allowed = read() === 'yes';
     root.querySelectorAll('.ad-slot').forEach((el) => {
       const cfg = slotCfg(el.dataset.slot);
-      if (!cfg || !allowed) { el.hidden = true; return; }
+      if (!cfg || !allowed) {
+        // No ad code yet: in preview mode show where the ad will go, otherwise stay out of the way.
+        const size = pickCfg(el.dataset.slot);
+        if (CONFIG.adPreview && size && !el.dataset.filled) {
+          el.hidden = false;
+          el.innerHTML = `<div class="ad-ph" style="width:${size.w}px;height:${size.h}px"><b>AD SLOT</b><span>${el.dataset.slot} · ${size.w}×${size.h}</span></div>`;
+        } else if (!el.dataset.filled) el.hidden = true;
+        return;
+      }
       el.hidden = false;
       if (el.dataset.filled) return;
+      el.innerHTML = '';
       el.dataset.filled = '1';
       const f = document.createElement('iframe');
       f.title = 'Advertisement';

@@ -446,6 +446,14 @@ kbd {
 /* ------------------------------------------------------------ ad slots */
 .ad-slot { display: flex; justify-content: center; align-items: center; margin: 18px auto; max-width: 100%; overflow: hidden; }
 .ad-slot[hidden] { display: none; }
+.ad-ph {
+  max-width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 10px; text-align: center;
+  border: 3px dashed #E1007A; color: #E1007A; font: 700 15px/1.2 var(--font); letter-spacing: .04em;
+  background: repeating-linear-gradient(45deg, rgba(225, 0, 122, .10) 0 12px, rgba(225, 0, 122, .03) 12px 24px);
+}
+.ad-ph b { font-size: 17px; } .ad-ph span { font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.on-table .ad-ph { color: #FF5BB0; border-color: #FF5BB0; }
+.lobby .ad-slot { grid-area: ad; }
 .ad-slot iframe { border: 0; max-width: 100%; display: block; background: transparent; }
 .chat .ad-slot { flex: none; margin: 6px auto 8px; }
 #ad-consent {
@@ -1021,7 +1029,7 @@ input[type=range]::-moz-range-thumb {
 /* ------------------------------------------------------------ lobby */
 .lobby {
   width: 100%; max-width: 1180px; padding: 40px 32px 60px;
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); grid-template-areas: 'invite games' 'seats games'; gap: 36px 56px; align-content: start;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); grid-template-areas: 'invite games' 'seats games' 'ad ad'; gap: 36px 56px; align-content: start;
 }
 .lobby-invite { grid-area: invite; }
 .lobby-seats { grid-area: seats; }
@@ -1147,7 +1155,7 @@ input[type=range]::-moz-range-thumb {
   .hero-felt { inset: 0 -40px 0 30px; }
   .hero-hand { --cw: clamp(58px, 13vw, 96px); top: 46%; }
   .game-row, .steps { grid-template-columns: 1fr; }
-  .lobby { grid-template-columns: 1fr; grid-template-areas: 'invite' 'games' 'seats'; }
+  .lobby { grid-template-columns: 1fr; grid-template-areas: 'invite' 'games' 'seats' 'ad'; }
   .rl { grid-template-columns: 1fr; gap: 16px; align-content: start; overflow-y: auto; padding: 16px; }
   .rl-wheel { grid-template-columns: auto 1fr; align-items: center; justify-items: start; }
   .wheel-box { width: 180px; }
