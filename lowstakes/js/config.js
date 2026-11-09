@@ -14,23 +14,23 @@ export const CONFIG = {
   requireLogin: false,
   // Ad slots. Each one stays hidden until it has ad code (and the visitor has allowed ads). Every slot has size
   // tiers, biggest first: the first tier that fits the screen (minW / minH in pixels) is used, and it swaps when the
-  // window is resized or a phone is turned. Paste the network's banner snippet for that exact size into `html`.
+  // window is resized or a phone is turned. Put the ad unit's key (from the network's snippet) in `key`; the ad is then served from the game server's address (see lowstakes-server/src/ads.js, which must list the same keys).
   // Slots: landing (home page), lobby (game setup), rail (beside the live table). Ad code loads inside a sandboxed
   // frame, away from the game.
   ads: {
     landing: [
-      { minW: 760, w: 728, h: 90, html: "<script>atOptions = {'key' : '13f9a0a286e616b330d213ba508671bc','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};</script><script src=\"https://bauval.org/22/13f9a0a286e616b330d213ba508671bc\"></script>" },
-      { minW: 500, w: 468, h: 60, html: "<script>atOptions = {'key' : 'a18825a808f1d9c38b854bf60023c50c','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};</script><script src=\"https://bauval.org/22/a18825a808f1d9c38b854bf60023c50c\"></script>" },
-      { minW: 0, w: 320, h: 50, html: "<script>atOptions = {'key' : '1a627a8f3a4793ba04130f439966e533','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};</script><script src=\"https://bauval.org/22/1a627a8f3a4793ba04130f439966e533\"></script>" },
+      { minW: 760, w: 728, h: 90, key: '13f9a0a286e616b330d213ba508671bc' },
+      { minW: 500, w: 468, h: 60, key: 'a18825a808f1d9c38b854bf60023c50c' },
+      { minW: 0, w: 320, h: 50, key: '1a627a8f3a4793ba04130f439966e533' },
     ],
     lobby: [
-      { minW: 760, w: 728, h: 90, html: "<script>atOptions = {'key' : '13f9a0a286e616b330d213ba508671bc','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};</script><script src=\"https://bauval.org/22/13f9a0a286e616b330d213ba508671bc\"></script>" },
-      { minW: 500, w: 468, h: 60, html: "<script>atOptions = {'key' : 'a18825a808f1d9c38b854bf60023c50c','format' : 'iframe','height' : 60,'width' : 468,'params' : {}};</script><script src=\"https://bauval.org/22/a18825a808f1d9c38b854bf60023c50c\"></script>" },
-      { minW: 0, w: 320, h: 50, html: "<script>atOptions = {'key' : '1a627a8f3a4793ba04130f439966e533','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};</script><script src=\"https://bauval.org/22/1a627a8f3a4793ba04130f439966e533\"></script>" },
+      { minW: 760, w: 728, h: 90, key: '13f9a0a286e616b330d213ba508671bc' },
+      { minW: 500, w: 468, h: 60, key: 'a18825a808f1d9c38b854bf60023c50c' },
+      { minW: 0, w: 320, h: 50, key: '1a627a8f3a4793ba04130f439966e533' },
     ],
     rail: [
-      { minW: 1180, minH: 700, w: 300, h: 250, html: "<script>atOptions = {'key' : '82f13974043f0644568ea90a3ed5d459','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};</script><script src=\"https://bauval.org/22/82f13974043f0644568ea90a3ed5d459\"></script>" },
-      { minW: 0, w: 320, h: 50, html: "<script>atOptions = {'key' : '1a627a8f3a4793ba04130f439966e533','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};</script><script src=\"https://bauval.org/22/1a627a8f3a4793ba04130f439966e533\"></script>" },
+      { minW: 1180, minH: 700, w: 300, h: 250, key: '82f13974043f0644568ea90a3ed5d459' },
+      { minW: 0, w: 320, h: 50, key: '1a627a8f3a4793ba04130f439966e533' },
     ],
   },
   // While true, every empty slot shows a bright dashed "ad goes here" box so you can see the layout. Set to false

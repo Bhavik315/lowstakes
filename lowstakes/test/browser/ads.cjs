@@ -6,8 +6,8 @@ let pass = 0, fail = 0;
 const t = (name, ok) => { ok ? pass++ : fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 // The site's real config now holds the Adsterra codes. Unless a test says otherwise, run with empty slots and the preview boxes on.
-const HTML_RE = /html: "(?:[^"\\]|\\.)*"/g;
-const emptyCfg = (route) => route.fetch().then(async (res) => { const body = (await res.text()).replace(HTML_RE, "html: ''").replace('adPreview: false', 'adPreview: true'); await route.fulfill({ response: res, body }); });
+const HTML_RE = /key: '[0-9a-f]{32}'/g;
+const emptyCfg = (route) => route.fetch().then(async (res) => { const body = (await res.text()).replace(HTML_RE, "key: ''").replace('adPreview: false', 'adPreview: true'); await route.fulfill({ response: res, body }); });
 
 async function openPractice(p) {
   await p.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
@@ -90,7 +90,6 @@ async function toTable(p) {
   // ---- with ad code set (config swapped in by the test)
   const withAds = (route) => route.fetch().then(async (res) => {
     let body = await res.text();
-    body = body.replace(HTML_RE, "html: '<div id=\"adtest\">TEST-AD</div>'");
     await route.fulfill({ response: res, body });
   });
   ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });
@@ -107,8 +106,9 @@ async function toTable(p) {
   await wait(600);
   const frame = p.locator('.ad-slot[data-slot=landing] iframe');
   t('the real banner is the laptop size (728 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '728');
-  t('the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
-  t('the ad code runs inside the frame, not in the page', await p.frameLocator('.ad-slot[data-slot=landing] iframe').locator('#adtest').count() === 1 && await p.locator('#adtest').count() === 0);
+  const src = await frame.getAttribute('src');
+  t('the home page ad is a frame loaded from the game server (a different address from the site), not code running on the site', await frame.count() === 1 && /^https:\/\/lowstakes-server\.[^/]+\/ad\?k=13f9a0a286e616b330d213ba508671bc$/.test(src) && new URL(src).origin !== new URL(BASE).origin && await p.locator('.ad-slot script').count() === 0);
+  t('the frame cannot navigate the page away without a tap', /allow-top-navigation-by-user-activation/.test(await frame.getAttribute('sandbox')) && !/allow-top-navigation(?!-by)/.test(await frame.getAttribute('sandbox')));
   await toTable(p);
   t('wide table: the ad slot in the chat panel is filled and visible', await p.locator('.chat .ad-slot iframe').count() === 1 && await p.locator('.chat .ad-slot').isVisible());
   const box = await p.locator('.chat .ad-slot iframe').boundingBox();

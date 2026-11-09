@@ -349,3 +349,21 @@ test('roulette: a forged spot like "col:0" (13 numbers, better than fair odds) i
   s.core.receive('u1', { t: 'act', a: { type: 'bet', spot: 'col:3', amount: 100 } });
   assert.equal(s.core.engine.total('u1'), 100, 'a real spot still works');
 });
+
+test('ad page: only the known ad units are served, from this origin, framed only by the real site', async () => {
+  const { adResponse, AD_UNITS } = await import('../src/ads.js');
+  const origins = ['https://lowstakes.pages.dev'];
+  for (const [key, [w, h]] of Object.entries(AD_UNITS)) {
+    const r = adResponse(new URL(`https://x.dev/ad?k=${key}`), origins);
+    assert.equal(r.status, 200);
+    assert.equal(r.headers.get('content-security-policy'), 'frame-ancestors https://lowstakes.pages.dev');
+    const html = await r.text();
+    assert.ok(html.includes(`'key' : '${key}'`) && html.includes(`'height' : ${h},'width' : ${w}`) && html.includes(`https://bauval.org/22/${key}`));
+    assert.equal((html.match(/<script/g) || []).length, 2, 'exactly the two Adsterra scripts');
+  }
+  for (const bad of ['', 'x', '__proto__', 'constructor', "13f9a0a286e616b330d213ba508671bc'+alert(1)+'", '13f9a0a286e616b330d213ba508671bc ', '../../etc']) {
+    assert.equal(adResponse(new URL(`https://x.dev/ad?k=${encodeURIComponent(bad)}`), origins), null, JSON.stringify(bad));
+  }
+  assert.equal(adResponse(new URL('https://x.dev/ad'), origins), null);
+  assert.equal(adResponse(new URL(`https://x.dev/ad?k=82f13974043f0644568ea90a3ed5d459`), []).headers.get('content-security-policy'), "frame-ancestors 'none'");
+});

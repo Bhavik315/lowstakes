@@ -1,6 +1,7 @@
 // Worker entry point: sends each WebSocket to the Durable Object for its table code.
 export { Table } from './table.js';
 import { keepAlive } from './keepalive.js';
+import { adResponse } from './ads.js';
 
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
@@ -8,6 +9,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/health') return json(200, { ok: true, service: 'lowstakes-server', configured: !!env.SUPABASE_SECRET_KEY });
+    if (url.pathname === '/ad') {
+      const origins = String(env.ALLOWED_ORIGINS || '').split(',').map((x) => x.trim()).filter((x) => x.startsWith('https://'));
+      return adResponse(url, origins) || json(404, { error: 'not found' });
+    }
     const m = /^\/ws\/([A-Z0-9]{5})$/.exec(url.pathname);
     if (!m) return json(404, { error: 'not found' });
     if (request.headers.get('Upgrade') !== 'websocket') return json(426, { error: 'expected a websocket' });

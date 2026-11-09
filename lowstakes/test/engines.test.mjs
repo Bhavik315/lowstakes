@@ -826,15 +826,15 @@ test('a guest cannot smuggle CSS or markup through the colour or name they send'
   } finally { h.close(); }
 });
 
-test('ad slots: every configured banner is the plain Adsterra iframe snippet, sized to match its slot', async () => {
+test('ad slots: every configured banner is a known Adsterra ad unit, sized to match, served by key (no code lives in the page)', async () => {
   const { CONFIG } = await import('../js/config.js');
+  const { AD_UNITS } = await import('../../lowstakes-server/src/ads.js');
   assert.equal(CONFIG.adPreview, false, 'preview boxes are off on the live site');
   for (const [slot, tiers] of Object.entries(CONFIG.ads)) {
     assert.ok(tiers.length >= 1 && tiers.at(-1).minW === 0, `${slot} has a fallback size`);
     for (const t of tiers) {
-      assert.match(t.html, /^<script>atOptions = \{'key' : '[0-9a-f]{32}','format' : 'iframe','height' : \d+,'width' : \d+,'params' : \{\}\};<\/script><script src="https:\/\/bauval\.org\/22\/[0-9a-f]{32}"><\/script>$/, `${slot} ${t.w}x${t.h}`);
-      assert.ok(t.html.includes(`'height' : ${t.h},'width' : ${t.w}`), `${slot}: snippet size matches ${t.w}x${t.h}`);
-      assert.equal(t.html.match(/[0-9a-f]{32}/g)[0], t.html.match(/[0-9a-f]{32}/g)[1], 'key matches the script address');
+      assert.ok(!('html' in t), `${slot}: no raw ad code in the page config`);
+      assert.deepEqual(AD_UNITS[t.key], [t.w, t.h], `${slot} ${t.w}x${t.h}: the server knows this key at this size`);
     }
   }
 });
