@@ -1,4 +1,4 @@
-// Reactions instead of chat, and the (empty until configured) ad slots.
+// The (empty until configured) ad slots, and that table chat is still there.
 // Needs Playwright and the site served at http://localhost:8080/lowstakes/ (python3 -m http.server 8080 from the repo root).
 const { chromium } = require('playwright');
 const BASE = 'http://localhost:8080/lowstakes/';
@@ -27,26 +27,21 @@ async function toTable(p) {
   await openPractice(p);
   t('home page: no ad slot showing, no consent bar when no ad code is set', await p.locator('.ad-slot:visible').count() === 0 && await p.locator('#ad-consent').count() === 0 && await p.locator('iframe').count() === 0);
   await toTable(p);
-  t('no chat box and no typing field anywhere at the table', await p.locator('#chat, #chat-input, .chat-form, input[type=text]').count() === 0 && !/Table talk/.test(await p.locator('body').innerText()));
-  t('five reactions by default', await p.locator('.rail .reacts button').count() === 5);
-  t('the reactions rail is visible on a wide screen', await p.locator('.rail').isVisible());
-  t('the rail ad slot stays hidden without ad code', await p.locator('.rail .ad-slot:visible').count() === 0);
-  const before = await p.locator('.bubble.react').count();
-  await p.click('.rail .reacts button:first-child'); await wait(400);
-  t('tapping a reaction pops an emoji over your seat', await p.locator('.bubble.react').count() > before || (await p.locator('#fx').innerText()).trim().length > 0);
-  t('table activity lists who sat down (no player text)', (await p.locator('.rail-feed li').count()) >= 1);
+  t('table chat is there: a typing box and a Send button', await p.locator('#chat-input').count() === 1 && await p.locator('.chat-form button').count() === 1);
+  t('quick reactions are plain words, no emoji', (await p.locator('.chat .reacts button').allInnerTexts()).every((x) => /^[A-Za-z!' ]+$/.test(x)) && await p.locator('.chat .reacts button').count() >= 5);
+  t('the chat panel is visible on a wide screen', await p.locator('.chat').isVisible());
+  t('the ad slot in the chat panel stays hidden without ad code', await p.locator('.chat .ad-slot:visible').count() === 0);
+  await p.fill('#chat-input', 'hello table'); await p.press('#chat-input', 'Enter'); await wait(400);
+  t('a typed message shows up in the chat', /hello table/.test(await p.locator('#chat-list').innerText()));
   await ctx.close();
 
-  // ---- phone: the rail slides in from the React button
+  // ---- phone: the chat panel slides in from the Chat button
   ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
   p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   await openPractice(p); await toTable(p);
-  t('phone: rail starts closed', !(await p.evaluate(() => document.getElementById('room').classList.contains('rail-open'))));
-  await p.click('[data-act=rail].tool'); await wait(400);
-  t('phone: the React button opens it', await p.evaluate(() => document.getElementById('room').classList.contains('rail-open')) && await p.locator('.rail .reacts button').first().isVisible());
-  await p.locator('.rail .reacts button:nth-child(2)').dispatchEvent('click'); await wait(300);
-  await p.locator('.rail-head [data-act=rail]').dispatchEvent('click'); await wait(400);
-  t('phone: and the close button shuts it', !(await p.evaluate(() => document.getElementById('room').classList.contains('rail-open'))));
+  t('phone: chat starts closed', !(await p.evaluate(() => document.getElementById('room').classList.contains('chat-open'))));
+  await p.locator('[data-act=chat].tool').dispatchEvent('click'); await wait(400);
+  t('phone: the Chat button opens it', await p.evaluate(() => document.getElementById('room').classList.contains('chat-open')) && await p.locator('#chat-input').isVisible());
   await ctx.close();
 
   // ---- with ad code set (config swapped in by the test)
@@ -75,12 +70,12 @@ async function toTable(p) {
   t('"Allow ads": the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
   t('the ad code runs inside the frame, not in the page', await p.frameLocator('.ad-slot[data-slot=landing] iframe').locator('#adtest').count() === 1 && await p.locator('#adtest').count() === 0);
   await toTable(p);
-  t('wide table: the rail slot is filled and visible under the reactions', await p.locator('.rail .ad-slot iframe').count() === 1 && await p.locator('.rail .ad-slot').isVisible());
-  const box = await p.locator('.rail .ad-slot iframe').boundingBox();
+  t('wide table: the ad slot in the chat panel is filled and visible', await p.locator('.chat .ad-slot iframe').count() === 1 && await p.locator('.chat .ad-slot').isVisible());
+  const box = await p.locator('.chat .ad-slot iframe').boundingBox();
   const stage = await p.locator('#stage').boundingBox();
   t('the ad sits beside the stage, not over it', box && stage && box.x >= stage.x + stage.width - 2);
   await p.setViewportSize({ width: 390, height: 844 }); await wait(500);
-  t('phone-width table: the rail ad is not shown', await p.locator('.rail .ad-slot').isHidden());
+  t('phone-width table: the ad is not shown', await p.locator('.chat .ad-slot').isHidden());
   await ctx.close();
 
   console.log(`\npage errors: ${errs.length}`, errs.slice(0, 3).join(' | '));

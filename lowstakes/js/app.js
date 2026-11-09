@@ -1,25 +1,24 @@
-import { Ads } from './ads.js?v=43';
-import { Slots } from './adslots.js?v=43';
-import { Auth } from './auth.js?v=43';
-import { CONFIG } from './config.js?v=43';
-import * as AU from './ui/account-ui.js?v=43';
-import morphdom from '../vendor/morphdom-esm.js?v=43';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=43';
-import { landing, gate } from './ui/landing.js?v=43';
-import { lobby, inviteLink } from './ui/lobby.js?v=43';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=43';
-import * as HU from './ui/holdem-ui.js?v=43';
-import * as BU from './ui/blackjack-ui.js?v=43';
-import * as RU from './ui/roulette-ui.js?v=43';
-import * as CU from './ui/crash-ui.js?v=43';
-import { sound } from './ui/sound.js?v=43';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=43';
-import { WHEEL } from './games/roulette.js?v=43';
-import * as Motion from './ui/motion.js?v=43';
+import { Ads } from './ads.js?v=44';
+import { Slots } from './adslots.js?v=44';
+import { Auth } from './auth.js?v=44';
+import { CONFIG } from './config.js?v=44';
+import * as AU from './ui/account-ui.js?v=44';
+import morphdom from '../vendor/morphdom-esm.js?v=44';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=44';
+import { landing, gate } from './ui/landing.js?v=44';
+import { lobby, inviteLink } from './ui/lobby.js?v=44';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=44';
+import * as HU from './ui/holdem-ui.js?v=44';
+import * as BU from './ui/blackjack-ui.js?v=44';
+import * as RU from './ui/roulette-ui.js?v=44';
+import * as CU from './ui/crash-ui.js?v=44';
+import { sound } from './ui/sound.js?v=44';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=44';
+import { WHEEL } from './games/roulette.js?v=44';
+import * as Motion from './ui/motion.js?v=44';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
-// The only way players talk to each other: a few fixed reactions (more can be added, or unlocked with coins, later).
-const REACT = { nice: ['👍', 'Nice'], lol: ['😂', 'Ha!'], ouch: ['😬', 'Ouch'], gg: ['🤝', 'GG'], wow: ['😮', 'Wow'] };
+const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
 const app = document.getElementById('app');
 const reduceQuery = matchMedia('(prefers-reduced-motion: reduce)');
 let reduceMotion = reduceQuery.matches;
@@ -41,9 +40,11 @@ const S = {
   recvAt: 0,
   gameKey: null,
   seenEv: 0,
+  seenChat: 0,
   dockSig: null,
   ui: {
-    railOpen: matchMedia('(min-width: 1180px)').matches,
+    chatOpen: matchMedia('(min-width: 1180px)').matches,
+    unread: 0,
     coach: store.get('ls.coach') === '1',
     pick: 'holdem',
     chip: 25,
@@ -210,6 +211,8 @@ function wire(client) {
   S.client = client;
   S.state = null;
   S.gameKey = null;
+  S.seenChat = 0;
+  S.ui.unread = 0;
   client.on('state', (msg) => { if (S.client === client) onState(msg); });
   client.on('status', (st) => { if (S.client === client) onStatus(st); });
   client.on('react', (msg) => { if (S.client === client) showReaction(msg); });
@@ -299,7 +302,7 @@ function onState(msg) {
 const ICON = {
   sound: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none"/></svg>',
   mute: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M17 9l5 6M22 9l-5 6" fill="none"/></svg>',
-  react: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke-width="2"/><circle cx="9" cy="10" r="1.3"/><circle cx="15" cy="10" r="1.3"/><path d="M8 14.5c1 1.6 2.4 2.3 4 2.3s3-.7 4-2.3" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   scores: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11h4v9zM10 20V5h4v15zM15 20v-7h4v7z"/></svg>',
   menu: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
 };
@@ -308,15 +311,16 @@ function showTable() {
   S.screen = 'table';
   document.body.className = 'on-table';
   app.innerHTML = `
-<div class="room${S.ui.railOpen ? ' rail-open' : ''}" id="room">
+<div class="room${S.ui.chatOpen ? ' chat-open' : ''}" id="room">
   <header class="r-top" id="r-top"></header>
   <div class="r-main">
     <main class="stage" id="stage"></main>
-    <aside class="rail" id="rail" aria-label="Reactions">
-      <div class="rail-head"><h2>Reactions</h2><button class="icon-btn" data-act="rail" aria-label="Close reactions">×</button></div>
-      <div class="reacts" role="group" aria-label="Quick reactions">${REACTIONS.map((r) => `<button data-act="react" data-r="${r}" aria-label="${REACT[r][1]}" title="${REACT[r][1]}">${REACT[r][0]}</button>`).join('')}</div>
-      <ol class="rail-feed" id="rail-feed" aria-label="Table activity"></ol>
+    <aside class="chat" id="chat" aria-label="Table chat">
+      <div class="chat-head"><h2>Table talk</h2><button class="icon-btn" data-act="chat" aria-label="Close chat">×</button></div>
+      <ol class="chat-list" id="chat-list"></ol>
+      <div class="reacts" role="group" aria-label="Quick reactions">${REACTIONS.map((r) => `<button data-act="react" data-r="${r}">${REACT_LABEL[r]}</button>`).join('')}</div>
       <div class="ad-slot" data-slot="rail" data-static hidden></div>
+      <form class="chat-form" id="chat-form"><input id="chat-input" maxlength="240" placeholder="Say something nice. Or don't." autocomplete="off" aria-label="Chat message"><button class="btn btn-dark btn-sm">Send</button></form>
     </aside>
   </div>
   <div class="dock" id="dock"></div>
@@ -325,7 +329,13 @@ function showTable() {
 <div class="fx" id="fx" aria-hidden="true"></div>
 <div id="pop"></div>`;
   S.dockSig = null;
-  Slots.mount(document);
+  document.getElementById('chat-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (text) S.client.say(text);
+    input.value = '';
+  });
   renderTable();
 }
 
@@ -346,7 +356,7 @@ function headerHtml() {
       ${me ? `<span class="my-stack">${avatar(me, 'xs')}<b>${fmt(me.chips)}</b></span>` : ''}
       <button class="tool tool-scores" data-act="scores" aria-label="Scores">${ICON.scores}<span>Scores</span></button>
       <button class="tool tool-sound" data-act="sound" aria-label="${sound.on ? 'Mute sounds' : 'Turn sounds on'}" aria-pressed="${sound.on}">${sound.on ? ICON.sound : ICON.mute}<span>Sound</span></button>
-      <button class="tool" data-act="rail" aria-label="Reactions" aria-expanded="${S.ui.railOpen}">${ICON.react}<span>React</span></button>
+      <button class="tool" data-act="chat" aria-label="Chat" aria-expanded="${S.ui.chatOpen}">${ICON.chat}<span>Chat</span>${S.ui.unread ? `<i class="badge">${S.ui.unread}</i>` : ''}</button>
       ${isHost ? `<button class="tool tool-menu" data-act="menu" aria-label="Table menu">${ICON.menu}<span>Table</span></button>` : ''}
       <button class="tool tool-leave" data-act="leave">Leave</button>
       <button class="tool tool-more" data-act="more" aria-label="More options" aria-haspopup="dialog">${ICON.menu}</button>
@@ -426,8 +436,8 @@ function renderTable() {
     bindDock();
   }
 
-  renderFeed();
-  Slots.mount(stage);
+  renderChat();
+  Slots.mount(document);
   renderBanner();
   if (S.ui.pop) renderPop();
 }
@@ -451,13 +461,25 @@ function bindDock() {
   }
 }
 
-// Who sat down, left, or what is being played. (Players cannot type to each other.)
-function renderFeed() {
-  const list = document.getElementById('rail-feed');
+function renderChat() {
+  const list = document.getElementById('chat-list');
   if (!list) return;
-  const notes = S.state.room.chat.filter((m) => !m.pid).slice(-8);
-  morphdom(list, `<ol class="rail-feed" id="rail-feed" aria-label="Table activity">${notes.map((m) => `<li id="m${m.id}">${esc(m.text)}</li>`).join('')}</ol>`);
-  list.scrollTop = list.scrollHeight;
+  const chat = S.state.room.chat;
+  const newest = chat.length ? chat[chat.length - 1].id : 0;
+  if (newest > S.seenChat) {
+    const fresh = chat.filter((m) => m.id > S.seenChat && m.pid && m.pid !== S.state.you);
+    if (S.seenChat && fresh.length) {
+      if (!S.ui.chatOpen) { S.ui.unread += fresh.length; morphdom(document.getElementById('r-top'), `<header class="r-top" id="r-top">${headerHtml()}</header>`, morphOpts); }
+      sound.play('message');
+      for (const m of fresh) speech(m.pid, m.text);
+    }
+    S.seenChat = newest;
+  }
+  const atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+  morphdom(list, `<ol class="chat-list" id="chat-list">${chat.map((m) => m.pid
+    ? `<li id="m${m.id}" class="msg${m.pid === S.state.you ? ' mine' : ''}"><b style="--c:${esc(m.color)}">${esc(m.name)}</b> ${esc(m.text)}</li>`
+    : `<li id="m${m.id}" class="msg sys">${esc(m.text)}</li>`).join('')}</ol>`);
+  if (atBottom) list.scrollTop = list.scrollHeight;
 }
 
 function renderBanner() {
@@ -541,10 +563,12 @@ document.addEventListener('click', (e) => {
       return;
     case 'copy-link': closePop(); copyInvite(); return;
     case 'sound': sound.toggle(); renderTable(); return;
-    case 'rail':
-      S.ui.railOpen = !S.ui.railOpen;
-      document.getElementById('room').classList.toggle('rail-open', S.ui.railOpen);
+    case 'chat':
+      S.ui.chatOpen = !S.ui.chatOpen;
+      S.ui.unread = 0;
+      document.getElementById('room').classList.toggle('chat-open', S.ui.chatOpen);
       renderTable();
+      if (S.ui.chatOpen && matchMedia('(min-width: 700px)').matches) document.getElementById('chat-input').focus();
       return;
     case 'scores': case 'menu': case 'more': S.ui.pop = S.ui.pop === act ? null : act; S.ui.pop ? renderPop() : closePop(); return;
     case 'close-pop': closePop(); return;
@@ -653,7 +677,7 @@ async function copyInvite() {
   if (navigator.share && matchMedia('(pointer: coarse)').matches) {
     try { await navigator.share({ title: 'Low Stakes', text: `Pull up a chair: table ${S.state.room.code}`, url: link }); return; } catch {}
   }
-  try { await navigator.clipboard.writeText(link); toast('Invite link copied. Paste it in your group chat.'); }
+  try { await navigator.clipboard.writeText(link); toast('Invite link copied. Paste it in the group chat.'); }
   catch {
     const input = document.getElementById('invite-link');
     if (input) { input.select(); toast('Press Ctrl+C (or ⌘C) to copy the link.'); }
@@ -817,8 +841,7 @@ function postEffects(events) {
 
 function showReaction(msg) {
   sound.play('react');
-  const r = REACT[msg.r];
-  if (r) speech(msg.pid, r[0], true);
+  speech(msg.pid, REACT_LABEL[msg.r] || msg.r, true);
 }
 
 function speech(pid, text, isReact = false) {

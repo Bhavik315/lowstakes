@@ -1,8 +1,8 @@
 // A table that runs on the game server. It looks like the browser-run tables to the rest of the app
 // (act, say, setGame...), but nothing is decided here: every action is a request the server may refuse,
 // and the coins are the player's wallet, kept by the server and the database.
-import { CONFIG } from '../config.js?v=43';
-import { Auth } from '../auth.js?v=43';
+import { CONFIG } from '../config.js?v=44';
+import { Auth } from '../auth.js?v=44';
 
 class Emitter {
   constructor() { this.handlers = {}; }
@@ -85,6 +85,7 @@ export class ServerClient extends Emitter {
 
   send(msg) { if (this.ws && this.ws.readyState === 1) { try { this.ws.send(JSON.stringify(msg)); } catch {} } }
   act(a) { this.send({ t: 'act', a }); }
+  say(text) { this.send({ t: 'chat', text }); }
   emote(r) { this.send({ t: 'react', r }); }
   requestRebuy() { this.send({ t: 'rebuy' }); }
 

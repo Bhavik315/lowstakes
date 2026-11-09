@@ -1,8 +1,8 @@
 // Account screens: sign in, create account, verify email, forgot/reset password, choose username,
 // and the profile (username, wallet balance, username change, recent transactions).
 // All state lives in the database; this file only presents it and relays the player's choices.
-import { Auth, explain, usernameProblem } from '../auth.js?v=43';
-import { esc, fmt, signed } from './parts.js?v=43';
+import { Auth, explain, usernameProblem } from '../auth.js?v=44';
+import { esc, fmt, signed } from './parts.js?v=44';
 
 let root = null; // the open modal, if any
 let required = false; // true when the site demands an account and the modal can't be dismissed

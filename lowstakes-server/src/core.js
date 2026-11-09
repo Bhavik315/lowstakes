@@ -18,8 +18,7 @@ const MAX_PLAYERS = 12;
 const BOT_START = 1000; // bots play with free chips; they have no wallet
 const COLORS = ['#E0472F', '#2A55C9', '#E8A825', '#1E8C7E', '#8A3B78', '#EE7B30', '#E86A92', '#4BA3D9', '#7FA83A', '#5B4B8A', '#C2563A', '#2F7D57'];
 const BOTS = [['Marguerite', 0.2], ['Big Sal', 0.85], ['Dottie', 0.4], ['Vinnie', 0.7], ['Professor', 0.3], ['June', 0.55], ['Otis', 0.65], ['Lola', 0.9], ['Hank', 0.15], ['Rosa', 0.5], ['Teddy', 0.75]];
-const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'wow'];
-const REACT_GAP_MS = 1200; // one reaction per player in this time
+const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
 const AWAY_MS = 60_000; // a disconnected player's seat is released after this, once nothing is staked
 
 const DEFAULT_SETTINGS = {
@@ -186,7 +185,8 @@ export class TableCore {
     if (!p || !msg || typeof msg !== 'object') return;
     switch (msg.t) {
       case 'act': { const a = cleanAction(msg.a); if (this.engine && a && this.engine.handle(pid, a)) this.changed(); break; }
-      case 'react': this.react(p, msg.r); break;
+      case 'chat': this.chat(pid, msg.text); break;
+      case 'react': if (REACTIONS.includes(msg.r)) this.broadcast({ t: 'react', pid, r: msg.r, id: uid() }); break;
       case 'refresh': this.resync(pid); break;
       case 'rebuy': this.notify(pid, 'Free rebuys are off at wallet tables. Your coins are your wallet.', 'warn'); break;
       case 'bye': this.leave(pid); break;
@@ -195,13 +195,10 @@ export class TableCore {
     }
   }
 
-  // Players cannot type to each other: only a few fixed reactions, and not too fast.
-  react(p, r) {
-    if (!REACTIONS.includes(r)) return;
-    const t = this.now();
-    if (t - (p.lastReact || 0) < REACT_GAP_MS) return;
-    p.lastReact = t;
-    this.broadcast({ t: 'react', pid: p.id, r, id: uid() });
+  chat(pid, text) {
+    const p = this.player(pid);
+    text = clean(text).slice(0, 240);
+    if (p && text) this.pushChat({ pid, name: p.name, color: p.color, text });
   }
 
   leave(pid) {

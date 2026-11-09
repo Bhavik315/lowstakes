@@ -1,6 +1,6 @@
 // Banner ad slots. Nothing here does anything until js/config.js has ad code for a slot AND the visitor has said yes
 // to ads. Ad code runs inside a sandboxed frame (no access to the game, the sign-in session or local storage).
-import { CONFIG } from './config.js?v=43';
+import { CONFIG } from './config.js?v=44';
 
 const KEY = 'ls.adconsent'; // 'yes' | 'no' | unset
 const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };

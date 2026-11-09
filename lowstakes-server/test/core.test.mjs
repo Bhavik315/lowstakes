@@ -335,27 +335,3 @@ test('keep-alive: one harmless database call with the secret key, and it never t
   const unset = await keepAlive({});
   assert.deepEqual(unset, { ok: false, why: 'not configured' });
 });
-
-test('no free-text chat: typed messages are ignored, only a few reactions get through, and not too fast', async () => {
-  const s = setup({ users: [['u1', 'Alice_1', 20000], ['u2', 'Bob_2', 20000]] });
-  await s.join('u1'); const c1 = s.conns.u1;
-  await s.join('u2'); const c2 = s.conns.u2;
-  const before = s.core.room.chat.length;
-  s.core.receive('u1', { t: 'chat', text: 'hello everyone' });
-  s.core.receive('u1', { t: 'chat', text: '<b>spam</b>'.repeat(50) });
-  assert.equal(s.core.room.chat.length, before, 'chat messages are not stored');
-  assert.ok(!c2.sent.some((m) => m.t === 'state' && JSON.stringify(m).includes('hello everyone')), 'nobody sees typed text');
-  const reacts = () => c2.sent.filter((m) => m.t === 'react');
-  s.core.receive('u1', { t: 'react', r: 'wow' });
-  assert.equal(reacts().length, 1);
-  s.core.receive('u1', { t: 'react', r: 'wow' });
-  assert.equal(reacts().length, 1, 'a second reaction straight away is dropped');
-  await s.advance(1300);
-  s.core.receive('u1', { t: 'react', r: 'bluff' });
-  s.core.receive('u1', { t: 'react', r: '<script>' });
-  s.core.receive('u1', { t: 'react', r: { x: 1 } });
-  assert.equal(reacts().length, 1, 'unknown reactions are ignored');
-  s.core.receive('u1', { t: 'react', r: 'gg' });
-  assert.equal(reacts().length, 2);
-  assert.ok(c1);
-});
