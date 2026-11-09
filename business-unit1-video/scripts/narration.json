@@ -1,0 +1,1946 @@
+[
+  {
+    "scene": "hook",
+    "chapter": 0,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Think about the last twenty-four hours of your life.",
+        "say": "Think about the last twenty-four hours of your life.",
+        "pause": null
+      },
+      {
+        "id": "things",
+        "text": "The breakfast you ate. The clothes you're wearing. The phone in your hand. The bus that took you to school.",
+        "say": "The breakfast you ate. The clothes you're wearing. The phone in your hand. The bus that took you to school.",
+        "pause": null
+      },
+      {
+        "id": "business",
+        "text": "Every single one of those things reached you because of a business.",
+        "say": "Every single one of those things reached you because of a business.",
+        "pause": null
+      },
+      {
+        "id": "L3",
+        "text": "Someone grew it, someone made it, someone moved it, and someone sold it to you.",
+        "say": "Someone grew it, someone made it, someone moved it, and someone sold it to you.",
+        "pause": null
+      },
+      {
+        "id": "question",
+        "text": "But why do businesses exist at all? How do they grow? Who do they serve? And what are they really trying to achieve?",
+        "say": "But why do businesses exist at all? How do they grow? Who do they serve? And what are they really trying to achieve?",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "title",
+    "chapter": 0,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Welcome to this complete guide to Unit 1 of Cambridge IGCSE Business Studies: Understanding Business Activity.",
+        "say": "Welcome to this complete guide to Unit One of Cambridge I G C S E Business Studies: Understanding Business Activity.",
+        "pause": null
+      },
+      {
+        "id": "L1",
+        "text": "By the end of this video, you'll understand the ideas that the rest of the course is built on, explained from scratch, with real examples and exam tips along the way.",
+        "say": "By the end of this video, you'll understand the ideas that the rest of the course is built on, explained from scratch, with real examples and exam tips along the way.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "roadmap",
+    "chapter": 0,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Here's our journey. It's split into five chapters.",
+        "say": "Here's our journey. It's split into five chapters.",
+        "pause": null
+      },
+      {
+        "id": "c1",
+        "text": "First, business activity: why businesses exist, and how they add value.",
+        "say": "First, business activity: why businesses exist, and how they add value.",
+        "pause": null
+      },
+      {
+        "id": "c2",
+        "text": "Second, how we classify businesses into different sectors.",
+        "say": "Second, how we classify businesses into different sectors.",
+        "pause": null
+      },
+      {
+        "id": "c3",
+        "text": "Third, enterprise, and how businesses grow, stay small, or fail.",
+        "say": "Third, enterprise, and how businesses grow, stay small, or fail.",
+        "pause": null
+      },
+      {
+        "id": "c4",
+        "text": "Fourth, the different types of business organisation, from a one-person shop to a global company.",
+        "say": "Fourth, the different types of business organisation, from a one-person shop to a global company.",
+        "pause": null
+      },
+      {
+        "id": "c5",
+        "text": "And fifth, business objectives, and the stakeholders who care about them.",
+        "say": "And fifth, business objectives, and the stakeholders who care about them.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ch1",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Chapter one. Business activity. Let's start with the most basic question of all: why do businesses exist?",
+        "say": "Chapter one. Business activity. Let's start with the most basic question of all: why do businesses exist?",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "needs-wants",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "It all begins with people, and the things they need, and want.",
+        "say": "It all begins with people, and the things they need, and want.",
+        "pause": null
+      },
+      {
+        "id": "needs",
+        "text": "Needs are the things we must have to survive: food, water, shelter, and clothing.",
+        "say": "Needs are the things we must have to survive: food, water, shelter, and clothing.",
+        "pause": null
+      },
+      {
+        "id": "wants",
+        "text": "Wants are things we would like to have, but can live without, such as a smartphone, a car, or a holiday abroad.",
+        "say": "Wants are things we would like to have, but can live without, such as a smartphone, a car, or a holiday abroad.",
+        "pause": null
+      },
+      {
+        "id": "unlimited",
+        "text": "Here's the important part. Our needs are limited, but our wants are unlimited. As soon as we get one thing, we start wanting the next.",
+        "say": "Here's the important part. Our needs are limited, but our wants are unlimited. As soon as we get one thing, we start wanting the next.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "factors",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "To satisfy needs and wants, we produce goods and services. And to produce anything at all, we need resources, called the factors of production. There are four of them.",
+        "say": "To satisfy needs and wants, we produce goods and services. And to produce anything at all, we need resources, called the factors of production. There are four of them.",
+        "pause": null
+      },
+      {
+        "id": "land",
+        "text": "Land: all natural resources, like soil, water, minerals, oil and forests.",
+        "say": "Land: all natural resources, like soil, water, minerals, oil and forests.",
+        "pause": null
+      },
+      {
+        "id": "labour",
+        "text": "Labour: people, and the physical and mental effort they put into their work.",
+        "say": "Labour: people, and the physical and mental effort they put into their work.",
+        "pause": null
+      },
+      {
+        "id": "capital",
+        "text": "Capital: man-made goods used to produce other goods, such as machines, tools, vehicles and buildings.",
+        "say": "Capital: man-made goods used to produce other goods, such as machines, tools, vehicles and buildings.",
+        "pause": null
+      },
+      {
+        "id": "enterprise",
+        "text": "And enterprise: the skill and risk-taking of the entrepreneur, who brings the other three factors together to start a business.",
+        "say": "And enterprise: the skill and risk-taking of the entrepreneur, who brings the other three factors together to start a business.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "scarcity",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Now, put those two ideas together.",
+        "say": "Now, put those two ideas together.",
+        "pause": null
+      },
+      {
+        "id": "wants",
+        "text": "Wants are unlimited.",
+        "say": "Wants are unlimited.",
+        "pause": null
+      },
+      {
+        "id": "resources",
+        "text": "But the resources to satisfy them are limited.",
+        "say": "But the resources to satisfy them are limited.",
+        "pause": null
+      },
+      {
+        "id": "scarcity",
+        "text": "The result is scarcity: there are not enough goods and services to satisfy everyone's wants. This is called the basic economic problem.",
+        "say": "The result is scarcity: there are not enough goods and services to satisfy everyone's wants. This is called the basic economic problem.",
+        "pause": null
+      },
+      {
+        "id": "choice",
+        "text": "And because of scarcity, people, businesses, and governments all have to make choices.",
+        "say": "And because of scarcity, people, businesses, and governments all have to make choices.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "opportunity-cost",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "def",
+        "text": "And every choice has a cost. Opportunity cost is the next best alternative given up when a choice is made.",
+        "say": "And every choice has a cost. Opportunity cost is the next best alternative given up when a choice is made.",
+        "pause": null
+      },
+      {
+        "id": "ex1",
+        "text": "Imagine you have $50. You could buy a concert ticket, or a new pair of trainers. If you choose the concert, the opportunity cost is the trainers you gave up.",
+        "say": "Imagine you have fifty dollars. You could buy a concert ticket, or a new pair of trainers. If you choose the concert, the opportunity cost is the trainers you gave up.",
+        "pause": null
+      },
+      {
+        "id": "ex2",
+        "text": "Businesses face this too. If a business spends its money on a new machine, the opportunity cost might be the advertising campaign it can no longer afford.",
+        "say": "Businesses face this too. If a business spends its money on a new machine, the opportunity cost might be the advertising campaign it can no longer afford.",
+        "pause": null
+      },
+      {
+        "id": "ex3",
+        "text": "And a government that builds a new hospital may have to give up building a new school.",
+        "say": "And a government that builds a new hospital may have to give up building a new school.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "specialisation",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "spec",
+        "text": "To produce goods efficiently, businesses use specialisation. Specialisation is when people and businesses concentrate on what they are best at.",
+        "say": "To produce goods efficiently, businesses use specialisation. Specialisation is when people and businesses concentrate on what they are best at.",
+        "pause": null
+      },
+      {
+        "id": "dol",
+        "text": "Inside a business, this often takes the form of the division of labour: production is split into separate tasks, and each worker focuses on just one task.",
+        "say": "Inside a business, this often takes the form of the division of labour: production is split into separate tasks, and each worker focuses on just one task.",
+        "pause": null
+      },
+      {
+        "id": "order",
+        "text": "Think of a sandwich shop at lunchtime. One person takes the orders,",
+        "say": "Think of a sandwich shop at lunchtime. One person takes the orders,",
+        "pause": null
+      },
+      {
+        "id": "make",
+        "text": "another makes the sandwiches,",
+        "say": "another makes the sandwiches,",
+        "pause": null
+      },
+      {
+        "id": "pay",
+        "text": "and a third handles the payments.",
+        "say": "and a third handles the payments.",
+        "pause": null
+      },
+      {
+        "id": "together",
+        "text": "Working together like this, they can serve far more customers than if each person did everything.",
+        "say": "Working together like this, they can serve far more customers than if each person did everything.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "specialisation-eval",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "So, is the division of labour a good thing? Let's weigh it up.",
+        "say": "So, is the division of labour a good thing? Let's weigh it up.",
+        "pause": null
+      },
+      {
+        "id": "p1",
+        "text": "On the plus side, workers become skilled and fast at their task, so output rises.",
+        "say": "On the plus side, workers become skilled and fast at their task, so output rises.",
+        "pause": null
+      },
+      {
+        "id": "p2",
+        "text": "Quality can improve, because each worker becomes an expert.",
+        "say": "Quality can improve, because each worker becomes an expert.",
+        "pause": null
+      },
+      {
+        "id": "p3",
+        "text": "And training is quicker, because each worker only needs to learn one job.",
+        "say": "And training is quicker, because each worker only needs to learn one job.",
+        "pause": null
+      },
+      {
+        "id": "c1",
+        "text": "But doing the same task all day can be boring and repetitive,",
+        "say": "But doing the same task all day can be boring and repetitive,",
+        "pause": null
+      },
+      {
+        "id": "c2",
+        "text": "which can lower motivation.",
+        "say": "which can lower motivation.",
+        "pause": null
+      },
+      {
+        "id": "c3",
+        "text": "And if one worker is absent, production can stop, because nobody else knows how to do that job.",
+        "say": "And if one worker is absent, production can stop, because nobody else knows how to do that job.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "purpose",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "So what is the purpose of business activity?",
+        "say": "So what is the purpose of business activity?",
+        "pause": null
+      },
+      {
+        "id": "combine",
+        "text": "A business combines the factors of production,",
+        "say": "A business combines the factors of production,",
+        "pause": null
+      },
+      {
+        "id": "produce",
+        "text": "to produce goods and services,",
+        "say": "to produce goods and services,",
+        "pause": null
+      },
+      {
+        "id": "satisfy",
+        "text": "that satisfy people's needs and wants.",
+        "say": "that satisfy people's needs and wants.",
+        "pause": null
+      },
+      {
+        "id": "more",
+        "text": "Along the way, businesses create jobs, pay wages, and earn income for their owners. That's why business activity is at the heart of every economy.",
+        "say": "Along the way, businesses create jobs, pay wages, and earn income for their owners. That's why business activity is at the heart of every economy.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "added-value",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "One of the most important ideas in this whole unit is added value.",
+        "say": "One of the most important ideas in this whole unit is added value.",
+        "pause": null
+      },
+      {
+        "id": "def",
+        "text": "Added value is the difference between the selling price of a product, and the cost of the bought-in materials and components used to make it.",
+        "say": "Added value is the difference between the selling price of a product, and the cost of the bought-in materials and components used to make it.",
+        "pause": null
+      },
+      {
+        "id": "sp",
+        "text": "In other words, added value equals the selling price,",
+        "say": "In other words, added value equals the selling price,",
+        "pause": null
+      },
+      {
+        "id": "minus",
+        "text": "minus the cost of bought-in materials.",
+        "say": "minus the cost of bought-in materials.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "added-value-example",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "buy",
+        "text": "Let's see it in action. A bakery buys flour, butter, sugar and eggs. The ingredients for one cake cost $2.",
+        "say": "Let's see it in action. A bakery buys flour, butter, sugar and eggs. The ingredients for one cake cost two dollars.",
+        "pause": null
+      },
+      {
+        "id": "sell",
+        "text": "After the baker has mixed, baked and decorated it, the cake sells for $10.",
+        "say": "After the baker has mixed, baked and decorated it, the cake sells for ten dollars.",
+        "pause": null
+      },
+      {
+        "id": "result",
+        "text": "So the added value is $10 minus $2, which is $8.",
+        "say": "So the added value is ten dollars, minus two dollars, which is eight dollars.",
+        "pause": null
+      },
+      {
+        "id": "warning",
+        "text": "But be careful. Added value is not the same as profit. Out of that $8, the bakery still has to pay wages, rent and electricity. Only what's left after those costs is profit.",
+        "say": "But be careful. Added value is not the same as profit. Out of that eight dollars, the bakery still has to pay wages, rent and electricity. Only what's left after those costs is profit.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "increase-value",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "So how can a business increase its added value? There are two routes: persuade customers to pay a higher price, or reduce the cost of materials.",
+        "say": "So how can a business increase its added value? There are two routes: persuade customers to pay a higher price, or reduce the cost of materials.",
+        "pause": null
+      },
+      {
+        "id": "brand",
+        "text": "It can build a strong brand image, so that customers are willing to pay more.",
+        "say": "It can build a strong brand image, so that customers are willing to pay more.",
+        "pause": null
+      },
+      {
+        "id": "quality",
+        "text": "It can improve quality, or use premium packaging that makes the product feel special.",
+        "say": "It can improve quality, or use premium packaging that makes the product feel special.",
+        "pause": null
+      },
+      {
+        "id": "service",
+        "text": "It can offer excellent customer service, or extra convenience, like fast delivery.",
+        "say": "It can offer excellent customer service, or extra convenience, like fast delivery.",
+        "pause": null
+      },
+      {
+        "id": "usp",
+        "text": "It can give the product a unique selling point: something that makes it different from its competitors.",
+        "say": "It can give the product a unique selling point: something that makes it different from its competitors.",
+        "pause": null
+      },
+      {
+        "id": "cost",
+        "text": "Or it can find cheaper suppliers to cut the cost of materials, although it must be careful not to lower quality and damage its reputation.",
+        "say": "Or it can find cheaper suppliers to cut the cost of materials, although it must be careful not to lower quality and damage its reputation.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "coffee",
+    "chapter": 1,
+    "lines": [
+      {
+        "id": "beans",
+        "text": "Think about a cup of coffee from a famous café chain. The coffee beans inside might cost just a few cents.",
+        "say": "Think about a cup of coffee from a famous café chain. The coffee beans inside might cost just a few cents.",
+        "pause": null
+      },
+      {
+        "id": "cup",
+        "text": "Yet the cup sells for four dollars or more.",
+        "say": "Yet the cup sells for four dollars or more.",
+        "pause": null
+      },
+      {
+        "id": "why",
+        "text": "The brand, the comfortable seats, the free wi-fi and the convenience all add value that customers are happy to pay for.",
+        "say": "The brand, the comfortable seats, the free wi-fi and the convenience all add value that customers are happy to pay for.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ch2",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Chapter two. Classifying businesses. There are millions of businesses in the world. So how do we organise them?",
+        "say": "Chapter two. Classifying businesses. There are millions of businesses in the world. So how do we organise them?",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sectors",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "Businesses are grouped into three sectors, according to what they do.",
+        "say": "Businesses are grouped into three sectors, according to what they do.",
+        "pause": null
+      },
+      {
+        "id": "primary",
+        "text": "The primary sector extracts natural resources from the earth. Think of farming, fishing, mining, forestry, and drilling for oil.",
+        "say": "The primary sector extracts natural resources from the earth. Think of farming, fishing, mining, forestry, and drilling for oil.",
+        "pause": null
+      },
+      {
+        "id": "secondary",
+        "text": "The secondary sector turns those raw materials into finished products. This is manufacturing, processing, and construction: car factories, bakeries, oil refineries, and builders.",
+        "say": "The secondary sector turns those raw materials into finished products. This is manufacturing, processing, and construction: car factories, bakeries, oil refineries, and builders.",
+        "pause": null
+      },
+      {
+        "id": "tertiary",
+        "text": "And the tertiary sector provides services, to people and to other businesses. Banks, shops, hotels, transport, hospitals, and schools are all in the tertiary sector.",
+        "say": "And the tertiary sector provides services, to people and to other businesses. Banks, shops, hotels, transport, hospitals, and schools are all in the tertiary sector.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "chain",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "These sectors are linked together in a chain of production. Let's follow a loaf of bread.",
+        "say": "These sectors are linked together in a chain of production. Let's follow a loaf of bread.",
+        "pause": null
+      },
+      {
+        "id": "farm",
+        "text": "A farmer grows wheat. That's the primary sector.",
+        "say": "A farmer grows wheat. That's the primary sector.",
+        "pause": null
+      },
+      {
+        "id": "bake",
+        "text": "A flour mill grinds the wheat, and a bakery turns the flour into bread. That's the secondary sector.",
+        "say": "A flour mill grinds the wheat, and a bakery turns the flour into bread. That's the secondary sector.",
+        "pause": null
+      },
+      {
+        "id": "shop",
+        "text": "Then a supermarket transports the bread and sells it to you. That's the tertiary sector.",
+        "say": "Then a supermarket transports the bread and sells it to you. That's the tertiary sector.",
+        "pause": null
+      },
+      {
+        "id": "you",
+        "text": "Value is added at every stage, and each business depends on the others.",
+        "say": "Value is added at every stage, and each business depends on the others.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sector-bars",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "The importance of each sector is different from country to country. We usually measure it by the share of workers employed, or the value of output, in each sector.",
+        "say": "The importance of each sector is different from country to country. We usually measure it by the share of workers employed, or the value of output, in each sector.",
+        "pause": null
+      },
+      {
+        "id": "developing",
+        "text": "In many developing economies, a large share of people work in the primary sector, especially in farming.",
+        "say": "In many developing economies, a large share of people work in the primary sector, especially in farming.",
+        "pause": null
+      },
+      {
+        "id": "emerging",
+        "text": "As countries industrialise, the secondary sector grows, as factories open and workers move to the cities.",
+        "say": "As countries industrialise, the secondary sector grows, as factories open and workers move to the cities.",
+        "pause": null
+      },
+      {
+        "id": "developed",
+        "text": "And in developed economies, such as the United Kingdom or the United States, the tertiary sector is by far the largest, employing around four out of every five workers.",
+        "say": "And in developed economies, such as the United Kingdom or the United States, the tertiary sector is by far the largest, employing around four out of every five workers.",
+        "pause": null
+      },
+      {
+        "id": "note",
+        "text": "These figures are illustrative, but it's the pattern that matters for your exam.",
+        "say": "These figures are illustrative, but it's the pattern that matters for your exam.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sector-change",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "s1",
+        "text": "As a country develops, the balance between the sectors shifts.",
+        "say": "As a country develops, the balance between the sectors shifts.",
+        "pause": null
+      },
+      {
+        "id": "s2",
+        "text": "First comes industrialisation: workers move from the farms into factories, and the secondary sector grows.",
+        "say": "First comes industrialisation: workers move from the farms into factories, and the secondary sector grows.",
+        "pause": null
+      },
+      {
+        "id": "s3",
+        "text": "Later comes de-industrialisation: the secondary sector shrinks, and the tertiary sector takes over.",
+        "say": "Later comes de-industrialisation: the secondary sector shrinks, and the tertiary sector takes over.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sector-reasons",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "So why does de-industrialisation happen in developed economies? There are four main reasons.",
+        "say": "So why does de-industrialisation happen in developed economies? There are four main reasons.",
+        "pause": null
+      },
+      {
+        "id": "income",
+        "text": "As people get richer, they spend more of their income on services, like eating out, travel, entertainment, and healthcare.",
+        "say": "As people get richer, they spend more of their income on services, like eating out, travel, entertainment, and healthcare.",
+        "pause": null
+      },
+      {
+        "id": "global",
+        "text": "Manufacturing often moves to other countries, where labour costs are lower.",
+        "say": "Manufacturing often moves to other countries, where labour costs are lower.",
+        "pause": null
+      },
+      {
+        "id": "deplete",
+        "text": "Natural resources can run out, so primary industries decline.",
+        "say": "Natural resources can run out, so primary industries decline.",
+        "pause": null
+      },
+      {
+        "id": "auto",
+        "text": "And automation means factories need fewer workers to produce the same output.",
+        "say": "And automation means factories need fewer workers to produce the same output.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "mixed-economy",
+    "chapter": 2,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Businesses can also be classified by who owns them.",
+        "say": "Businesses can also be classified by who owns them.",
+        "pause": null
+      },
+      {
+        "id": "private",
+        "text": "The private sector is made up of businesses owned by private individuals, such as sole traders, partnerships, and companies. Most of them aim to make a profit.",
+        "say": "The private sector is made up of businesses owned by private individuals, such as sole traders, partnerships, and companies. Most of them aim to make a profit.",
+        "pause": null
+      },
+      {
+        "id": "public",
+        "text": "The public sector is made up of organisations owned and controlled by the government, such as state schools and hospitals, the police, and the armed forces. Their main aim is usually to provide a service to the public.",
+        "say": "The public sector is made up of organisations owned and controlled by the government, such as state schools and hospitals, the police, and the armed forces. Their main aim is usually to provide a service to the public.",
+        "pause": null
+      },
+      {
+        "id": "mixed",
+        "text": "Most countries have a mixed economy, where the private sector and the public sector exist side by side.",
+        "say": "Most countries have a mixed economy, where the private sector and the public sector exist side by side.",
+        "pause": null
+      },
+      {
+        "id": "why",
+        "text": "Governments usually run essential services that everyone needs, or services that private businesses might not provide, because they wouldn't make a profit, like street lighting or national defence.",
+        "say": "Governments usually run essential services that everyone needs, or services that private businesses might not provide, because they wouldn't make a profit, like street lighting or national defence.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ch3",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Chapter three. Enterprise, business growth, and size. Every business, even the biggest in the world, started as an idea in someone's head.",
+        "say": "Chapter three. Enterprise, business growth, and size. Every business, even the biggest in the world, started as an idea in someone's head.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "entrepreneur",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "def",
+        "text": "An entrepreneur is a person who organises, operates, and takes the risk for a new business venture.",
+        "say": "An entrepreneur is a person who organises, operates, and takes the risk for a new business venture.",
+        "pause": null
+      },
+      {
+        "id": "spot",
+        "text": "Entrepreneurs spot an opportunity, gather the resources, and put their own money and time on the line.",
+        "say": "Entrepreneurs spot an opportunity, gather the resources, and put their own money and time on the line.",
+        "pause": null
+      },
+      {
+        "id": "reward",
+        "text": "If the business succeeds, they are rewarded with profit. If it fails, they may lose everything they invested.",
+        "say": "If the business succeeds, they are rewarded with profit. If it fails, they may lose everything they invested.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "traits",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "So what makes a successful entrepreneur? Here are the key characteristics.",
+        "say": "So what makes a successful entrepreneur? Here are the key characteristics.",
+        "pause": null
+      },
+      {
+        "id": "risk",
+        "text": "They are willing to take risks.",
+        "say": "They are willing to take risks.",
+        "pause": null
+      },
+      {
+        "id": "creative",
+        "text": "They are creative and innovative, always coming up with new ideas.",
+        "say": "They are creative and innovative, always coming up with new ideas.",
+        "pause": null
+      },
+      {
+        "id": "hard",
+        "text": "They are hard-working and determined, and they don't give up easily.",
+        "say": "They are hard-working and determined, and they don't give up easily.",
+        "pause": null
+      },
+      {
+        "id": "confident",
+        "text": "They are self-confident, and believe in their ideas.",
+        "say": "They are self-confident, and believe in their ideas.",
+        "pause": null
+      },
+      {
+        "id": "comm",
+        "text": "They are good communicators, able to persuade customers, banks, and employees.",
+        "say": "They are good communicators, able to persuade customers, banks, and employees.",
+        "pause": null
+      },
+      {
+        "id": "multi",
+        "text": "And they are independent and multi-skilled, able to handle lots of different jobs at once, especially in the early days.",
+        "say": "And they are independent and multi-skilled, able to handle lots of different jobs at once, especially in the early days.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "business-plan",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Before starting, most entrepreneurs write a business plan: a document containing the business objectives, and important details about its operations, finance, and owners.",
+        "say": "Before starting, most entrepreneurs write a business plan: a document containing the business objectives, and important details about its operations, finance, and owners.",
+        "pause": null
+      },
+      {
+        "id": "desc",
+        "text": "A typical business plan includes a description of the business, and its objectives.",
+        "say": "A typical business plan includes a description of the business, and its objectives.",
+        "pause": null
+      },
+      {
+        "id": "product",
+        "text": "The product or service it will sell.",
+        "say": "The product or service it will sell.",
+        "pause": null
+      },
+      {
+        "id": "market",
+        "text": "The target market, and the competition.",
+        "say": "The target market, and the competition.",
+        "pause": null
+      },
+      {
+        "id": "ops",
+        "text": "How and where the product will be made, and the staff that are needed.",
+        "say": "How and where the product will be made, and the staff that are needed.",
+        "pause": null
+      },
+      {
+        "id": "finance",
+        "text": "And financial forecasts, such as expected sales, costs, profit, and cash flow, plus where the finance will come from.",
+        "say": "And financial forecasts, such as expected sales, costs, profit, and cash flow, plus where the finance will come from.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "plan-why",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Why bother writing one?",
+        "say": "Why bother writing one?",
+        "pause": null
+      },
+      {
+        "id": "think",
+        "text": "Writing a plan forces the entrepreneur to think carefully about every part of the business, which reduces the risk of failure.",
+        "say": "Writing a plan forces the entrepreneur to think carefully about every part of the business, which reduces the risk of failure.",
+        "pause": null
+      },
+      {
+        "id": "bank",
+        "text": "Banks and investors will usually want to see a business plan before they lend any money.",
+        "say": "Banks and investors will usually want to see a business plan before they lend any money.",
+        "pause": null
+      },
+      {
+        "id": "targets",
+        "text": "And it sets clear targets, so the owner can measure progress once the business is up and running.",
+        "say": "And it sets clear targets, so the owner can measure progress once the business is up and running.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "gov-support",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "why",
+        "text": "Governments are very keen to help new businesses get started. Why?",
+        "say": "Governments are very keen to help new businesses get started. Why?",
+        "pause": null
+      },
+      {
+        "id": "w1",
+        "text": "New businesses create jobs, and reduce unemployment.",
+        "say": "New businesses create jobs, and reduce unemployment.",
+        "pause": null
+      },
+      {
+        "id": "w2",
+        "text": "They increase competition, which gives consumers more choice and lower prices.",
+        "say": "They increase competition, which gives consumers more choice and lower prices.",
+        "pause": null
+      },
+      {
+        "id": "w3",
+        "text": "And they bring new ideas, and some will grow into the large firms of the future, paying more tax and exporting goods.",
+        "say": "And they bring new ideas, and some will grow into the large firms of the future, paying more tax and exporting goods.",
+        "pause": null
+      },
+      {
+        "id": "how",
+        "text": "So how do governments help?",
+        "say": "So how do governments help?",
+        "pause": null
+      },
+      {
+        "id": "h1",
+        "text": "They offer grants, and low-interest loans.",
+        "say": "They offer grants, and low-interest loans.",
+        "pause": null
+      },
+      {
+        "id": "h2",
+        "text": "They provide advice and training schemes for new entrepreneurs.",
+        "say": "They provide advice and training schemes for new entrepreneurs.",
+        "pause": null
+      },
+      {
+        "id": "h3",
+        "text": "They provide cheap premises, sometimes in business incubator centres.",
+        "say": "They provide cheap premises, sometimes in business incubator centres.",
+        "pause": null
+      },
+      {
+        "id": "h4",
+        "text": "And they may reduce taxes for new businesses.",
+        "say": "And they may reduce taxes for new businesses.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "measure-size",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "As businesses grow, how do we measure how big they are? There are three main methods, and each one has a limitation.",
+        "say": "As businesses grow, how do we measure how big they are? There are three main methods, and each one has a limitation.",
+        "pause": null
+      },
+      {
+        "id": "employees",
+        "text": "First, the number of employees. It's simple, but it can be misleading: a highly automated business can produce a huge amount, with very few workers.",
+        "say": "First, the number of employees. It's simple, but it can be misleading: a highly automated business can produce a huge amount, with very few workers.",
+        "pause": null
+      },
+      {
+        "id": "output",
+        "text": "Second, the value of output, or sales. But this depends on what's being sold: a firm selling a few very expensive products could look bigger than one selling lots of cheap ones.",
+        "say": "Second, the value of output, or sales. But this depends on what's being sold: a firm selling a few very expensive products could look bigger than one selling lots of cheap ones.",
+        "pause": null
+      },
+      {
+        "id": "capital",
+        "text": "Third, capital employed: the total value of money invested in the business. But a business that uses lots of workers, rather than machines, may look small, even if it employs thousands.",
+        "say": "Third, capital employed: the total value of money invested in the business. But a business that uses lots of workers, rather than machines, may look small, even if it employs thousands.",
+        "pause": null
+      },
+      {
+        "id": "both",
+        "text": "That's why it's best to compare businesses using more than one method.",
+        "say": "That's why it's best to compare businesses using more than one method.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "profit-trap",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Here's a classic exam trap.",
+        "say": "Here's a classic exam trap.",
+        "pause": null
+      },
+      {
+        "id": "rule",
+        "text": "Profit is not a measure of business size. A small business can be very profitable, and a huge business can make a loss. Profit tells you how well a business is doing, not how big it is.",
+        "say": "Profit is not a measure of business size. A small business can be very profitable, and a huge business can make a loss. Profit tells you how well a business is doing, not how big it is.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "why-grow",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Why do owners want their businesses to grow?",
+        "say": "Why do owners want their businesses to grow?",
+        "pause": null
+      },
+      {
+        "id": "profit",
+        "text": "Bigger businesses can earn higher profits.",
+        "say": "Bigger businesses can earn higher profits.",
+        "pause": null
+      },
+      {
+        "id": "eos",
+        "text": "They can benefit from economies of scale, which means lower average costs, for example, by buying materials in bulk at a discount.",
+        "say": "They can benefit from economies of scale, which means lower average costs, for example, by buying materials in bulk at a discount.",
+        "pause": null
+      },
+      {
+        "id": "share",
+        "text": "They gain a larger market share, and more power over their suppliers.",
+        "say": "They gain a larger market share, and more power over their suppliers.",
+        "pause": null
+      },
+      {
+        "id": "security",
+        "text": "And they are more secure: larger businesses are less likely to fail, or to be taken over.",
+        "say": "And they are more secure: larger businesses are less likely to fail, or to be taken over.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "growth-ways",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "There are two ways for a business to grow.",
+        "say": "There are two ways for a business to grow.",
+        "pause": null
+      },
+      {
+        "id": "internal",
+        "text": "Internal growth, also called organic growth, is when a business expands its own operations. It might open new branches, launch new products, or start selling in new countries.",
+        "say": "Internal growth, also called organic growth, is when a business expands its own operations. It might open new branches, launch new products, or start selling in new countries.",
+        "pause": null
+      },
+      {
+        "id": "ieval",
+        "text": "Internal growth is usually slow, but it's less risky, and the owners keep control.",
+        "say": "Internal growth is usually slow, but it's less risky, and the owners keep control.",
+        "pause": null
+      },
+      {
+        "id": "external",
+        "text": "External growth is much faster. It happens through mergers and takeovers.",
+        "say": "External growth is much faster. It happens through mergers and takeovers.",
+        "pause": null
+      },
+      {
+        "id": "merger",
+        "text": "A merger is when two businesses agree to join together, to form one new business.",
+        "say": "A merger is when two businesses agree to join together, to form one new business.",
+        "pause": null
+      },
+      {
+        "id": "takeover",
+        "text": "A takeover, or acquisition, is when one business buys enough shares to take control of another.",
+        "say": "A takeover, or acquisition, is when one business buys enough shares to take control of another.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "mergers",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "There are three main types of merger, or takeover. To understand them, imagine a chocolate company, and its chain of production.",
+        "say": "There are three main types of merger, or takeover. To understand them, imagine a chocolate company, and its chain of production.",
+        "pause": null
+      },
+      {
+        "id": "horizontal",
+        "text": "A horizontal merger is between two businesses in the same industry, at the same stage of production. For example, our chocolate maker joins with another chocolate maker. This reduces competition, and increases market share.",
+        "say": "A horizontal merger is between two businesses in the same industry, at the same stage of production. For example, our chocolate maker joins with another chocolate maker. This reduces competition, and increases market share.",
+        "pause": null
+      },
+      {
+        "id": "backward",
+        "text": "A vertical merger is between businesses at different stages of the same chain. If our chocolate maker buys a cocoa farm, that's backward vertical integration. It secures the supply of raw materials, and helps control their cost and quality.",
+        "say": "A vertical merger is between businesses at different stages of the same chain. If our chocolate maker buys a cocoa farm, that's backward vertical integration. It secures the supply of raw materials, and helps control their cost and quality.",
+        "pause": null
+      },
+      {
+        "id": "forward",
+        "text": "If it buys a chain of sweet shops, that's forward vertical integration. It guarantees an outlet for its products, and brings it closer to its customers.",
+        "say": "If it buys a chain of sweet shops, that's forward vertical integration. It guarantees an outlet for its products, and brings it closer to its customers.",
+        "pause": null
+      },
+      {
+        "id": "conglomerate",
+        "text": "Finally, a conglomerate merger is between businesses in completely different industries, like our chocolate maker buying a hotel chain. This is called diversification, and it spreads risk: if chocolate sales fall, the hotels may still do well.",
+        "say": "Finally, a conglomerate merger is between businesses in completely different industries, like our chocolate maker buying a hotel chain. This is called diversification, and it spreads risk: if chocolate sales fall, the hotels may still do well.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "growth-problems",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "But growth brings its own problems, and good managers find ways to overcome them.",
+        "say": "But growth brings its own problems, and good managers find ways to overcome them.",
+        "pause": null
+      },
+      {
+        "id": "control",
+        "text": "Large businesses are harder to control and coordinate. The solution is to split the business into smaller divisions, each with its own managers.",
+        "say": "Large businesses are harder to control and coordinate. The solution is to split the business into smaller divisions, each with its own managers.",
+        "pause": null
+      },
+      {
+        "id": "comm",
+        "text": "Communication gets slower, and messages can get lost. Good IT systems, and a clear structure, can help.",
+        "say": "Communication gets slower, and messages can get lost. Good IT systems, and a clear structure, can help.",
+        "pause": null
+      },
+      {
+        "id": "finance",
+        "text": "Expansion needs a lot of money. So careful financial planning, and choosing the right sources of finance, are essential.",
+        "say": "Expansion needs a lot of money. So careful financial planning, and choosing the right sources of finance, are essential.",
+        "pause": null
+      },
+      {
+        "id": "culture",
+        "text": "And after a merger, the two businesses may have very different cultures, and workers may worry about losing their jobs. Clear communication, and involving employees in decisions, can reduce these problems.",
+        "say": "And after a merger, the two businesses may have very different cultures, and workers may worry about losing their jobs. Clear communication, and involving employees in decisions, can reduce these problems.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "stay-small",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Not every business wants to grow. Many stay small, and that's perfectly fine.",
+        "say": "Not every business wants to grow. Many stay small, and that's perfectly fine.",
+        "pause": null
+      },
+      {
+        "id": "type",
+        "text": "Some industries suit small firms, because customers want a personal service, like hairdressers, plumbers, or accountants.",
+        "say": "Some industries suit small firms, because customers want a personal service, like hairdressers, plumbers, or accountants.",
+        "pause": null
+      },
+      {
+        "id": "market",
+        "text": "Some businesses sell to a small market, such as a village shop, or a luxury product with only a few buyers.",
+        "say": "Some businesses sell to a small market, such as a village shop, or a luxury product with only a few buyers.",
+        "pause": null
+      },
+      {
+        "id": "owner",
+        "text": "Many owners simply want to stay small. They prefer to keep control, avoid the stress of running a big business, and enjoy a good work-life balance.",
+        "say": "Many owners simply want to stay small. They prefer to keep control, avoid the stress of running a big business, and enjoy a good work-life balance.",
+        "pause": null
+      },
+      {
+        "id": "finance",
+        "text": "And some businesses just don't have the finance needed to grow.",
+        "say": "And some businesses just don't have the finance needed to grow.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "failure",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Sadly, many businesses fail. What are the main causes?",
+        "say": "Sadly, many businesses fail. What are the main causes?",
+        "pause": null
+      },
+      {
+        "id": "mgmt",
+        "text": "A lack of management skills: owners without experience may make poor decisions about pricing, stock, or staff.",
+        "say": "A lack of management skills: owners without experience may make poor decisions about pricing, stock, or staff.",
+        "pause": null
+      },
+      {
+        "id": "env",
+        "text": "Changes in the business environment: a new competitor arrives, consumer tastes change, new technology appears, or the economy falls into recession.",
+        "say": "Changes in the business environment: a new competitor arrives, consumer tastes change, new technology appears, or the economy falls into recession.",
+        "pause": null
+      },
+      {
+        "id": "cash",
+        "text": "And liquidity problems, which means running out of cash. A business can be selling well, and even making a profit, but if it can't pay its suppliers and workers on time, it may be forced to close.",
+        "say": "And liquidity problems, which means running out of cash. A business can be selling well, and even making a profit, but if it can't pay its suppliers and workers on time, it may be forced to close.",
+        "pause": null
+      },
+      {
+        "id": "plan",
+        "text": "Other causes include poor planning, and expanding too quickly.",
+        "say": "Other causes include poor planning, and expanding too quickly.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "new-risk",
+    "chapter": 3,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "New businesses are at an especially high risk of failure. Why?",
+        "say": "New businesses are at an especially high risk of failure. Why?",
+        "pause": null
+      },
+      {
+        "id": "exp",
+        "text": "Their owners often have little experience of running a business.",
+        "say": "Their owners often have little experience of running a business.",
+        "pause": null
+      },
+      {
+        "id": "cust",
+        "text": "They have few customers, and nobody knows their brand yet.",
+        "say": "They have few customers, and nobody knows their brand yet.",
+        "pause": null
+      },
+      {
+        "id": "cash",
+        "text": "They have limited finance, and no cash reserves to fall back on.",
+        "say": "They have limited finance, and no cash reserves to fall back on.",
+        "pause": null
+      },
+      {
+        "id": "comp",
+        "text": "And they face tough competition from established firms, which already have loyal customers, and lower costs.",
+        "say": "And they face tough competition from established firms, which already have loyal customers, and lower costs.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ch4",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Chapter four. Types of business organisation. When someone starts a business, one of the first decisions is which legal form it should take.",
+        "say": "Chapter four. Types of business organisation. When someone starts a business, one of the first decisions is which legal form it should take.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "liability",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "To understand the different types, you need one key idea first: liability.",
+        "say": "To understand the different types, you need one key idea first: liability.",
+        "pause": null
+      },
+      {
+        "id": "unlimited",
+        "text": "Unlimited liability means the owners are personally responsible for all the debts of the business. If the business can't pay, the owners may have to sell their own possessions, like their car, or even their house.",
+        "say": "Unlimited liability means the owners are personally responsible for all the debts of the business. If the business can't pay, the owners may have to sell their own possessions, like their car, or even their house.",
+        "pause": null
+      },
+      {
+        "id": "limited",
+        "text": "Limited liability means the owners can only lose the money they invested in the business. Their personal possessions are safe.",
+        "say": "Limited liability means the owners can only lose the money they invested in the business. Their personal possessions are safe.",
+        "pause": null
+      },
+      {
+        "id": "incorporated",
+        "text": "Businesses with limited liability are called limited companies, or incorporated businesses. They have a separate legal identity from their owners, so the company itself can own property, sign contracts, sue, and be sued.",
+        "say": "Businesses with limited liability are called limited companies, or incorporated businesses. They have a separate legal identity from their owners, so the company itself can own property, sign contracts, sue, and be sued.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sole-trader",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Let's start with the simplest. A sole trader is a business owned and controlled by just one person, although it can still employ other workers. Many small shops, hairdressers, and plumbers are sole traders.",
+        "say": "Let's start with the simplest. A sole trader is a business owned and controlled by just one person, although it can still employ other workers. Many small shops, hairdressers, and plumbers are sole traders.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "Sole traders are easy and cheap to set up, with very few legal formalities. The owner keeps all of the profit, and has complete control, so decisions can be made quickly.",
+        "say": "Sole traders are easy and cheap to set up, with very few legal formalities. The owner keeps all of the profit, and has complete control, so decisions can be made quickly.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "But the owner has unlimited liability. Raising capital is difficult, the hours are long, and there's nobody to share the work with. And the business may end if the owner becomes ill or dies, which is called a lack of continuity.",
+        "say": "But the owner has unlimited liability. Raising capital is difficult, the hours are long, and there's nobody to share the work with. And the business may end if the owner becomes ill or dies, which is called a lack of continuity.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "partnership",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "A partnership is a business owned by two or more people, usually up to twenty. Partners often sign a partnership agreement, which sets out how much capital each partner puts in, how profits are shared, and what happens if a partner leaves.",
+        "say": "A partnership is a business owned by two or more people, usually up to twenty. Partners often sign a partnership agreement, which sets out how much capital each partner puts in, how profits are shared, and what happens if a partner leaves.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "Compared with a sole trader, there's more capital available, and partners can share the workload, their skills, and any losses.",
+        "say": "Compared with a sole trader, there's more capital available, and partners can share the workload, their skills, and any losses.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "But in most partnerships, the partners still have unlimited liability. Partners can disagree, profits have to be shared, and if a partner leaves or dies, the partnership may have to end.",
+        "say": "But in most partnerships, the partners still have unlimited liability. Partners can disagree, profits have to be shared, and if a partner leaves or dies, the partnership may have to end.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "shares",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "intro",
+        "text": "The next two types are limited companies, which are owned by shareholders.",
+        "say": "The next two types are limited companies, which are owned by shareholders.",
+        "pause": null
+      },
+      {
+        "id": "share",
+        "text": "A share is a small part of the ownership of a company. If you own shares, you're a shareholder, and you may receive part of the profits, called a dividend.",
+        "say": "A share is a small part of the ownership of a company. If you own shares, you're a shareholder, and you may receive part of the profits, called a dividend.",
+        "pause": null
+      },
+      {
+        "id": "board",
+        "text": "Shareholders elect a board of directors, to run the company on their behalf.",
+        "say": "Shareholders elect a board of directors, to run the company on their behalf.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ltd",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "A private limited company, shown by the letters Ltd after its name, sells shares privately, to people the owners choose, such as family and friends. Its shares cannot be sold to the general public.",
+        "say": "A private limited company, shown by the letters L, T, D, after its name, sells shares privately, to people the owners choose, such as family and friends. Its shares cannot be sold to the general public.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "Shareholders have limited liability. The company has a separate legal identity, and continuity, so it carries on even if a shareholder dies. It can raise more capital than a partnership, and the original owners keep control.",
+        "say": "Shareholders have limited liability. The company has a separate legal identity, and continuity, so it carries on even if a shareholder dies. It can raise more capital than a partnership, and the original owners keep control.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "But there are more legal formalities to set it up. The accounts must be published, so there's less privacy. And the amount of capital is still limited, because shares can't be sold to the public.",
+        "say": "But there are more legal formalities to set it up. The accounts must be published, so there's less privacy. And the amount of capital is still limited, because shares can't be sold to the public.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "plc",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "A public limited company, or plc, can sell its shares to the general public, usually through a stock exchange. Most of the world's biggest companies are public limited companies.",
+        "say": "A public limited company, or P L C, can sell its shares to the general public, usually through a stock exchange. Most of the world's biggest companies are public limited companies.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "This means it can raise huge amounts of capital. Shareholders have limited liability, the company has continuity, and its size makes it easier to borrow money.",
+        "say": "This means it can raise huge amounts of capital. Shareholders have limited liability, the company has continuity, and its size makes it easier to borrow money.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "But setting up and running a plc is expensive, with strict legal rules. Its accounts are public, so competitors can see them. Because anyone can buy its shares, it can face a takeover. And there's a separation of ownership and control: shareholders own the company, but directors control it, and they may want different things.",
+        "say": "But setting up and running a P L C is expensive, with strict legal rules. Its accounts are public, so competitors can see them. Because anyone can buy its shares, it can face a takeover. And there's a separation of ownership and control: shareholders own the company, but directors control it, and they may want different things.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "franchise",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "A franchise is when a business, called the franchisor, sells the right to use its brand name, products, and way of doing business, to another business, called the franchisee.",
+        "say": "A franchise is when a business, called the franchisor, sells the right to use its brand name, products, and way of doing business, to another business, called the franchisee.",
+        "pause": null
+      },
+      {
+        "id": "money",
+        "text": "The franchisee pays an initial fee, and then a royalty, which is a percentage of its sales, usually every year.",
+        "say": "The franchisee pays an initial fee, and then a royalty, which is a percentage of its sales, usually every year.",
+        "pause": null
+      },
+      {
+        "id": "support",
+        "text": "In return, the franchisor provides the brand, training, supplies, and national advertising. Many fast-food restaurants, hotels, and gyms work this way.",
+        "say": "In return, the franchisor provides the brand, training, supplies, and national advertising. Many fast-food restaurants, hotels, and gyms work this way.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "franchise-eval",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "frp",
+        "text": "For the franchisor, it's a fast way to expand without needing much capital, and franchisees work hard, because they've invested their own money.",
+        "say": "For the franchisor, it's a fast way to expand without needing much capital, and franchisees work hard, because they've invested their own money.",
+        "pause": null
+      },
+      {
+        "id": "frc",
+        "text": "The risk is that one badly run franchise could damage the reputation of the whole brand, and profits are shared with the franchisees.",
+        "say": "The risk is that one badly run franchise could damage the reputation of the whole brand, and profits are shared with the franchisees.",
+        "pause": null
+      },
+      {
+        "id": "fep",
+        "text": "For the franchisee, the risk of failure is lower, because the brand is already well known, and they receive training and support.",
+        "say": "For the franchisee, the risk of failure is lower, because the brand is already well known, and they receive training and support.",
+        "pause": null
+      },
+      {
+        "id": "fec",
+        "text": "But they pay fees and royalties, must follow strict rules, and have little freedom to make their own decisions.",
+        "say": "But they pay fees and royalties, must follow strict rules, and have little freedom to make their own decisions.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "joint-venture",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "A joint venture is when two or more businesses agree to work together on a particular project, creating a separate business unit, and sharing its costs, risks, and profits.",
+        "say": "A joint venture is when two or more businesses agree to work together on a particular project, creating a separate business unit, and sharing its costs, risks, and profits.",
+        "pause": null
+      },
+      {
+        "id": "ex",
+        "text": "For example, a foreign car maker might team up with a local company to enter a new country, using the local company's knowledge of that market.",
+        "say": "For example, a foreign car maker might team up with a local company to enter a new country, using the local company's knowledge of that market.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "Joint ventures share costs and risks, and combine the expertise of both partners.",
+        "say": "Joint ventures share costs and risks, and combine the expertise of both partners.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "But the profits must be shared, and the partners may disagree, especially if they have different ways of working.",
+        "say": "But the profits must be shared, and the partners may disagree, especially if they have different ways of working.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "public-corp",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Finally, back to the public sector. A public corporation is a business owned and controlled by the government, on behalf of the public. Examples can include national railways, postal services, state broadcasters, and water companies.",
+        "say": "Finally, back to the public sector. A public corporation is a business owned and controlled by the government, on behalf of the public. Examples can include national railways, postal services, state broadcasters, and water companies.",
+        "pause": null
+      },
+      {
+        "id": "pros",
+        "text": "Its main aim is usually to provide an essential service at an affordable price, and to protect jobs, rather than simply to make a profit.",
+        "say": "Its main aim is usually to provide an essential service at an affordable price, and to protect jobs, rather than simply to make a profit.",
+        "pause": null
+      },
+      {
+        "id": "cons",
+        "text": "However, because the government will often cover its losses, there may be less incentive to be efficient, and it can become a burden on taxpayers.",
+        "say": "However, because the government will often cover its losses, there may be less incentive to be efficient, and it can become a burden on taxpayers.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "org-table",
+    "chapter": 4,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Let's put the main types side by side.",
+        "say": "Let's put the main types side by side.",
+        "pause": null
+      },
+      {
+        "id": "r1",
+        "text": "Sole traders have one owner, unlimited liability, and limited capital.",
+        "say": "Sole traders have one owner, unlimited liability, and limited capital.",
+        "pause": null
+      },
+      {
+        "id": "r2",
+        "text": "Partnerships have more owners and more capital, but still unlimited liability.",
+        "say": "Partnerships have more owners and more capital, but still unlimited liability.",
+        "pause": null
+      },
+      {
+        "id": "r3",
+        "text": "Private limited companies give limited liability and continuity, with shares sold privately.",
+        "say": "Private limited companies give limited liability and continuity, with shares sold privately.",
+        "pause": null
+      },
+      {
+        "id": "r4",
+        "text": "And public limited companies can raise the most capital of all, by selling shares to the public.",
+        "say": "And public limited companies can raise the most capital of all, by selling shares to the public.",
+        "pause": null
+      },
+      {
+        "id": "choose",
+        "text": "In an exam, the best type of organisation depends on how much capital is needed, how much risk the owners will accept, and how much control they want to keep.",
+        "say": "In an exam, the best type of organisation depends on how much capital is needed, how much risk the owners will accept, and how much control they want to keep.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "ch5",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Chapter five. Business objectives and stakeholders. Every business needs to know where it's going, and who it answers to.",
+        "say": "Chapter five. Business objectives and stakeholders. Every business needs to know where it's going, and who it answers to.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "objectives-why",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Business objectives are the aims, or targets, that a business works towards.",
+        "say": "Business objectives are the aims, or targets, that a business works towards.",
+        "pause": null
+      },
+      {
+        "id": "direction",
+        "text": "They give the business a clear direction and focus.",
+        "say": "They give the business a clear direction and focus.",
+        "pause": null
+      },
+      {
+        "id": "motivate",
+        "text": "They motivate employees, who know exactly what they're working towards.",
+        "say": "They motivate employees, who know exactly what they're working towards.",
+        "pause": null
+      },
+      {
+        "id": "measure",
+        "text": "They make it possible to measure success, by comparing actual performance with the target.",
+        "say": "They make it possible to measure success, by comparing actual performance with the target.",
+        "pause": null
+      },
+      {
+        "id": "decide",
+        "text": "And they guide decision-making, helping managers choose between different options.",
+        "say": "And they guide decision-making, helping managers choose between different options.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "smart",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "letters",
+        "text": "The best objectives are SMART: specific, measurable, achievable, realistic, and time-bound.",
+        "say": "The best objectives are SMART: specific, measurable, achievable, realistic, and time-bound.",
+        "pause": null
+      },
+      {
+        "id": "ex",
+        "text": "For example: increase sales by 10% within the next 12 months. It's specific, measurable, realistic, and it has a deadline.",
+        "say": "For example: increase sales by ten percent within the next twelve months. It's specific, measurable, realistic, and it has a deadline.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "objective-types",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "So what objectives do businesses set? Here are the four big ones.",
+        "say": "So what objectives do businesses set? Here are the four big ones.",
+        "pause": null
+      },
+      {
+        "id": "survival",
+        "text": "Survival: simply staying in business. This is the main objective for new businesses, and for any business during a recession, or when a powerful new competitor arrives.",
+        "say": "Survival: simply staying in business. This is the main objective for new businesses, and for any business during a recession, or when a powerful new competitor arrives.",
+        "pause": null
+      },
+      {
+        "id": "profit",
+        "text": "Profit: the reward for the owners, and a source of money to reinvest in the business.",
+        "say": "Profit: the reward for the owners, and a source of money to reinvest in the business.",
+        "pause": null
+      },
+      {
+        "id": "growth",
+        "text": "Growth: increasing the size of the business, for example in sales, or the number of outlets, which can bring economies of scale, and more security.",
+        "say": "Growth: increasing the size of the business, for example in sales, or the number of outlets, which can bring economies of scale, and more security.",
+        "pause": null
+      },
+      {
+        "id": "share",
+        "text": "And market share: the percentage of total market sales made by one business. A high market share gives a business status, and more power over suppliers and retailers.",
+        "say": "And market share: the percentage of total market sales made by one business. A high market share gives a business status, and more power over suppliers and retailers.",
+        "pause": null
+      },
+      {
+        "id": "change",
+        "text": "Objectives also change over time. A brand new business may focus on survival, but once it's established, it may aim for growth, profit, or market share.",
+        "say": "Objectives also change over time. A brand new business may focus on survival, but once it's established, it may aim for growth, profit, or market share.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "market-share",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "formula",
+        "text": "Market share is calculated as the firm's sales, divided by the total sales in the market, multiplied by 100.",
+        "say": "Market share is calculated as the firm's sales, divided by the total sales in the market, multiplied by one hundred.",
+        "pause": null
+      },
+      {
+        "id": "ex",
+        "text": "So if a business sells $2 million worth of trainers, in a market worth $10 million,",
+        "say": "So if a business sells two million dollars' worth of trainers, in a market worth ten million dollars,",
+        "pause": null
+      },
+      {
+        "id": "answer",
+        "text": "its market share is 20%.",
+        "say": "its market share is twenty percent.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "social-enterprise",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Some businesses have very different priorities. A social enterprise is a business whose main objectives are social, or environmental. It still tries to make a profit, but it uses that profit to help people, or the planet.",
+        "say": "Some businesses have very different priorities. A social enterprise is a business whose main objectives are social, or environmental. It still tries to make a profit, but it uses that profit to help people, or the planet.",
+        "pause": null
+      },
+      {
+        "id": "ex",
+        "text": "For example, a café that trains and employs homeless people, or a company that sells bottled water, and uses its profits to build wells in communities without clean water.",
+        "say": "For example, a café that trains and employs homeless people, or a company that sells bottled water, and uses its profits to build wells in communities without clean water.",
+        "pause": null
+      },
+      {
+        "id": "tbl",
+        "text": "Social enterprises often aim for a triple bottom line.",
+        "say": "Social enterprises often aim for a triple bottom line.",
+        "pause": null
+      },
+      {
+        "id": "profit",
+        "text": "Economic: making a profit.",
+        "say": "Economic: making a profit.",
+        "pause": null
+      },
+      {
+        "id": "people",
+        "text": "Social: helping people and communities.",
+        "say": "Social: helping people and communities.",
+        "pause": null
+      },
+      {
+        "id": "planet",
+        "text": "And environmental: protecting the planet. These are often called profit, people, and planet.",
+        "say": "And environmental: protecting the planet. These are often called profit, people, and planet.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "stakeholders",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "def",
+        "text": "Every business affects lots of different people. A stakeholder is any person or group with an interest in the activities and performance of a business.",
+        "say": "Every business affects lots of different people. A stakeholder is any person or group with an interest in the activities and performance of a business.",
+        "pause": null
+      },
+      {
+        "id": "internal",
+        "text": "Internal stakeholders are inside the business: the owners or shareholders, the managers, and the employees.",
+        "say": "Internal stakeholders are inside the business: the owners or shareholders, the managers, and the employees.",
+        "pause": null
+      },
+      {
+        "id": "external",
+        "text": "External stakeholders are outside the business: customers, suppliers, lenders such as banks, the government, and the local community.",
+        "say": "External stakeholders are outside the business: customers, suppliers, lenders such as banks, the government, and the local community.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "stakeholder-aims",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Each stakeholder group wants something different from the business.",
+        "say": "Each stakeholder group wants something different from the business.",
+        "pause": null
+      },
+      {
+        "id": "owners",
+        "text": "Owners and shareholders want high profits, dividends, and a rising share price.",
+        "say": "Owners and shareholders want high profits, dividends, and a rising share price.",
+        "pause": null
+      },
+      {
+        "id": "managers",
+        "text": "Managers want good salaries, power and status, and job security.",
+        "say": "Managers want good salaries, power and status, and job security.",
+        "pause": null
+      },
+      {
+        "id": "employees",
+        "text": "Employees want fair pay, good working conditions, job security, and opportunities for training.",
+        "say": "Employees want fair pay, good working conditions, job security, and opportunities for training.",
+        "pause": null
+      },
+      {
+        "id": "customers",
+        "text": "Customers want good-quality products, at reasonable prices, with good service.",
+        "say": "Customers want good-quality products, at reasonable prices, with good service.",
+        "pause": null
+      },
+      {
+        "id": "suppliers",
+        "text": "Suppliers want regular orders, and to be paid on time.",
+        "say": "Suppliers want regular orders, and to be paid on time.",
+        "pause": null
+      },
+      {
+        "id": "lenders",
+        "text": "Banks and other lenders want their loans repaid on time, with interest.",
+        "say": "Banks and other lenders want their loans repaid on time, with interest.",
+        "pause": null
+      },
+      {
+        "id": "government",
+        "text": "The government wants the business to create jobs, pay its taxes, and obey the law.",
+        "say": "The government wants the business to create jobs, pay its taxes, and obey the law.",
+        "pause": null
+      },
+      {
+        "id": "community",
+        "text": "And the local community wants jobs for local people, with little pollution, and a safe environment.",
+        "say": "And the local community wants jobs for local people, with little pollution, and a safe environment.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "conflict",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Here's the problem: these objectives often conflict.",
+        "say": "Here's the problem: these objectives often conflict.",
+        "pause": null
+      },
+      {
+        "id": "c1",
+        "text": "Shareholders want higher profits. One way to achieve that is to cut costs, perhaps by replacing workers with machines. That's good for shareholders, but bad for employees, who want job security.",
+        "say": "Shareholders want higher profits. One way to achieve that is to cut costs, perhaps by replacing workers with machines. That's good for shareholders, but bad for employees, who want job security.",
+        "pause": null
+      },
+      {
+        "id": "c2",
+        "text": "Or imagine a business that wants to build a new factory. The government is pleased about the new jobs, but local residents may be unhappy about the extra noise, traffic, and pollution.",
+        "say": "Or imagine a business that wants to build a new factory. The government is pleased about the new jobs, but local residents may be unhappy about the extra noise, traffic, and pollution.",
+        "pause": null
+      },
+      {
+        "id": "c3",
+        "text": "And customers want low prices, while owners want high profits.",
+        "say": "And customers want low prices, while owners want high profits.",
+        "pause": null
+      },
+      {
+        "id": "resolve",
+        "text": "A business can't keep everyone happy all the time. It has to prioritise, and find a compromise.",
+        "say": "A business can't keep everyone happy all the time. It has to prioritise, and find a compromise.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "sector-objectives",
+    "chapter": 5,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Finally, objectives depend on which sector an organisation is in.",
+        "say": "Finally, objectives depend on which sector an organisation is in.",
+        "pause": null
+      },
+      {
+        "id": "private",
+        "text": "Private sector businesses usually aim for survival, profit, growth, and market share.",
+        "say": "Private sector businesses usually aim for survival, profit, growth, and market share.",
+        "pause": null
+      },
+      {
+        "id": "public",
+        "text": "Public sector organisations usually aim to provide a good service to the public, keep prices affordable so that everyone can use the service, protect jobs, and stay within the budget set by the government.",
+        "say": "Public sector organisations usually aim to provide a good service to the public, keep prices affordable so that everyone can use the service, protect jobs, and stay within the budget set by the government.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "recap",
+    "chapter": 6,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Let's bring it all together.",
+        "say": "Let's bring it all together.",
+        "pause": null
+      },
+      {
+        "id": "r1",
+        "text": "Businesses exist to satisfy needs and wants, by combining scarce resources, and they succeed by adding value.",
+        "say": "Businesses exist to satisfy needs and wants, by combining scarce resources, and they succeed by adding value.",
+        "pause": null
+      },
+      {
+        "id": "r2",
+        "text": "They are classified into the primary, secondary, and tertiary sectors, and into the private and public sectors.",
+        "say": "They are classified into the primary, secondary, and tertiary sectors, and into the private and public sectors.",
+        "pause": null
+      },
+      {
+        "id": "r3",
+        "text": "Entrepreneurs start them. They grow internally or externally, and they can fail if they run out of cash, or fail to adapt.",
+        "say": "Entrepreneurs start them. They grow internally or externally, and they can fail if they run out of cash, or fail to adapt.",
+        "pause": null
+      },
+      {
+        "id": "r4",
+        "text": "They take different legal forms, from sole traders to public limited companies, each with its own balance of risk, capital, and control.",
+        "say": "They take different legal forms, from sole traders to public limited companies, each with its own balance of risk, capital, and control.",
+        "pause": null
+      },
+      {
+        "id": "r5",
+        "text": "And they set objectives, while balancing the conflicting interests of their stakeholders.",
+        "say": "And they set objectives, while balancing the conflicting interests of their stakeholders.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "exam-tips",
+    "chapter": 6,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "Before you go, here are three exam tips.",
+        "say": "Before you go, here are three exam tips.",
+        "pause": null
+      },
+      {
+        "id": "t1",
+        "text": "One: learn your definitions word for word. Terms like added value, opportunity cost, and limited liability are easy marks.",
+        "say": "One: learn your definitions word for word. Terms like added value, opportunity cost, and limited liability are easy marks.",
+        "pause": null
+      },
+      {
+        "id": "t2",
+        "text": "Two: always apply your answer to the business in the question. Use its name, its products, and its situation, not just general points.",
+        "say": "Two: always apply your answer to the business in the question. Use its name, its products, and its situation, not just general points.",
+        "pause": null
+      },
+      {
+        "id": "t3",
+        "text": "And three: when a question asks you to evaluate, or discuss, look at both sides, and finish with a clear, justified conclusion.",
+        "say": "And three: when a question asks you to evaluate, or discuss, look at both sides, and finish with a clear, justified conclusion.",
+        "pause": null
+      }
+    ]
+  },
+  {
+    "scene": "end",
+    "chapter": 6,
+    "lines": [
+      {
+        "id": "L0",
+        "text": "That's Unit 1: Understanding Business Activity. You now have the foundation for everything else in IGCSE Business. Good luck, and keep learning.",
+        "say": "That's Unit One: Understanding Business Activity. You now have the foundation for everything else in I G C S E Business. Good luck, and keep learning.",
+        "pause": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+node_modules
+dist
+.DS_Store
+.env
+
+# Ignore the output video from Git but not videos you import into src/.
+out
+
+# Voiceover engine model files and per-sentence cache (re-created by scripts/setup-voice.sh / npm run voice)
+scripts/.models
+scripts/.tts-cache
+
+# Uncompressed voice tracks (the committed .mp3 files are what the video uses)
+public/vo/*.wav

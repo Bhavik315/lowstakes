@@ -1,0 +1,43 @@
+{
+  "name": "igcse-business-unit1-video",
+  "version": "1.0.0",
+  "description": "Cinematic explainer: Cambridge IGCSE Business Studies (0450) Unit 1, Understanding Business Activity",
+  "repository": {},
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.542",
+    "@remotion/fonts": "4.0.542",
+    "@remotion/media": "4.0.542",
+    "@remotion/transitions": "4.0.542",
+    "lucide-react": "^1.70.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.542"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.542",
+    "@types/react": "19.3.0",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "voice": "node --no-warnings scripts/export-narration.ts && python3 scripts/tts.py",
+    "audio": "python3 scripts/audio.py",
+    "stills": "node scripts/stills.mjs",
+    "render": "remotion render IGCSEBusinessUnit1 out/IGCSE-Business-Unit1.mp4 --crf=22 --x264-preset=slow --audio-bitrate=192k",
+    "subtitles": "python3 scripts/srt.py"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}

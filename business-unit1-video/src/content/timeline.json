@@ -1,0 +1,4050 @@
+{
+ "voice": "af_heart",
+ "speed": 0.94,
+ "scenes": {
+  "hook": {
+   "duration": 24.276,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.527,
+     "parts": [
+      {
+       "text": "Think about the last twenty-four hours of your life.",
+       "start": 0.0,
+       "end": 2.527
+      }
+     ]
+    },
+    {
+     "id": "things",
+     "start": 2.978,
+     "end": 8.788,
+     "parts": [
+      {
+       "text": "The breakfast you ate.",
+       "start": 2.978,
+       "end": 4.193
+      },
+      {
+       "text": "The clothes you're wearing.",
+       "start": 4.453,
+       "end": 5.647
+      },
+      {
+       "text": "The phone in your hand.",
+       "start": 5.907,
+       "end": 7.01
+      },
+      {
+       "text": "The bus that took you to school.",
+       "start": 7.27,
+       "end": 8.788
+      }
+     ]
+    },
+    {
+     "id": "business",
+     "start": 9.238,
+     "end": 12.632,
+     "parts": [
+      {
+       "text": "Every single one of those things reached you because of a business.",
+       "start": 9.238,
+       "end": 12.632
+      }
+     ]
+    },
+    {
+     "id": "L3",
+     "start": 13.082,
+     "end": 17.118,
+     "parts": [
+      {
+       "text": "Someone grew it, someone made it, someone moved it, and someone sold it to you.",
+       "start": 13.082,
+       "end": 17.118
+      }
+     ]
+    },
+    {
+     "id": "question",
+     "start": 17.568,
+     "end": 24.276,
+     "parts": [
+      {
+       "text": "But why do businesses exist at all?",
+       "start": 17.568,
+       "end": 19.562
+      },
+      {
+       "text": "How do they grow?",
+       "start": 19.822,
+       "end": 20.813
+      },
+      {
+       "text": "Who do they serve?",
+       "start": 21.073,
+       "end": 22.105
+      },
+      {
+       "text": "And what are they really trying to achieve?",
+       "start": 22.365,
+       "end": 24.276
+      }
+     ]
+    }
+   ]
+  },
+  "title": {
+   "duration": 18.421,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 8.186,
+     "parts": [
+      {
+       "text": "Welcome to this complete guide to Unit 1 of Cambridge IGCSE Business Studies: Understanding Business Activity.",
+       "start": 0.0,
+       "end": 8.186
+      }
+     ]
+    },
+    {
+     "id": "L1",
+     "start": 8.636,
+     "end": 18.421,
+     "parts": [
+      {
+       "text": "By the end of this video, you'll understand the ideas that the rest of the course is built on, explained from scratch, with real examples and exam tips along the way.",
+       "start": 8.636,
+       "end": 18.421
+      }
+     ]
+    }
+   ]
+  },
+  "roadmap": {
+   "duration": 26.858,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.951,
+     "parts": [
+      {
+       "text": "Here's our journey.",
+       "start": 0.0,
+       "end": 1.029
+      },
+      {
+       "text": "It's split into five chapters.",
+       "start": 1.289,
+       "end": 2.951
+      }
+     ]
+    },
+    {
+     "id": "c1",
+     "start": 3.401,
+     "end": 8.017,
+     "parts": [
+      {
+       "text": "First, business activity: why businesses exist, and how they add value.",
+       "start": 3.401,
+       "end": 8.017
+      }
+     ]
+    },
+    {
+     "id": "c2",
+     "start": 8.467,
+     "end": 11.768,
+     "parts": [
+      {
+       "text": "Second, how we classify businesses into different sectors.",
+       "start": 8.467,
+       "end": 11.768
+      }
+     ]
+    },
+    {
+     "id": "c3",
+     "start": 12.218,
+     "end": 16.192,
+     "parts": [
+      {
+       "text": "Third, enterprise, and how businesses grow, stay small, or fail.",
+       "start": 12.218,
+       "end": 16.192
+      }
+     ]
+    },
+    {
+     "id": "c4",
+     "start": 16.642,
+     "end": 22.339,
+     "parts": [
+      {
+       "text": "Fourth, the different types of business organisation, from a one-person shop to a global company.",
+       "start": 16.642,
+       "end": 22.339
+      }
+     ]
+    },
+    {
+     "id": "c5",
+     "start": 22.789,
+     "end": 26.858,
+     "parts": [
+      {
+       "text": "And fifth, business objectives, and the stakeholders who care about them.",
+       "start": 22.789,
+       "end": 26.858
+      }
+     ]
+    }
+   ]
+  },
+  "ch1": {
+   "duration": 6.976,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 6.976,
+     "parts": [
+      {
+       "text": "Chapter one.",
+       "start": 0.0,
+       "end": 0.811
+      },
+      {
+       "text": "Business activity.",
+       "start": 1.071,
+       "end": 2.196
+      },
+      {
+       "text": "Let's start with the most basic question of all: why do businesses exist?",
+       "start": 2.456,
+       "end": 6.976
+      }
+     ]
+    }
+   ]
+  },
+  "needs-wants": {
+   "duration": 23.914,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.407,
+     "parts": [
+      {
+       "text": "It all begins with people, and the things they need, and want.",
+       "start": 0.0,
+       "end": 3.407
+      }
+     ]
+    },
+    {
+     "id": "needs",
+     "start": 3.857,
+     "end": 8.812,
+     "parts": [
+      {
+       "text": "Needs are the things we must have to survive: food, water, shelter, and clothing.",
+       "start": 3.857,
+       "end": 8.812
+      }
+     ]
+    },
+    {
+     "id": "wants",
+     "start": 9.262,
+     "end": 15.737,
+     "parts": [
+      {
+       "text": "Wants are things we would like to have, but can live without, such as a smartphone, a car, or a holiday abroad.",
+       "start": 9.262,
+       "end": 15.737
+      }
+     ]
+    },
+    {
+     "id": "unlimited",
+     "start": 16.187,
+     "end": 23.914,
+     "parts": [
+      {
+       "text": "Here's the important part.",
+       "start": 16.187,
+       "end": 17.736
+      },
+      {
+       "text": "Our needs are limited, but our wants are unlimited.",
+       "start": 17.997,
+       "end": 20.723
+      },
+      {
+       "text": "As soon as we get one thing, we start wanting the next.",
+       "start": 20.983,
+       "end": 23.914
+      }
+     ]
+    }
+   ]
+  },
+  "factors": {
+   "duration": 34.619,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 9.984,
+     "parts": [
+      {
+       "text": "To satisfy needs and wants, we produce goods and services.",
+       "start": 0.0,
+       "end": 3.648
+      },
+      {
+       "text": "And to produce anything at all, we need resources, called the factors of production.",
+       "start": 3.908,
+       "end": 8.617
+      },
+      {
+       "text": "There are four of them.",
+       "start": 8.877,
+       "end": 9.984
+      }
+     ]
+    },
+    {
+     "id": "land",
+     "start": 10.434,
+     "end": 15.509,
+     "parts": [
+      {
+       "text": "Land: all natural resources, like soil, water, minerals, oil and forests.",
+       "start": 10.434,
+       "end": 15.509
+      }
+     ]
+    },
+    {
+     "id": "labour",
+     "start": 15.959,
+     "end": 20.195,
+     "parts": [
+      {
+       "text": "Labour: people, and the physical and mental effort they put into their work.",
+       "start": 15.959,
+       "end": 20.195
+      }
+     ]
+    },
+    {
+     "id": "capital",
+     "start": 20.645,
+     "end": 26.886,
+     "parts": [
+      {
+       "text": "Capital: man-made goods used to produce other goods, such as machines, tools, vehicles and buildings.",
+       "start": 20.645,
+       "end": 26.886
+      }
+     ]
+    },
+    {
+     "id": "enterprise",
+     "start": 27.336,
+     "end": 34.619,
+     "parts": [
+      {
+       "text": "And enterprise: the skill and risk-taking of the entrepreneur, who brings the other three factors together to start a business.",
+       "start": 27.336,
+       "end": 34.619
+      }
+     ]
+    }
+   ]
+  },
+  "scarcity": {
+   "duration": 20.744,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.038,
+     "parts": [
+      {
+       "text": "Now, put those two ideas together.",
+       "start": 0.0,
+       "end": 2.038
+      }
+     ]
+    },
+    {
+     "id": "wants",
+     "start": 2.488,
+     "end": 3.728,
+     "parts": [
+      {
+       "text": "Wants are unlimited.",
+       "start": 2.488,
+       "end": 3.728
+      }
+     ]
+    },
+    {
+     "id": "resources",
+     "start": 4.178,
+     "end": 6.783,
+     "parts": [
+      {
+       "text": "But the resources to satisfy them are limited.",
+       "start": 4.178,
+       "end": 6.783
+      }
+     ]
+    },
+    {
+     "id": "scarcity",
+     "start": 7.233,
+     "end": 15.469,
+     "parts": [
+      {
+       "text": "The result is scarcity: there are not enough goods and services to satisfy everyone's wants.",
+       "start": 7.233,
+       "end": 12.787
+      },
+      {
+       "text": "This is called the basic economic problem.",
+       "start": 13.047,
+       "end": 15.469
+      }
+     ]
+    },
+    {
+     "id": "choice",
+     "start": 15.919,
+     "end": 20.744,
+     "parts": [
+      {
+       "text": "And because of scarcity, people, businesses, and governments all have to make choices.",
+       "start": 15.919,
+       "end": 20.744
+      }
+     ]
+    }
+   ]
+  },
+  "opportunity-cost": {
+   "duration": 31.182,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 6.354,
+     "parts": [
+      {
+       "text": "And every choice has a cost.",
+       "start": 0.0,
+       "end": 1.549
+      },
+      {
+       "text": "Opportunity cost is the next best alternative given up when a choice is made.",
+       "start": 1.809,
+       "end": 6.354
+      }
+     ]
+    },
+    {
+     "id": "ex1",
+     "start": 6.804,
+     "end": 16.303,
+     "parts": [
+      {
+       "text": "Imagine you have $50.",
+       "start": 6.804,
+       "end": 8.553
+      },
+      {
+       "text": "You could buy a concert ticket, or a new pair of trainers.",
+       "start": 8.813,
+       "end": 11.87
+      },
+      {
+       "text": "If you choose the concert, the opportunity cost is the trainers you gave up.",
+       "start": 12.13,
+       "end": 16.303
+      }
+     ]
+    },
+    {
+     "id": "ex2",
+     "start": 16.753,
+     "end": 26.137,
+     "parts": [
+      {
+       "text": "Businesses face this too.",
+       "start": 16.753,
+       "end": 18.215
+      },
+      {
+       "text": "If a business spends its money on a new machine, the opportunity cost might be the advertising campaign it can no longer afford.",
+       "start": 18.475,
+       "end": 26.137
+      }
+     ]
+    },
+    {
+     "id": "ex3",
+     "start": 26.587,
+     "end": 31.182,
+     "parts": [
+      {
+       "text": "And a government that builds a new hospital may have to give up building a new school.",
+       "start": 26.587,
+       "end": 31.182
+      }
+     ]
+    }
+   ]
+  },
+  "specialisation": {
+   "duration": 33.576,
+   "lines": [
+    {
+     "id": "spec",
+     "start": 0.0,
+     "end": 8.596,
+     "parts": [
+      {
+       "text": "To produce goods efficiently, businesses use specialisation.",
+       "start": 0.0,
+       "end": 3.514
+      },
+      {
+       "text": "Specialisation is when people and businesses concentrate on what they are best at.",
+       "start": 3.774,
+       "end": 8.596
+      }
+     ]
+    },
+    {
+     "id": "dol",
+     "start": 9.046,
+     "end": 18.974,
+     "parts": [
+      {
+       "text": "Inside a business, this often takes the form of the division of labour: production is split into separate tasks, and each worker focuses on just one task.",
+       "start": 9.046,
+       "end": 18.974
+      }
+     ]
+    },
+    {
+     "id": "order",
+     "start": 19.424,
+     "end": 23.325,
+     "parts": [
+      {
+       "text": "Think of a sandwich shop at lunchtime.",
+       "start": 19.424,
+       "end": 21.381
+      },
+      {
+       "text": "One person takes the orders,",
+       "start": 21.641,
+       "end": 23.325
+      }
+     ]
+    },
+    {
+     "id": "make",
+     "start": 23.775,
+     "end": 25.298,
+     "parts": [
+      {
+       "text": "another makes the sandwiches,",
+       "start": 23.775,
+       "end": 25.298
+      }
+     ]
+    },
+    {
+     "id": "pay",
+     "start": 25.748,
+     "end": 27.528,
+     "parts": [
+      {
+       "text": "and a third handles the payments.",
+       "start": 25.748,
+       "end": 27.528
+      }
+     ]
+    },
+    {
+     "id": "together",
+     "start": 27.978,
+     "end": 33.576,
+     "parts": [
+      {
+       "text": "Working together like this, they can serve far more customers than if each person did everything.",
+       "start": 27.978,
+       "end": 33.576
+      }
+     ]
+    }
+   ]
+  },
+  "specialisation-eval": {
+   "duration": 30.466,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.711,
+     "parts": [
+      {
+       "text": "So, is the division of labour a good thing?",
+       "start": 0.0,
+       "end": 2.407
+      },
+      {
+       "text": "Let's weigh it up.",
+       "start": 2.667,
+       "end": 3.711
+      }
+     ]
+    },
+    {
+     "id": "p1",
+     "start": 4.16,
+     "end": 9.374,
+     "parts": [
+      {
+       "text": "On the plus side, workers become skilled and fast at their task, so output rises.",
+       "start": 4.16,
+       "end": 9.374
+      }
+     ]
+    },
+    {
+     "id": "p2",
+     "start": 9.824,
+     "end": 13.303,
+     "parts": [
+      {
+       "text": "Quality can improve, because each worker becomes an expert.",
+       "start": 9.824,
+       "end": 13.303
+      }
+     ]
+    },
+    {
+     "id": "p3",
+     "start": 13.753,
+     "end": 17.984,
+     "parts": [
+      {
+       "text": "And training is quicker, because each worker only needs to learn one job.",
+       "start": 13.753,
+       "end": 17.984
+      }
+     ]
+    },
+    {
+     "id": "c1",
+     "start": 18.434,
+     "end": 22.242,
+     "parts": [
+      {
+       "text": "But doing the same task all day can be boring and repetitive,",
+       "start": 18.434,
+       "end": 22.242
+      }
+     ]
+    },
+    {
+     "id": "c2",
+     "start": 22.692,
+     "end": 24.237,
+     "parts": [
+      {
+       "text": "which can lower motivation.",
+       "start": 22.692,
+       "end": 24.237
+      }
+     ]
+    },
+    {
+     "id": "c3",
+     "start": 24.687,
+     "end": 30.466,
+     "parts": [
+      {
+       "text": "And if one worker is absent, production can stop, because nobody else knows how to do that job.",
+       "start": 24.687,
+       "end": 30.466
+      }
+     ]
+    }
+   ]
+  },
+  "purpose": {
+   "duration": 19.971,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.397,
+     "parts": [
+      {
+       "text": "So what is the purpose of business activity?",
+       "start": 0.0,
+       "end": 2.397
+      }
+     ]
+    },
+    {
+     "id": "combine",
+     "start": 3.047,
+     "end": 5.511,
+     "parts": [
+      {
+       "text": "A business combines the factors of production,",
+       "start": 3.047,
+       "end": 5.511
+      }
+     ]
+    },
+    {
+     "id": "produce",
+     "start": 5.961,
+     "end": 7.728,
+     "parts": [
+      {
+       "text": "to produce goods and services,",
+       "start": 5.961,
+       "end": 7.728
+      }
+     ]
+    },
+    {
+     "id": "satisfy",
+     "start": 8.178,
+     "end": 10.408,
+     "parts": [
+      {
+       "text": "that satisfy people's needs and wants.",
+       "start": 8.178,
+       "end": 10.408
+      }
+     ]
+    },
+    {
+     "id": "more",
+     "start": 10.858,
+     "end": 19.971,
+     "parts": [
+      {
+       "text": "Along the way, businesses create jobs, pay wages, and earn income for their owners.",
+       "start": 10.858,
+       "end": 16.097
+      },
+      {
+       "text": "That's why business activity is at the heart of every economy.",
+       "start": 16.357,
+       "end": 19.971
+      }
+     ]
+    }
+   ]
+  },
+  "added-value": {
+   "duration": 18.086,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 3.951,
+     "parts": [
+      {
+       "text": "One of the most important ideas in this whole unit is added value.",
+       "start": 0.0,
+       "end": 3.951
+      }
+     ]
+    },
+    {
+     "id": "def",
+     "start": 4.401,
+     "end": 11.942,
+     "parts": [
+      {
+       "text": "Added value is the difference between the selling price of a product, and the cost of the bought-in materials and components used to make it.",
+       "start": 4.401,
+       "end": 11.942
+      }
+     ]
+    },
+    {
+     "id": "sp",
+     "start": 12.392,
+     "end": 15.541,
+     "parts": [
+      {
+       "text": "In other words, added value equals the selling price,",
+       "start": 12.392,
+       "end": 15.541
+      }
+     ]
+    },
+    {
+     "id": "minus",
+     "start": 15.991,
+     "end": 18.086,
+     "parts": [
+      {
+       "text": "minus the cost of bought-in materials.",
+       "start": 15.991,
+       "end": 18.086
+      }
+     ]
+    }
+   ]
+  },
+  "added-value-example": {
+   "duration": 29.967,
+   "lines": [
+    {
+     "id": "buy",
+     "start": 0.0,
+     "end": 7.232,
+     "parts": [
+      {
+       "text": "Let's see it in action.",
+       "start": 0.0,
+       "end": 1.186
+      },
+      {
+       "text": "A bakery buys flour, butter, sugar and eggs.",
+       "start": 1.446,
+       "end": 4.394
+      },
+      {
+       "text": "The ingredients for one cake cost $2.",
+       "start": 4.654,
+       "end": 7.232
+      }
+     ]
+    },
+    {
+     "id": "sell",
+     "start": 7.682,
+     "end": 12.615,
+     "parts": [
+      {
+       "text": "After the baker has mixed, baked and decorated it, the cake sells for $10.",
+       "start": 7.682,
+       "end": 12.615
+      }
+     ]
+    },
+    {
+     "id": "result",
+     "start": 13.065,
+     "end": 17.829,
+     "parts": [
+      {
+       "text": "So the added value is $10 minus $2, which is $8.",
+       "start": 13.065,
+       "end": 17.829
+      }
+     ]
+    },
+    {
+     "id": "warning",
+     "start": 18.279,
+     "end": 29.967,
+     "parts": [
+      {
+       "text": "But be careful.",
+       "start": 18.279,
+       "end": 19.188
+      },
+      {
+       "text": "Added value is not the same as profit.",
+       "start": 19.448,
+       "end": 21.826
+      },
+      {
+       "text": "Out of that $8, the bakery still has to pay wages, rent and electricity.",
+       "start": 22.086,
+       "end": 26.998
+      },
+      {
+       "text": "Only what's left after those costs is profit.",
+       "start": 27.258,
+       "end": 29.967
+      }
+     ]
+    }
+   ]
+  },
+  "increase-value": {
+   "duration": 39.394,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 8.647,
+     "parts": [
+      {
+       "text": "So how can a business increase its added value?",
+       "start": 0.0,
+       "end": 2.549
+      },
+      {
+       "text": "There are two routes: persuade customers to pay a higher price, or reduce the cost of materials.",
+       "start": 2.809,
+       "end": 8.647
+      }
+     ]
+    },
+    {
+     "id": "brand",
+     "start": 9.097,
+     "end": 13.493,
+     "parts": [
+      {
+       "text": "It can build a strong brand image, so that customers are willing to pay more.",
+       "start": 9.097,
+       "end": 13.493
+      }
+     ]
+    },
+    {
+     "id": "quality",
+     "start": 13.943,
+     "end": 18.966,
+     "parts": [
+      {
+       "text": "It can improve quality, or use premium packaging that makes the product feel special.",
+       "start": 13.943,
+       "end": 18.966
+      }
+     ]
+    },
+    {
+     "id": "service",
+     "start": 19.416,
+     "end": 24.395,
+     "parts": [
+      {
+       "text": "It can offer excellent customer service, or extra convenience, like fast delivery.",
+       "start": 19.416,
+       "end": 24.395
+      }
+     ]
+    },
+    {
+     "id": "usp",
+     "start": 24.845,
+     "end": 30.206,
+     "parts": [
+      {
+       "text": "It can give the product a unique selling point: something that makes it different from its competitors.",
+       "start": 24.845,
+       "end": 30.206
+      }
+     ]
+    },
+    {
+     "id": "cost",
+     "start": 30.656,
+     "end": 39.394,
+     "parts": [
+      {
+       "text": "Or it can find cheaper suppliers to cut the cost of materials, although it must be careful not to lower quality and damage its reputation.",
+       "start": 30.656,
+       "end": 39.394
+      }
+     ]
+    }
+   ]
+  },
+  "coffee": {
+   "duration": 16.781,
+   "lines": [
+    {
+     "id": "beans",
+     "start": 0.0,
+     "end": 6.312,
+     "parts": [
+      {
+       "text": "Think about a cup of coffee from a famous caf\u00e9 chain.",
+       "start": 0.0,
+       "end": 2.911
+      },
+      {
+       "text": "The coffee beans inside might cost just a few cents.",
+       "start": 3.171,
+       "end": 6.312
+      }
+     ]
+    },
+    {
+     "id": "cup",
+     "start": 6.762,
+     "end": 8.968,
+     "parts": [
+      {
+       "text": "Yet the cup sells for four dollars or more.",
+       "start": 6.762,
+       "end": 8.968
+      }
+     ]
+    },
+    {
+     "id": "why",
+     "start": 9.418,
+     "end": 16.781,
+     "parts": [
+      {
+       "text": "The brand, the comfortable seats, the free wi-fi and the convenience all add value that customers are happy to pay for.",
+       "start": 9.418,
+       "end": 16.781
+      }
+     ]
+    }
+   ]
+  },
+  "ch2": {
+   "duration": 6.654,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 6.654,
+     "parts": [
+      {
+       "text": "Chapter two.",
+       "start": 0.0,
+       "end": 0.874
+      },
+      {
+       "text": "Classifying businesses.",
+       "start": 1.134,
+       "end": 2.571
+      },
+      {
+       "text": "There are millions of businesses in the world.",
+       "start": 2.831,
+       "end": 4.917
+      },
+      {
+       "text": "So how do we organise them?",
+       "start": 5.177,
+       "end": 6.654
+      }
+     ]
+    }
+   ]
+  },
+  "sectors": {
+   "duration": 34.486,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 3.829,
+     "parts": [
+      {
+       "text": "Businesses are grouped into three sectors, according to what they do.",
+       "start": 0.0,
+       "end": 3.829
+      }
+     ]
+    },
+    {
+     "id": "primary",
+     "start": 4.279,
+     "end": 12.058,
+     "parts": [
+      {
+       "text": "The primary sector extracts natural resources from the earth.",
+       "start": 4.279,
+       "end": 7.87
+      },
+      {
+       "text": "Think of farming, fishing, mining, forestry, and drilling for oil.",
+       "start": 8.13,
+       "end": 12.058
+      }
+     ]
+    },
+    {
+     "id": "secondary",
+     "start": 12.508,
+     "end": 23.78,
+     "parts": [
+      {
+       "text": "The secondary sector turns those raw materials into finished products.",
+       "start": 12.508,
+       "end": 16.426
+      },
+      {
+       "text": "This is manufacturing, processing, and construction: car factories, bakeries, oil refineries, and builders.",
+       "start": 16.686,
+       "end": 23.78
+      }
+     ]
+    },
+    {
+     "id": "tertiary",
+     "start": 24.23,
+     "end": 34.486,
+     "parts": [
+      {
+       "text": "And the tertiary sector provides services, to people and to other businesses.",
+       "start": 24.23,
+       "end": 28.841
+      },
+      {
+       "text": "Banks, shops, hotels, transport, hospitals, and schools are all in the tertiary sector.",
+       "start": 29.101,
+       "end": 34.486
+      }
+     ]
+    }
+   ]
+  },
+  "chain": {
+   "duration": 24.896,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.926,
+     "parts": [
+      {
+       "text": "These sectors are linked together in a chain of production.",
+       "start": 0.0,
+       "end": 3.064
+      },
+      {
+       "text": "Let's follow a loaf of bread.",
+       "start": 3.324,
+       "end": 4.926
+      }
+     ]
+    },
+    {
+     "id": "farm",
+     "start": 5.376,
+     "end": 8.323,
+     "parts": [
+      {
+       "text": "A farmer grows wheat.",
+       "start": 5.376,
+       "end": 6.663
+      },
+      {
+       "text": "That's the primary sector.",
+       "start": 6.923,
+       "end": 8.323
+      }
+     ]
+    },
+    {
+     "id": "bake",
+     "start": 8.773,
+     "end": 14.679,
+     "parts": [
+      {
+       "text": "A flour mill grinds the wheat, and a bakery turns the flour into bread.",
+       "start": 8.773,
+       "end": 12.935
+      },
+      {
+       "text": "That's the secondary sector.",
+       "start": 13.195,
+       "end": 14.679
+      }
+     ]
+    },
+    {
+     "id": "shop",
+     "start": 15.129,
+     "end": 20.117,
+     "parts": [
+      {
+       "text": "Then a supermarket transports the bread and sells it to you.",
+       "start": 15.129,
+       "end": 18.446
+      },
+      {
+       "text": "That's the tertiary sector.",
+       "start": 18.706,
+       "end": 20.117
+      }
+     ]
+    },
+    {
+     "id": "you",
+     "start": 20.567,
+     "end": 24.896,
+     "parts": [
+      {
+       "text": "Value is added at every stage, and each business depends on the others.",
+       "start": 20.567,
+       "end": 24.896
+      }
+     ]
+    }
+   ]
+  },
+  "sector-bars": {
+   "duration": 39.633,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 9.624,
+     "parts": [
+      {
+       "text": "The importance of each sector is different from country to country.",
+       "start": 0.0,
+       "end": 3.728
+      },
+      {
+       "text": "We usually measure it by the share of workers employed, or the value of output, in each sector.",
+       "start": 3.988,
+       "end": 9.624
+      }
+     ]
+    },
+    {
+     "id": "developing",
+     "start": 10.074,
+     "end": 16.5,
+     "parts": [
+      {
+       "text": "In many developing economies, a large share of people work in the primary sector, especially in farming.",
+       "start": 10.074,
+       "end": 16.5
+      }
+     ]
+    },
+    {
+     "id": "emerging",
+     "start": 16.95,
+     "end": 23.466,
+     "parts": [
+      {
+       "text": "As countries industrialise, the secondary sector grows, as factories open and workers move to the cities.",
+       "start": 16.95,
+       "end": 23.466
+      }
+     ]
+    },
+    {
+     "id": "developed",
+     "start": 23.916,
+     "end": 34.903,
+     "parts": [
+      {
+       "text": "And in developed economies, such as the United Kingdom or the United States, the tertiary sector is by far the largest, employing around four out of every five workers.",
+       "start": 23.916,
+       "end": 34.903
+      }
+     ]
+    },
+    {
+     "id": "note",
+     "start": 35.353,
+     "end": 39.633,
+     "parts": [
+      {
+       "text": "These figures are illustrative, but it's the pattern that matters for your exam.",
+       "start": 35.353,
+       "end": 39.633
+      }
+     ]
+    }
+   ]
+  },
+  "sector-change": {
+   "duration": 17.379,
+   "lines": [
+    {
+     "id": "s1",
+     "start": 0.0,
+     "end": 3.361,
+     "parts": [
+      {
+       "text": "As a country develops, the balance between the sectors shifts.",
+       "start": 0.0,
+       "end": 3.361
+      }
+     ]
+    },
+    {
+     "id": "s2",
+     "start": 3.811,
+     "end": 10.732,
+     "parts": [
+      {
+       "text": "First comes industrialisation: workers move from the farms into factories, and the secondary sector grows.",
+       "start": 3.811,
+       "end": 10.732
+      }
+     ]
+    },
+    {
+     "id": "s3",
+     "start": 11.182,
+     "end": 17.379,
+     "parts": [
+      {
+       "text": "Later comes de-industrialisation: the secondary sector shrinks, and the tertiary sector takes over.",
+       "start": 11.182,
+       "end": 17.379
+      }
+     ]
+    }
+   ]
+  },
+  "sector-reasons": {
+   "duration": 28.062,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 5.789,
+     "parts": [
+      {
+       "text": "So why does de-industrialisation happen in developed economies?",
+       "start": 0.0,
+       "end": 4.044
+      },
+      {
+       "text": "There are four main reasons.",
+       "start": 4.304,
+       "end": 5.789
+      }
+     ]
+    },
+    {
+     "id": "income",
+     "start": 6.239,
+     "end": 13.398,
+     "parts": [
+      {
+       "text": "As people get richer, they spend more of their income on services, like eating out, travel, entertainment, and healthcare.",
+       "start": 6.239,
+       "end": 13.398
+      }
+     ]
+    },
+    {
+     "id": "global",
+     "start": 13.848,
+     "end": 18.234,
+     "parts": [
+      {
+       "text": "Manufacturing often moves to other countries, where labour costs are lower.",
+       "start": 13.848,
+       "end": 18.234
+      }
+     ]
+    },
+    {
+     "id": "deplete",
+     "start": 18.684,
+     "end": 22.574,
+     "parts": [
+      {
+       "text": "Natural resources can run out, so primary industries decline.",
+       "start": 18.684,
+       "end": 22.574
+      }
+     ]
+    },
+    {
+     "id": "auto",
+     "start": 23.024,
+     "end": 28.062,
+     "parts": [
+      {
+       "text": "And automation means factories need fewer workers to produce the same output.",
+       "start": 23.024,
+       "end": 28.062
+      }
+     ]
+    }
+   ]
+  },
+  "mixed-economy": {
+   "duration": 46.289,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.116,
+     "parts": [
+      {
+       "text": "Businesses can also be classified by who owns them.",
+       "start": 0.0,
+       "end": 3.116
+      }
+     ]
+    },
+    {
+     "id": "private",
+     "start": 3.566,
+     "end": 13.311,
+     "parts": [
+      {
+       "text": "The private sector is made up of businesses owned by private individuals, such as sole traders, partnerships, and companies.",
+       "start": 3.566,
+       "end": 10.879
+      },
+      {
+       "text": "Most of them aim to make a profit.",
+       "start": 11.139,
+       "end": 13.311
+      }
+     ]
+    },
+    {
+     "id": "public",
+     "start": 13.761,
+     "end": 27.104,
+     "parts": [
+      {
+       "text": "The public sector is made up of organisations owned and controlled by the government, such as state schools and hospitals, the police, and the armed forces.",
+       "start": 13.761,
+       "end": 23.227
+      },
+      {
+       "text": "Their main aim is usually to provide a service to the public.",
+       "start": 23.487,
+       "end": 27.104
+      }
+     ]
+    },
+    {
+     "id": "mixed",
+     "start": 27.554,
+     "end": 33.763,
+     "parts": [
+      {
+       "text": "Most countries have a mixed economy, where the private sector and the public sector exist side by side.",
+       "start": 27.554,
+       "end": 33.763
+      }
+     ]
+    },
+    {
+     "id": "why",
+     "start": 34.213,
+     "end": 46.289,
+     "parts": [
+      {
+       "text": "Governments usually run essential services that everyone needs, or services that private businesses might not provide, because they wouldn't make a profit, like street lighting or national defence.",
+       "start": 34.213,
+       "end": 46.289
+      }
+     ]
+    }
+   ]
+  },
+  "ch3": {
+   "duration": 8.456,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 8.456,
+     "parts": [
+      {
+       "text": "Chapter three.",
+       "start": 0.0,
+       "end": 0.875
+      },
+      {
+       "text": "Enterprise, business growth, and size.",
+       "start": 1.135,
+       "end": 3.414
+      },
+      {
+       "text": "Every business, even the biggest in the world, started as an idea in someone's head.",
+       "start": 3.674,
+       "end": 8.456
+      }
+     ]
+    }
+   ]
+  },
+  "entrepreneur": {
+   "duration": 19.273,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 6.142,
+     "parts": [
+      {
+       "text": "An entrepreneur is a person who organises, operates, and takes the risk for a new business venture.",
+       "start": 0.0,
+       "end": 6.142
+      }
+     ]
+    },
+    {
+     "id": "spot",
+     "start": 6.592,
+     "end": 12.649,
+     "parts": [
+      {
+       "text": "Entrepreneurs spot an opportunity, gather the resources, and put their own money and time on the line.",
+       "start": 6.592,
+       "end": 12.649
+      }
+     ]
+    },
+    {
+     "id": "reward",
+     "start": 13.099,
+     "end": 19.273,
+     "parts": [
+      {
+       "text": "If the business succeeds, they are rewarded with profit.",
+       "start": 13.099,
+       "end": 16.127
+      },
+      {
+       "text": "If it fails, they may lose everything they invested.",
+       "start": 16.387,
+       "end": 19.273
+      }
+     ]
+    }
+   ]
+  },
+  "traits": {
+   "duration": 30.642,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.029,
+     "parts": [
+      {
+       "text": "So what makes a successful entrepreneur?",
+       "start": 0.0,
+       "end": 2.062
+      },
+      {
+       "text": "Here are the key characteristics.",
+       "start": 2.322,
+       "end": 4.029
+      }
+     ]
+    },
+    {
+     "id": "risk",
+     "start": 4.479,
+     "end": 6.098,
+     "parts": [
+      {
+       "text": "They are willing to take risks.",
+       "start": 4.479,
+       "end": 6.098
+      }
+     ]
+    },
+    {
+     "id": "creative",
+     "start": 6.548,
+     "end": 10.349,
+     "parts": [
+      {
+       "text": "They are creative and innovative, always coming up with new ideas.",
+       "start": 6.548,
+       "end": 10.349
+      }
+     ]
+    },
+    {
+     "id": "hard",
+     "start": 10.799,
+     "end": 14.32,
+     "parts": [
+      {
+       "text": "They are hard-working and determined, and they don't give up easily.",
+       "start": 10.799,
+       "end": 14.32
+      }
+     ]
+    },
+    {
+     "id": "confident",
+     "start": 14.77,
+     "end": 17.693,
+     "parts": [
+      {
+       "text": "They are self-confident, and believe in their ideas.",
+       "start": 14.77,
+       "end": 17.693
+      }
+     ]
+    },
+    {
+     "id": "comm",
+     "start": 18.143,
+     "end": 22.878,
+     "parts": [
+      {
+       "text": "They are good communicators, able to persuade customers, banks, and employees.",
+       "start": 18.143,
+       "end": 22.878
+      }
+     ]
+    },
+    {
+     "id": "multi",
+     "start": 23.328,
+     "end": 30.642,
+     "parts": [
+      {
+       "text": "And they are independent and multi-skilled, able to handle lots of different jobs at once, especially in the early days.",
+       "start": 23.328,
+       "end": 30.642
+      }
+     ]
+    }
+   ]
+  },
+  "business-plan": {
+   "duration": 32.386,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 10.761,
+     "parts": [
+      {
+       "text": "Before starting, most entrepreneurs write a business plan: a document containing the business objectives, and important details about its operations, finance, and owners.",
+       "start": 0.0,
+       "end": 10.761
+      }
+     ]
+    },
+    {
+     "id": "desc",
+     "start": 11.211,
+     "end": 15.982,
+     "parts": [
+      {
+       "text": "A typical business plan includes a description of the business, and its objectives.",
+       "start": 11.211,
+       "end": 15.982
+      }
+     ]
+    },
+    {
+     "id": "product",
+     "start": 16.432,
+     "end": 18.22,
+     "parts": [
+      {
+       "text": "The product or service it will sell.",
+       "start": 16.432,
+       "end": 18.22
+      }
+     ]
+    },
+    {
+     "id": "market",
+     "start": 18.67,
+     "end": 20.78,
+     "parts": [
+      {
+       "text": "The target market, and the competition.",
+       "start": 18.67,
+       "end": 20.78
+      }
+     ]
+    },
+    {
+     "id": "ops",
+     "start": 21.23,
+     "end": 24.798,
+     "parts": [
+      {
+       "text": "How and where the product will be made, and the staff that are needed.",
+       "start": 21.23,
+       "end": 24.798
+      }
+     ]
+    },
+    {
+     "id": "finance",
+     "start": 25.248,
+     "end": 32.386,
+     "parts": [
+      {
+       "text": "And financial forecasts, such as expected sales, costs, profit, and cash flow, plus where the finance will come from.",
+       "start": 25.248,
+       "end": 32.386
+      }
+     ]
+    }
+   ]
+  },
+  "plan-why": {
+   "duration": 20.636,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 1.429,
+     "parts": [
+      {
+       "text": "Why bother writing one?",
+       "start": 0.0,
+       "end": 1.429
+      }
+     ]
+    },
+    {
+     "id": "think",
+     "start": 2.079,
+     "end": 9.544,
+     "parts": [
+      {
+       "text": "Writing a plan forces the entrepreneur to think carefully about every part of the business, which reduces the risk of failure.",
+       "start": 2.079,
+       "end": 9.544
+      }
+     ]
+    },
+    {
+     "id": "bank",
+     "start": 9.994,
+     "end": 14.957,
+     "parts": [
+      {
+       "text": "Banks and investors will usually want to see a business plan before they lend any money.",
+       "start": 9.994,
+       "end": 14.957
+      }
+     ]
+    },
+    {
+     "id": "targets",
+     "start": 15.407,
+     "end": 20.636,
+     "parts": [
+      {
+       "text": "And it sets clear targets, so the owner can measure progress once the business is up and running.",
+       "start": 15.407,
+       "end": 20.636
+      }
+     ]
+    }
+   ]
+  },
+  "gov-support": {
+   "duration": 37.142,
+   "lines": [
+    {
+     "id": "why",
+     "start": 0.0,
+     "end": 4.132,
+     "parts": [
+      {
+       "text": "Governments are very keen to help new businesses get started.",
+       "start": 0.0,
+       "end": 3.342
+      },
+      {
+       "text": "Why?",
+       "start": 3.602,
+       "end": 4.132
+      }
+     ]
+    },
+    {
+     "id": "w1",
+     "start": 4.782,
+     "end": 8.051,
+     "parts": [
+      {
+       "text": "New businesses create jobs, and reduce unemployment.",
+       "start": 4.782,
+       "end": 8.051
+      }
+     ]
+    },
+    {
+     "id": "w2",
+     "start": 8.501,
+     "end": 13.204,
+     "parts": [
+      {
+       "text": "They increase competition, which gives consumers more choice and lower prices.",
+       "start": 8.501,
+       "end": 13.204
+      }
+     ]
+    },
+    {
+     "id": "w3",
+     "start": 13.654,
+     "end": 20.677,
+     "parts": [
+      {
+       "text": "And they bring new ideas, and some will grow into the large firms of the future, paying more tax and exporting goods.",
+       "start": 13.654,
+       "end": 20.677
+      }
+     ]
+    },
+    {
+     "id": "how",
+     "start": 21.127,
+     "end": 22.715,
+     "parts": [
+      {
+       "text": "So how do governments help?",
+       "start": 21.127,
+       "end": 22.715
+      }
+     ]
+    },
+    {
+     "id": "h1",
+     "start": 23.365,
+     "end": 25.539,
+     "parts": [
+      {
+       "text": "They offer grants, and low-interest loans.",
+       "start": 23.365,
+       "end": 25.539
+      }
+     ]
+    },
+    {
+     "id": "h2",
+     "start": 25.989,
+     "end": 29.534,
+     "parts": [
+      {
+       "text": "They provide advice and training schemes for new entrepreneurs.",
+       "start": 25.989,
+       "end": 29.534
+      }
+     ]
+    },
+    {
+     "id": "h3",
+     "start": 29.984,
+     "end": 34.298,
+     "parts": [
+      {
+       "text": "They provide cheap premises, sometimes in business incubator centres.",
+       "start": 29.984,
+       "end": 34.298
+      }
+     ]
+    },
+    {
+     "id": "h4",
+     "start": 34.748,
+     "end": 37.142,
+     "parts": [
+      {
+       "text": "And they may reduce taxes for new businesses.",
+       "start": 34.748,
+       "end": 37.142
+      }
+     ]
+    }
+   ]
+  },
+  "measure-size": {
+   "duration": 43.516,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 6.65,
+     "parts": [
+      {
+       "text": "As businesses grow, how do we measure how big they are?",
+       "start": 0.0,
+       "end": 3.092
+      },
+      {
+       "text": "There are three main methods, and each one has a limitation.",
+       "start": 3.352,
+       "end": 6.65
+      }
+     ]
+    },
+    {
+     "id": "employees",
+     "start": 7.1,
+     "end": 16.087,
+     "parts": [
+      {
+       "text": "First, the number of employees.",
+       "start": 7.1,
+       "end": 8.907
+      },
+      {
+       "text": "It's simple, but it can be misleading: a highly automated business can produce a huge amount, with very few workers.",
+       "start": 9.167,
+       "end": 16.087
+      }
+     ]
+    },
+    {
+     "id": "output",
+     "start": 16.537,
+     "end": 27.378,
+     "parts": [
+      {
+       "text": "Second, the value of output, or sales.",
+       "start": 16.537,
+       "end": 18.873
+      },
+      {
+       "text": "But this depends on what's being sold: a firm selling a few very expensive products could look bigger than one selling lots of cheap ones.",
+       "start": 19.133,
+       "end": 27.378
+      }
+     ]
+    },
+    {
+     "id": "capital",
+     "start": 27.828,
+     "end": 39.182,
+     "parts": [
+      {
+       "text": "Third, capital employed: the total value of money invested in the business.",
+       "start": 27.828,
+       "end": 32.373
+      },
+      {
+       "text": "But a business that uses lots of workers, rather than machines, may look small, even if it employs thousands.",
+       "start": 32.633,
+       "end": 39.182
+      }
+     ]
+    },
+    {
+     "id": "both",
+     "start": 39.632,
+     "end": 43.516,
+     "parts": [
+      {
+       "text": "That's why it's best to compare businesses using more than one method.",
+       "start": 39.632,
+       "end": 43.516
+      }
+     ]
+    }
+   ]
+  },
+  "profit-trap": {
+   "duration": 13.004,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 1.629,
+     "parts": [
+      {
+       "text": "Here's a classic exam trap.",
+       "start": 0.0,
+       "end": 1.629
+      }
+     ]
+    },
+    {
+     "id": "rule",
+     "start": 2.079,
+     "end": 13.004,
+     "parts": [
+      {
+       "text": "Profit is not a measure of business size.",
+       "start": 2.079,
+       "end": 4.436
+      },
+      {
+       "text": "A small business can be very profitable, and a huge business can make a loss.",
+       "start": 4.696,
+       "end": 9.081
+      },
+      {
+       "text": "Profit tells you how well a business is doing, not how big it is.",
+       "start": 9.341,
+       "end": 13.004
+      }
+     ]
+    }
+   ]
+  },
+  "why-grow": {
+   "duration": 24.454,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.423,
+     "parts": [
+      {
+       "text": "Why do owners want their businesses to grow?",
+       "start": 0.0,
+       "end": 2.423
+      }
+     ]
+    },
+    {
+     "id": "profit",
+     "start": 3.073,
+     "end": 5.418,
+     "parts": [
+      {
+       "text": "Bigger businesses can earn higher profits.",
+       "start": 3.073,
+       "end": 5.418
+      }
+     ]
+    },
+    {
+     "id": "eos",
+     "start": 5.868,
+     "end": 13.959,
+     "parts": [
+      {
+       "text": "They can benefit from economies of scale, which means lower average costs, for example, by buying materials in bulk at a discount.",
+       "start": 5.868,
+       "end": 13.959
+      }
+     ]
+    },
+    {
+     "id": "share",
+     "start": 14.409,
+     "end": 18.415,
+     "parts": [
+      {
+       "text": "They gain a larger market share, and more power over their suppliers.",
+       "start": 14.409,
+       "end": 18.415
+      }
+     ]
+    },
+    {
+     "id": "security",
+     "start": 18.865,
+     "end": 24.454,
+     "parts": [
+      {
+       "text": "And they are more secure: larger businesses are less likely to fail, or to be taken over.",
+       "start": 18.865,
+       "end": 24.454
+      }
+     ]
+    }
+   ]
+  },
+  "growth-ways": {
+   "duration": 35.183,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 1.921,
+     "parts": [
+      {
+       "text": "There are two ways for a business to grow.",
+       "start": 0.0,
+       "end": 1.921
+      }
+     ]
+    },
+    {
+     "id": "internal",
+     "start": 2.371,
+     "end": 13.366,
+     "parts": [
+      {
+       "text": "Internal growth, also called organic growth, is when a business expands its own operations.",
+       "start": 2.371,
+       "end": 8.371
+      },
+      {
+       "text": "It might open new branches, launch new products, or start selling in new countries.",
+       "start": 8.631,
+       "end": 13.366
+      }
+     ]
+    },
+    {
+     "id": "ieval",
+     "start": 13.816,
+     "end": 18.781,
+     "parts": [
+      {
+       "text": "Internal growth is usually slow, but it's less risky, and the owners keep control.",
+       "start": 13.816,
+       "end": 18.781
+      }
+     ]
+    },
+    {
+     "id": "external",
+     "start": 19.231,
+     "end": 23.593,
+     "parts": [
+      {
+       "text": "External growth is much faster.",
+       "start": 19.231,
+       "end": 21.086
+      },
+      {
+       "text": "It happens through mergers and takeovers.",
+       "start": 21.346,
+       "end": 23.593
+      }
+     ]
+    },
+    {
+     "id": "merger",
+     "start": 24.043,
+     "end": 28.821,
+     "parts": [
+      {
+       "text": "A merger is when two businesses agree to join together, to form one new business.",
+       "start": 24.043,
+       "end": 28.821
+      }
+     ]
+    },
+    {
+     "id": "takeover",
+     "start": 29.271,
+     "end": 35.183,
+     "parts": [
+      {
+       "text": "A takeover, or acquisition, is when one business buys enough shares to take control of another.",
+       "start": 29.271,
+       "end": 35.183
+      }
+     ]
+    }
+   ]
+  },
+  "mergers": {
+   "duration": 62.821,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 7.471,
+     "parts": [
+      {
+       "text": "There are three main types of merger, or takeover.",
+       "start": 0.0,
+       "end": 2.849
+      },
+      {
+       "text": "To understand them, imagine a chocolate company, and its chain of production.",
+       "start": 3.109,
+       "end": 7.471
+      }
+     ]
+    },
+    {
+     "id": "horizontal",
+     "start": 7.921,
+     "end": 21.918,
+     "parts": [
+      {
+       "text": "A horizontal merger is between two businesses in the same industry, at the same stage of production.",
+       "start": 7.921,
+       "end": 13.959
+      },
+      {
+       "text": "For example, our chocolate maker joins with another chocolate maker.",
+       "start": 14.219,
+       "end": 18.299
+      },
+      {
+       "text": "This reduces competition, and increases market share.",
+       "start": 18.559,
+       "end": 21.918
+      }
+     ]
+    },
+    {
+     "id": "backward",
+     "start": 22.368,
+     "end": 37.501,
+     "parts": [
+      {
+       "text": "A vertical merger is between businesses at different stages of the same chain.",
+       "start": 22.368,
+       "end": 27.136
+      },
+      {
+       "text": "If our chocolate maker buys a cocoa farm, that's backward vertical integration.",
+       "start": 27.396,
+       "end": 32.309
+      },
+      {
+       "text": "It secures the supply of raw materials, and helps control their cost and quality.",
+       "start": 32.569,
+       "end": 37.501
+      }
+     ]
+    },
+    {
+     "id": "forward",
+     "start": 37.951,
+     "end": 46.689,
+     "parts": [
+      {
+       "text": "If it buys a chain of sweet shops, that's forward vertical integration.",
+       "start": 37.951,
+       "end": 41.951
+      },
+      {
+       "text": "It guarantees an outlet for its products, and brings it closer to its customers.",
+       "start": 42.211,
+       "end": 46.689
+      }
+     ]
+    },
+    {
+     "id": "conglomerate",
+     "start": 47.139,
+     "end": 62.821,
+     "parts": [
+      {
+       "text": "Finally, a conglomerate merger is between businesses in completely different industries, like our chocolate maker buying a hotel chain.",
+       "start": 47.139,
+       "end": 55.706
+      },
+      {
+       "text": "This is called diversification, and it spreads risk: if chocolate sales fall, the hotels may still do well.",
+       "start": 55.966,
+       "end": 62.821
+      }
+     ]
+    }
+   ]
+  },
+  "growth-problems": {
+   "duration": 42.011,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.691,
+     "parts": [
+      {
+       "text": "But growth brings its own problems, and good managers find ways to overcome them.",
+       "start": 0.0,
+       "end": 4.691
+      }
+     ]
+    },
+    {
+     "id": "control",
+     "start": 5.141,
+     "end": 13.898,
+     "parts": [
+      {
+       "text": "Large businesses are harder to control and coordinate.",
+       "start": 5.141,
+       "end": 8.455
+      },
+      {
+       "text": "The solution is to split the business into smaller divisions, each with its own managers.",
+       "start": 8.715,
+       "end": 13.898
+      }
+     ]
+    },
+    {
+     "id": "comm",
+     "start": 14.348,
+     "end": 21.05,
+     "parts": [
+      {
+       "text": "Communication gets slower, and messages can get lost.",
+       "start": 14.348,
+       "end": 17.707
+      },
+      {
+       "text": "Good IT systems, and a clear structure, can help.",
+       "start": 17.967,
+       "end": 21.05
+      }
+     ]
+    },
+    {
+     "id": "finance",
+     "start": 21.5,
+     "end": 28.825,
+     "parts": [
+      {
+       "text": "Expansion needs a lot of money.",
+       "start": 21.5,
+       "end": 23.436
+      },
+      {
+       "text": "So careful financial planning, and choosing the right sources of finance, are essential.",
+       "start": 23.697,
+       "end": 28.825
+      }
+     ]
+    },
+    {
+     "id": "culture",
+     "start": 29.275,
+     "end": 42.011,
+     "parts": [
+      {
+       "text": "And after a merger, the two businesses may have very different cultures, and workers may worry about losing their jobs.",
+       "start": 29.275,
+       "end": 36.254
+      },
+      {
+       "text": "Clear communication, and involving employees in decisions, can reduce these problems.",
+       "start": 36.514,
+       "end": 42.011
+      }
+     ]
+    }
+   ]
+  },
+  "stay-small": {
+   "duration": 32.729,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.589,
+     "parts": [
+      {
+       "text": "Not every business wants to grow.",
+       "start": 0.0,
+       "end": 1.796
+      },
+      {
+       "text": "Many stay small, and that's perfectly fine.",
+       "start": 2.056,
+       "end": 4.589
+      }
+     ]
+    },
+    {
+     "id": "type",
+     "start": 5.039,
+     "end": 12.324,
+     "parts": [
+      {
+       "text": "Some industries suit small firms, because customers want a personal service, like hairdressers, plumbers, or accountants.",
+       "start": 5.039,
+       "end": 12.324
+      }
+     ]
+    },
+    {
+     "id": "market",
+     "start": 12.774,
+     "end": 19.338,
+     "parts": [
+      {
+       "text": "Some businesses sell to a small market, such as a village shop, or a luxury product with only a few buyers.",
+       "start": 12.774,
+       "end": 19.338
+      }
+     ]
+    },
+    {
+     "id": "owner",
+     "start": 19.788,
+     "end": 28.761,
+     "parts": [
+      {
+       "text": "Many owners simply want to stay small.",
+       "start": 19.788,
+       "end": 22.033
+      },
+      {
+       "text": "They prefer to keep control, avoid the stress of running a big business, and enjoy a good work-life balance.",
+       "start": 22.293,
+       "end": 28.761
+      }
+     ]
+    },
+    {
+     "id": "finance",
+     "start": 29.211,
+     "end": 32.729,
+     "parts": [
+      {
+       "text": "And some businesses just don't have the finance needed to grow.",
+       "start": 29.211,
+       "end": 32.729
+      }
+     ]
+    }
+   ]
+  },
+  "failure": {
+   "duration": 37.021,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.308,
+     "parts": [
+      {
+       "text": "Sadly, many businesses fail.",
+       "start": 0.0,
+       "end": 1.756
+      },
+      {
+       "text": "What are the main causes?",
+       "start": 2.016,
+       "end": 3.308
+      }
+     ]
+    },
+    {
+     "id": "mgmt",
+     "start": 3.958,
+     "end": 11.031,
+     "parts": [
+      {
+       "text": "A lack of management skills: owners without experience may make poor decisions about pricing, stock, or staff.",
+       "start": 3.958,
+       "end": 11.031
+      }
+     ]
+    },
+    {
+     "id": "env",
+     "start": 11.481,
+     "end": 21.135,
+     "parts": [
+      {
+       "text": "Changes in the business environment: a new competitor arrives, consumer tastes change, new technology appears, or the economy falls into recession.",
+       "start": 11.481,
+       "end": 21.135
+      }
+     ]
+    },
+    {
+     "id": "cash",
+     "start": 21.585,
+     "end": 32.948,
+     "parts": [
+      {
+       "text": "And liquidity problems, which means running out of cash.",
+       "start": 21.585,
+       "end": 24.639
+      },
+      {
+       "text": "A business can be selling well, and even making a profit, but if it can't pay its suppliers and workers on time, it may be forced to close.",
+       "start": 24.899,
+       "end": 32.948
+      }
+     ]
+    },
+    {
+     "id": "plan",
+     "start": 33.398,
+     "end": 37.021,
+     "parts": [
+      {
+       "text": "Other causes include poor planning, and expanding too quickly.",
+       "start": 33.398,
+       "end": 37.021
+      }
+     ]
+    }
+   ]
+  },
+  "new-risk": {
+   "duration": 22.589,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.973,
+     "parts": [
+      {
+       "text": "New businesses are at an especially high risk of failure.",
+       "start": 0.0,
+       "end": 3.183
+      },
+      {
+       "text": "Why?",
+       "start": 3.443,
+       "end": 3.973
+      }
+     ]
+    },
+    {
+     "id": "exp",
+     "start": 4.623,
+     "end": 8.067,
+     "parts": [
+      {
+       "text": "Their owners often have little experience of running a business.",
+       "start": 4.623,
+       "end": 8.067
+      }
+     ]
+    },
+    {
+     "id": "cust",
+     "start": 8.517,
+     "end": 11.724,
+     "parts": [
+      {
+       "text": "They have few customers, and nobody knows their brand yet.",
+       "start": 8.517,
+       "end": 11.724
+      }
+     ]
+    },
+    {
+     "id": "cash",
+     "start": 12.174,
+     "end": 15.909,
+     "parts": [
+      {
+       "text": "They have limited finance, and no cash reserves to fall back on.",
+       "start": 12.174,
+       "end": 15.909
+      }
+     ]
+    },
+    {
+     "id": "comp",
+     "start": 16.359,
+     "end": 22.589,
+     "parts": [
+      {
+       "text": "And they face tough competition from established firms, which already have loyal customers, and lower costs.",
+       "start": 16.359,
+       "end": 22.589
+      }
+     ]
+    }
+   ]
+  },
+  "ch4": {
+   "duration": 8.384,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 8.384,
+     "parts": [
+      {
+       "text": "Chapter four.",
+       "start": 0.0,
+       "end": 0.877
+      },
+      {
+       "text": "Types of business organisation.",
+       "start": 1.137,
+       "end": 2.874
+      },
+      {
+       "text": "When someone starts a business, one of the first decisions is which legal form it should take.",
+       "start": 3.134,
+       "end": 8.384
+      }
+     ]
+    }
+   ]
+  },
+  "liability": {
+   "duration": 40.701,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.735,
+     "parts": [
+      {
+       "text": "To understand the different types, you need one key idea first: liability.",
+       "start": 0.0,
+       "end": 4.735
+      }
+     ]
+    },
+    {
+     "id": "unlimited",
+     "start": 5.185,
+     "end": 18.246,
+     "parts": [
+      {
+       "text": "Unlimited liability means the owners are personally responsible for all the debts of the business.",
+       "start": 5.185,
+       "end": 11.27
+      },
+      {
+       "text": "If the business can't pay, the owners may have to sell their own possessions, like their car, or even their house.",
+       "start": 11.53,
+       "end": 18.246
+      }
+     ]
+    },
+    {
+     "id": "limited",
+     "start": 18.696,
+     "end": 26.23,
+     "parts": [
+      {
+       "text": "Limited liability means the owners can only lose the money they invested in the business.",
+       "start": 18.696,
+       "end": 24.138
+      },
+      {
+       "text": "Their personal possessions are safe.",
+       "start": 24.398,
+       "end": 26.23
+      }
+     ]
+    },
+    {
+     "id": "incorporated",
+     "start": 26.68,
+     "end": 40.701,
+     "parts": [
+      {
+       "text": "Businesses with limited liability are called limited companies, or incorporated businesses.",
+       "start": 26.68,
+       "end": 32.503
+      },
+      {
+       "text": "They have a separate legal identity from their owners, so the company itself can own property, sign contracts, sue, and be sued.",
+       "start": 32.763,
+       "end": 40.701
+      }
+     ]
+    }
+   ]
+  },
+  "sole-trader": {
+   "duration": 37.742,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 12.416,
+     "parts": [
+      {
+       "text": "Let's start with the simplest.",
+       "start": 0.0,
+       "end": 1.563
+      },
+      {
+       "text": "A sole trader is a business owned and controlled by just one person, although it can still employ other workers.",
+       "start": 1.823,
+       "end": 8.502
+      },
+      {
+       "text": "Many small shops, hairdressers, and plumbers are sole traders.",
+       "start": 8.762,
+       "end": 12.416
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 12.866,
+     "end": 23.372,
+     "parts": [
+      {
+       "text": "Sole traders are easy and cheap to set up, with very few legal formalities.",
+       "start": 12.866,
+       "end": 17.643
+      },
+      {
+       "text": "The owner keeps all of the profit, and has complete control, so decisions can be made quickly.",
+       "start": 17.903,
+       "end": 23.372
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 23.822,
+     "end": 37.742,
+     "parts": [
+      {
+       "text": "But the owner has unlimited liability.",
+       "start": 23.822,
+       "end": 26.203
+      },
+      {
+       "text": "Raising capital is difficult, the hours are long, and there's nobody to share the work with.",
+       "start": 26.463,
+       "end": 31.826
+      },
+      {
+       "text": "And the business may end if the owner becomes ill or dies, which is called a lack of continuity.",
+       "start": 32.086,
+       "end": 37.742
+      }
+     ]
+    }
+   ]
+  },
+  "partnership": {
+   "duration": 33.583,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 14.194,
+     "parts": [
+      {
+       "text": "A partnership is a business owned by two or more people, usually up to twenty.",
+       "start": 0.0,
+       "end": 4.516
+      },
+      {
+       "text": "Partners often sign a partnership agreement, which sets out how much capital each partner puts in, how profits are shared, and what happens if a partner leaves.",
+       "start": 4.776,
+       "end": 14.194
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 14.644,
+     "end": 21.968,
+     "parts": [
+      {
+       "text": "Compared with a sole trader, there's more capital available, and partners can share the workload, their skills, and any losses.",
+       "start": 14.644,
+       "end": 21.968
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 22.418,
+     "end": 33.583,
+     "parts": [
+      {
+       "text": "But in most partnerships, the partners still have unlimited liability.",
+       "start": 22.418,
+       "end": 26.417
+      },
+      {
+       "text": "Partners can disagree, profits have to be shared, and if a partner leaves or dies, the partnership may have to end.",
+       "start": 26.677,
+       "end": 33.583
+      }
+     ]
+    }
+   ]
+  },
+  "shares": {
+   "duration": 17.888,
+   "lines": [
+    {
+     "id": "intro",
+     "start": 0.0,
+     "end": 4.041,
+     "parts": [
+      {
+       "text": "The next two types are limited companies, which are owned by shareholders.",
+       "start": 0.0,
+       "end": 4.041
+      }
+     ]
+    },
+    {
+     "id": "share",
+     "start": 4.491,
+     "end": 13.149,
+     "parts": [
+      {
+       "text": "A share is a small part of the ownership of a company.",
+       "start": 4.491,
+       "end": 7.477
+      },
+      {
+       "text": "If you own shares, you're a shareholder, and you may receive part of the profits, called a dividend.",
+       "start": 7.737,
+       "end": 13.149
+      }
+     ]
+    },
+    {
+     "id": "board",
+     "start": 13.599,
+     "end": 17.888,
+     "parts": [
+      {
+       "text": "Shareholders elect a board of directors, to run the company on their behalf.",
+       "start": 13.599,
+       "end": 17.888
+      }
+     ]
+    }
+   ]
+  },
+  "ltd": {
+   "duration": 37.904,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 12.816,
+     "parts": [
+      {
+       "text": "A private limited company, shown by the letters Ltd after its name, sells shares privately, to people the owners choose, such as family and friends.",
+       "start": 0.0,
+       "end": 9.932
+      },
+      {
+       "text": "Its shares cannot be sold to the general public.",
+       "start": 10.192,
+       "end": 12.816
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 13.266,
+     "end": 27.123,
+     "parts": [
+      {
+       "text": "Shareholders have limited liability.",
+       "start": 13.266,
+       "end": 15.518
+      },
+      {
+       "text": "The company has a separate legal identity, and continuity, so it carries on even if a shareholder dies.",
+       "start": 15.778,
+       "end": 22.226
+      },
+      {
+       "text": "It can raise more capital than a partnership, and the original owners keep control.",
+       "start": 22.486,
+       "end": 27.123
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 27.573,
+     "end": 37.904,
+     "parts": [
+      {
+       "text": "But there are more legal formalities to set it up.",
+       "start": 27.573,
+       "end": 29.991
+      },
+      {
+       "text": "The accounts must be published, so there's less privacy.",
+       "start": 30.251,
+       "end": 33.175
+      },
+      {
+       "text": "And the amount of capital is still limited, because shares can't be sold to the public.",
+       "start": 33.435,
+       "end": 37.904
+      }
+     ]
+    }
+   ]
+  },
+  "plc": {
+   "duration": 42.534,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 11.562,
+     "parts": [
+      {
+       "text": "A public limited company, or plc, can sell its shares to the general public, usually through a stock exchange.",
+       "start": 0.0,
+       "end": 7.649
+      },
+      {
+       "text": "Most of the world's biggest companies are public limited companies.",
+       "start": 7.909,
+       "end": 11.562
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 12.012,
+     "end": 22.052,
+     "parts": [
+      {
+       "text": "This means it can raise huge amounts of capital.",
+       "start": 12.012,
+       "end": 14.652
+      },
+      {
+       "text": "Shareholders have limited liability, the company has continuity, and its size makes it easier to borrow money.",
+       "start": 14.912,
+       "end": 22.052
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 22.502,
+     "end": 42.534,
+     "parts": [
+      {
+       "text": "But setting up and running a plc is expensive, with strict legal rules.",
+       "start": 22.502,
+       "end": 27.21
+      },
+      {
+       "text": "Its accounts are public, so competitors can see them.",
+       "start": 27.47,
+       "end": 30.298
+      },
+      {
+       "text": "Because anyone can buy its shares, it can face a takeover.",
+       "start": 30.558,
+       "end": 34.056
+      },
+      {
+       "text": "And there's a separation of ownership and control: shareholders own the company, but directors control it, and they may want different things.",
+       "start": 34.316,
+       "end": 42.534
+      }
+     ]
+    }
+   ]
+  },
+  "franchise": {
+   "duration": 28.024,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 10.01,
+     "parts": [
+      {
+       "text": "A franchise is when a business, called the franchisor, sells the right to use its brand name, products, and way of doing business, to another business, called the franchisee.",
+       "start": 0.0,
+       "end": 10.01
+      }
+     ]
+    },
+    {
+     "id": "money",
+     "start": 10.46,
+     "end": 17.491,
+     "parts": [
+      {
+       "text": "The franchisee pays an initial fee, and then a royalty, which is a percentage of its sales, usually every year.",
+       "start": 10.46,
+       "end": 17.491
+      }
+     ]
+    },
+    {
+     "id": "support",
+     "start": 17.941,
+     "end": 28.024,
+     "parts": [
+      {
+       "text": "In return, the franchisor provides the brand, training, supplies, and national advertising.",
+       "start": 17.941,
+       "end": 23.804
+      },
+      {
+       "text": "Many fast-food restaurants, hotels, and gyms work this way.",
+       "start": 24.064,
+       "end": 28.024
+      }
+     ]
+    }
+   ]
+  },
+  "franchise-eval": {
+   "duration": 32.113,
+   "lines": [
+    {
+     "id": "frp",
+     "start": 0.0,
+     "end": 8.592,
+     "parts": [
+      {
+       "text": "For the franchisor, it's a fast way to expand without needing much capital, and franchisees work hard, because they've invested their own money.",
+       "start": 0.0,
+       "end": 8.592
+      }
+     ]
+    },
+    {
+     "id": "frc",
+     "start": 9.042,
+     "end": 17.318,
+     "parts": [
+      {
+       "text": "The risk is that one badly run franchise could damage the reputation of the whole brand, and profits are shared with the franchisees.",
+       "start": 9.042,
+       "end": 17.318
+      }
+     ]
+    },
+    {
+     "id": "fep",
+     "start": 17.768,
+     "end": 25.203,
+     "parts": [
+      {
+       "text": "For the franchisee, the risk of failure is lower, because the brand is already well known, and they receive training and support.",
+       "start": 17.768,
+       "end": 25.203
+      }
+     ]
+    },
+    {
+     "id": "fec",
+     "start": 25.653,
+     "end": 32.113,
+     "parts": [
+      {
+       "text": "But they pay fees and royalties, must follow strict rules, and have little freedom to make their own decisions.",
+       "start": 25.653,
+       "end": 32.113
+      }
+     ]
+    }
+   ]
+  },
+  "joint-venture": {
+   "duration": 31.4,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 10.344,
+     "parts": [
+      {
+       "text": "A joint venture is when two or more businesses agree to work together on a particular project, creating a separate business unit, and sharing its costs, risks, and profits.",
+       "start": 0.0,
+       "end": 10.344
+      }
+     ]
+    },
+    {
+     "id": "ex",
+     "start": 10.794,
+     "end": 19.244,
+     "parts": [
+      {
+       "text": "For example, a foreign car maker might team up with a local company to enter a new country, using the local company's knowledge of that market.",
+       "start": 10.794,
+       "end": 19.244
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 19.694,
+     "end": 24.661,
+     "parts": [
+      {
+       "text": "Joint ventures share costs and risks, and combine the expertise of both partners.",
+       "start": 19.694,
+       "end": 24.661
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 25.111,
+     "end": 31.4,
+     "parts": [
+      {
+       "text": "But the profits must be shared, and the partners may disagree, especially if they have different ways of working.",
+       "start": 25.111,
+       "end": 31.4
+      }
+     ]
+    }
+   ]
+  },
+  "public-corp": {
+   "duration": 32.704,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 14.723,
+     "parts": [
+      {
+       "text": "Finally, back to the public sector.",
+       "start": 0.0,
+       "end": 2.045
+      },
+      {
+       "text": "A public corporation is a business owned and controlled by the government, on behalf of the public.",
+       "start": 2.305,
+       "end": 8.149
+      },
+      {
+       "text": "Examples can include national railways, postal services, state broadcasters, and water companies.",
+       "start": 8.409,
+       "end": 14.723
+      }
+     ]
+    },
+    {
+     "id": "pros",
+     "start": 15.173,
+     "end": 23.629,
+     "parts": [
+      {
+       "text": "Its main aim is usually to provide an essential service at an affordable price, and to protect jobs, rather than simply to make a profit.",
+       "start": 15.173,
+       "end": 23.629
+      }
+     ]
+    },
+    {
+     "id": "cons",
+     "start": 24.079,
+     "end": 32.704,
+     "parts": [
+      {
+       "text": "However, because the government will often cover its losses, there may be less incentive to be efficient, and it can become a burden on taxpayers.",
+       "start": 24.079,
+       "end": 32.704
+      }
+     ]
+    }
+   ]
+  },
+  "org-table": {
+   "duration": 34.684,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.159,
+     "parts": [
+      {
+       "text": "Let's put the main types side by side.",
+       "start": 0.0,
+       "end": 2.159
+      }
+     ]
+    },
+    {
+     "id": "r1",
+     "start": 2.609,
+     "end": 7.117,
+     "parts": [
+      {
+       "text": "Sole traders have one owner, unlimited liability, and limited capital.",
+       "start": 2.609,
+       "end": 7.117
+      }
+     ]
+    },
+    {
+     "id": "r2",
+     "start": 7.567,
+     "end": 12.288,
+     "parts": [
+      {
+       "text": "Partnerships have more owners and more capital, but still unlimited liability.",
+       "start": 7.567,
+       "end": 12.288
+      }
+     ]
+    },
+    {
+     "id": "r3",
+     "start": 12.738,
+     "end": 18.571,
+     "parts": [
+      {
+       "text": "Private limited companies give limited liability and continuity, with shares sold privately.",
+       "start": 12.738,
+       "end": 18.571
+      }
+     ]
+    },
+    {
+     "id": "r4",
+     "start": 19.021,
+     "end": 24.743,
+     "parts": [
+      {
+       "text": "And public limited companies can raise the most capital of all, by selling shares to the public.",
+       "start": 19.021,
+       "end": 24.743
+      }
+     ]
+    },
+    {
+     "id": "choose",
+     "start": 25.193,
+     "end": 34.684,
+     "parts": [
+      {
+       "text": "In an exam, the best type of organisation depends on how much capital is needed, how much risk the owners will accept, and how much control they want to keep.",
+       "start": 25.193,
+       "end": 34.684
+      }
+     ]
+    }
+   ]
+  },
+  "ch5": {
+   "duration": 7.182,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 7.182,
+     "parts": [
+      {
+       "text": "Chapter five.",
+       "start": 0.0,
+       "end": 0.929
+      },
+      {
+       "text": "Business objectives and stakeholders.",
+       "start": 1.189,
+       "end": 3.284
+      },
+      {
+       "text": "Every business needs to know where it's going, and who it answers to.",
+       "start": 3.544,
+       "end": 7.182
+      }
+     ]
+    }
+   ]
+  },
+  "objectives-why": {
+   "duration": 22.722,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 4.546,
+     "parts": [
+      {
+       "text": "Business objectives are the aims, or targets, that a business works towards.",
+       "start": 0.0,
+       "end": 4.546
+      }
+     ]
+    },
+    {
+     "id": "direction",
+     "start": 4.996,
+     "end": 7.7,
+     "parts": [
+      {
+       "text": "They give the business a clear direction and focus.",
+       "start": 4.996,
+       "end": 7.7
+      }
+     ]
+    },
+    {
+     "id": "motivate",
+     "start": 8.15,
+     "end": 12.108,
+     "parts": [
+      {
+       "text": "They motivate employees, who know exactly what they're working towards.",
+       "start": 8.15,
+       "end": 12.108
+      }
+     ]
+    },
+    {
+     "id": "measure",
+     "start": 12.558,
+     "end": 17.629,
+     "parts": [
+      {
+       "text": "They make it possible to measure success, by comparing actual performance with the target.",
+       "start": 12.558,
+       "end": 17.629
+      }
+     ]
+    },
+    {
+     "id": "decide",
+     "start": 18.079,
+     "end": 22.722,
+     "parts": [
+      {
+       "text": "And they guide decision-making, helping managers choose between different options.",
+       "start": 18.079,
+       "end": 22.722
+      }
+     ]
+    }
+   ]
+  },
+  "smart": {
+   "duration": 14.454,
+   "lines": [
+    {
+     "id": "letters",
+     "start": 0.0,
+     "end": 5.937,
+     "parts": [
+      {
+       "text": "The best objectives are SMART: specific, measurable, achievable, realistic, and time-bound.",
+       "start": 0.0,
+       "end": 5.937
+      }
+     ]
+    },
+    {
+     "id": "ex",
+     "start": 6.387,
+     "end": 14.454,
+     "parts": [
+      {
+       "text": "For example: increase sales by 10% within the next 12 months.",
+       "start": 6.387,
+       "end": 10.539
+      },
+      {
+       "text": "It's specific, measurable, realistic, and it has a deadline.",
+       "start": 10.799,
+       "end": 14.454
+      }
+     ]
+    }
+   ]
+  },
+  "objective-types": {
+   "duration": 50.314,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.807,
+     "parts": [
+      {
+       "text": "So what objectives do businesses set?",
+       "start": 0.0,
+       "end": 2.092
+      },
+      {
+       "text": "Here are the four big ones.",
+       "start": 2.352,
+       "end": 3.807
+      }
+     ]
+    },
+    {
+     "id": "survival",
+     "start": 4.257,
+     "end": 14.554,
+     "parts": [
+      {
+       "text": "Survival: simply staying in business.",
+       "start": 4.257,
+       "end": 6.473
+      },
+      {
+       "text": "This is the main objective for new businesses, and for any business during a recession, or when a powerful new competitor arrives.",
+       "start": 6.733,
+       "end": 14.554
+      }
+     ]
+    },
+    {
+     "id": "profit",
+     "start": 15.004,
+     "end": 19.969,
+     "parts": [
+      {
+       "text": "Profit: the reward for the owners, and a source of money to reinvest in the business.",
+       "start": 15.004,
+       "end": 19.969
+      }
+     ]
+    },
+    {
+     "id": "growth",
+     "start": 20.419,
+     "end": 29.506,
+     "parts": [
+      {
+       "text": "Growth: increasing the size of the business, for example in sales, or the number of outlets, which can bring economies of scale, and more security.",
+       "start": 20.419,
+       "end": 29.506
+      }
+     ]
+    },
+    {
+     "id": "share",
+     "start": 29.956,
+     "end": 40.176,
+     "parts": [
+      {
+       "text": "And market share: the percentage of total market sales made by one business.",
+       "start": 29.956,
+       "end": 34.494
+      },
+      {
+       "text": "A high market share gives a business status, and more power over suppliers and retailers.",
+       "start": 34.754,
+       "end": 40.176
+      }
+     ]
+    },
+    {
+     "id": "change",
+     "start": 40.626,
+     "end": 50.314,
+     "parts": [
+      {
+       "text": "Objectives also change over time.",
+       "start": 40.626,
+       "end": 42.804
+      },
+      {
+       "text": "A brand new business may focus on survival, but once it's established, it may aim for growth, profit, or market share.",
+       "start": 43.064,
+       "end": 50.314
+      }
+     ]
+    }
+   ]
+  },
+  "market-share": {
+   "duration": 16.12,
+   "lines": [
+    {
+     "id": "formula",
+     "start": 0.0,
+     "end": 7.63,
+     "parts": [
+      {
+       "text": "Market share is calculated as the firm's sales, divided by the total sales in the market, multiplied by 100.",
+       "start": 0.0,
+       "end": 7.63
+      }
+     ]
+    },
+    {
+     "id": "ex",
+     "start": 8.08,
+     "end": 13.795,
+     "parts": [
+      {
+       "text": "So if a business sells $2 million worth of trainers, in a market worth $10 million,",
+       "start": 8.08,
+       "end": 13.795
+      }
+     ]
+    },
+    {
+     "id": "answer",
+     "start": 14.245,
+     "end": 16.12,
+     "parts": [
+      {
+       "text": "its market share is 20%.",
+       "start": 14.245,
+       "end": 16.12
+      }
+     ]
+    }
+   ]
+  },
+  "social-enterprise": {
+   "duration": 40.144,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 13.845,
+     "parts": [
+      {
+       "text": "Some businesses have very different priorities.",
+       "start": 0.0,
+       "end": 2.702
+      },
+      {
+       "text": "A social enterprise is a business whose main objectives are social, or environmental.",
+       "start": 2.962,
+       "end": 8.394
+      },
+      {
+       "text": "It still tries to make a profit, but it uses that profit to help people, or the planet.",
+       "start": 8.654,
+       "end": 13.845
+      }
+     ]
+    },
+    {
+     "id": "ex",
+     "start": 14.295,
+     "end": 25.292,
+     "parts": [
+      {
+       "text": "For example, a caf\u00e9 that trains and employs homeless people, or a company that sells bottled water, and uses its profits to build wells in communities without clean water.",
+       "start": 14.295,
+       "end": 25.292
+      }
+     ]
+    },
+    {
+     "id": "tbl",
+     "start": 25.742,
+     "end": 29.195,
+     "parts": [
+      {
+       "text": "Social enterprises often aim for a triple bottom line.",
+       "start": 25.742,
+       "end": 29.195
+      }
+     ]
+    },
+    {
+     "id": "profit",
+     "start": 29.645,
+     "end": 31.44,
+     "parts": [
+      {
+       "text": "Economic: making a profit.",
+       "start": 29.645,
+       "end": 31.44
+      }
+     ]
+    },
+    {
+     "id": "people",
+     "start": 31.89,
+     "end": 34.183,
+     "parts": [
+      {
+       "text": "Social: helping people and communities.",
+       "start": 31.89,
+       "end": 34.183
+      }
+     ]
+    },
+    {
+     "id": "planet",
+     "start": 34.633,
+     "end": 40.144,
+     "parts": [
+      {
+       "text": "And environmental: protecting the planet.",
+       "start": 34.633,
+       "end": 37.047
+      },
+      {
+       "text": "These are often called profit, people, and planet.",
+       "start": 37.307,
+       "end": 40.144
+      }
+     ]
+    }
+   ]
+  },
+  "stakeholders": {
+   "duration": 24.692,
+   "lines": [
+    {
+     "id": "def",
+     "start": 0.0,
+     "end": 8.957,
+     "parts": [
+      {
+       "text": "Every business affects lots of different people.",
+       "start": 0.0,
+       "end": 2.607
+      },
+      {
+       "text": "A stakeholder is any person or group with an interest in the activities and performance of a business.",
+       "start": 2.867,
+       "end": 8.957
+      }
+     ]
+    },
+    {
+     "id": "internal",
+     "start": 9.407,
+     "end": 16.087,
+     "parts": [
+      {
+       "text": "Internal stakeholders are inside the business: the owners or shareholders, the managers, and the employees.",
+       "start": 9.407,
+       "end": 16.087
+      }
+     ]
+    },
+    {
+     "id": "external",
+     "start": 16.537,
+     "end": 24.692,
+     "parts": [
+      {
+       "text": "External stakeholders are outside the business: customers, suppliers, lenders such as banks, the government, and the local community.",
+       "start": 16.537,
+       "end": 24.692
+      }
+     ]
+    }
+   ]
+  },
+  "stakeholder-aims": {
+   "duration": 45.633,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.176,
+     "parts": [
+      {
+       "text": "Each stakeholder group wants something different from the business.",
+       "start": 0.0,
+       "end": 3.176
+      }
+     ]
+    },
+    {
+     "id": "owners",
+     "start": 3.626,
+     "end": 8.63,
+     "parts": [
+      {
+       "text": "Owners and shareholders want high profits, dividends, and a rising share price.",
+       "start": 3.626,
+       "end": 8.63
+      }
+     ]
+    },
+    {
+     "id": "managers",
+     "start": 9.08,
+     "end": 13.255,
+     "parts": [
+      {
+       "text": "Managers want good salaries, power and status, and job security.",
+       "start": 9.08,
+       "end": 13.255
+      }
+     ]
+    },
+    {
+     "id": "employees",
+     "start": 13.705,
+     "end": 19.74,
+     "parts": [
+      {
+       "text": "Employees want fair pay, good working conditions, job security, and opportunities for training.",
+       "start": 13.705,
+       "end": 19.74
+      }
+     ]
+    },
+    {
+     "id": "customers",
+     "start": 20.19,
+     "end": 25.276,
+     "parts": [
+      {
+       "text": "Customers want good-quality products, at reasonable prices, with good service.",
+       "start": 20.19,
+       "end": 25.276
+      }
+     ]
+    },
+    {
+     "id": "suppliers",
+     "start": 25.726,
+     "end": 29.205,
+     "parts": [
+      {
+       "text": "Suppliers want regular orders, and to be paid on time.",
+       "start": 25.726,
+       "end": 29.205
+      }
+     ]
+    },
+    {
+     "id": "lenders",
+     "start": 29.655,
+     "end": 33.822,
+     "parts": [
+      {
+       "text": "Banks and other lenders want their loans repaid on time, with interest.",
+       "start": 29.655,
+       "end": 33.822
+      }
+     ]
+    },
+    {
+     "id": "government",
+     "start": 34.272,
+     "end": 39.195,
+     "parts": [
+      {
+       "text": "The government wants the business to create jobs, pay its taxes, and obey the law.",
+       "start": 34.272,
+       "end": 39.195
+      }
+     ]
+    },
+    {
+     "id": "community",
+     "start": 39.645,
+     "end": 45.633,
+     "parts": [
+      {
+       "text": "And the local community wants jobs for local people, with little pollution, and a safe environment.",
+       "start": 39.645,
+       "end": 45.633
+      }
+     ]
+    }
+   ]
+  },
+  "conflict": {
+   "duration": 38.137,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 3.25,
+     "parts": [
+      {
+       "text": "Here's the problem: these objectives often conflict.",
+       "start": 0.0,
+       "end": 3.25
+      }
+     ]
+    },
+    {
+     "id": "c1",
+     "start": 3.7,
+     "end": 15.971,
+     "parts": [
+      {
+       "text": "Shareholders want higher profits.",
+       "start": 3.7,
+       "end": 5.607
+      },
+      {
+       "text": "One way to achieve that is to cut costs, perhaps by replacing workers with machines.",
+       "start": 5.867,
+       "end": 11.228
+      },
+      {
+       "text": "That's good for shareholders, but bad for employees, who want job security.",
+       "start": 11.488,
+       "end": 15.971
+      }
+     ]
+    },
+    {
+     "id": "c2",
+     "start": 16.421,
+     "end": 27.776,
+     "parts": [
+      {
+       "text": "Or imagine a business that wants to build a new factory.",
+       "start": 16.421,
+       "end": 19.744
+      },
+      {
+       "text": "The government is pleased about the new jobs, but local residents may be unhappy about the extra noise, traffic, and pollution.",
+       "start": 20.004,
+       "end": 27.776
+      }
+     ]
+    },
+    {
+     "id": "c3",
+     "start": 28.226,
+     "end": 32.05,
+     "parts": [
+      {
+       "text": "And customers want low prices, while owners want high profits.",
+       "start": 28.226,
+       "end": 32.05
+      }
+     ]
+    },
+    {
+     "id": "resolve",
+     "start": 32.5,
+     "end": 38.137,
+     "parts": [
+      {
+       "text": "A business can't keep everyone happy all the time.",
+       "start": 32.5,
+       "end": 35.046
+      },
+      {
+       "text": "It has to prioritise, and find a compromise.",
+       "start": 35.306,
+       "end": 38.137
+      }
+     ]
+    }
+   ]
+  },
+  "sector-objectives": {
+   "duration": 22.944,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 4.072,
+     "parts": [
+      {
+       "text": "Finally, objectives depend on which sector an organisation is in.",
+       "start": 0.0,
+       "end": 4.072
+      }
+     ]
+    },
+    {
+     "id": "private",
+     "start": 4.522,
+     "end": 9.79,
+     "parts": [
+      {
+       "text": "Private sector businesses usually aim for survival, profit, growth, and market share.",
+       "start": 4.522,
+       "end": 9.79
+      }
+     ]
+    },
+    {
+     "id": "public",
+     "start": 10.24,
+     "end": 22.944,
+     "parts": [
+      {
+       "text": "Public sector organisations usually aim to provide a good service to the public, keep prices affordable so that everyone can use the service, protect jobs, and stay within the budget set by the government.",
+       "start": 10.24,
+       "end": 22.944
+      }
+     ]
+    }
+   ]
+  },
+  "recap": {
+   "duration": 37.974,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 1.339,
+     "parts": [
+      {
+       "text": "Let's bring it all together.",
+       "start": 0.0,
+       "end": 1.339
+      }
+     ]
+    },
+    {
+     "id": "r1",
+     "start": 1.789,
+     "end": 9.045,
+     "parts": [
+      {
+       "text": "Businesses exist to satisfy needs and wants, by combining scarce resources, and they succeed by adding value.",
+       "start": 1.789,
+       "end": 9.045
+      }
+     ]
+    },
+    {
+     "id": "r2",
+     "start": 9.495,
+     "end": 16.024,
+     "parts": [
+      {
+       "text": "They are classified into the primary, secondary, and tertiary sectors, and into the private and public sectors.",
+       "start": 9.495,
+       "end": 16.024
+      }
+     ]
+    },
+    {
+     "id": "r3",
+     "start": 16.474,
+     "end": 23.908,
+     "parts": [
+      {
+       "text": "Entrepreneurs start them.",
+       "start": 16.474,
+       "end": 17.836
+      },
+      {
+       "text": "They grow internally or externally, and they can fail if they run out of cash, or fail to adapt.",
+       "start": 18.096,
+       "end": 23.908
+      }
+     ]
+    },
+    {
+     "id": "r4",
+     "start": 24.358,
+     "end": 32.824,
+     "parts": [
+      {
+       "text": "They take different legal forms, from sole traders to public limited companies, each with its own balance of risk, capital, and control.",
+       "start": 24.358,
+       "end": 32.824
+      }
+     ]
+    },
+    {
+     "id": "r5",
+     "start": 33.274,
+     "end": 37.974,
+     "parts": [
+      {
+       "text": "And they set objectives, while balancing the conflicting interests of their stakeholders.",
+       "start": 33.274,
+       "end": 37.974
+      }
+     ]
+    }
+   ]
+  },
+  "exam-tips": {
+   "duration": 27.615,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 2.318,
+     "parts": [
+      {
+       "text": "Before you go, here are three exam tips.",
+       "start": 0.0,
+       "end": 2.318
+      }
+     ]
+    },
+    {
+     "id": "t1",
+     "start": 2.768,
+     "end": 10.465,
+     "parts": [
+      {
+       "text": "One: learn your definitions word for word.",
+       "start": 2.768,
+       "end": 5.1
+      },
+      {
+       "text": "Terms like added value, opportunity cost, and limited liability are easy marks.",
+       "start": 5.36,
+       "end": 10.465
+      }
+     ]
+    },
+    {
+     "id": "t2",
+     "start": 10.915,
+     "end": 19.084,
+     "parts": [
+      {
+       "text": "Two: always apply your answer to the business in the question.",
+       "start": 10.915,
+       "end": 14.169
+      },
+      {
+       "text": "Use its name, its products, and its situation, not just general points.",
+       "start": 14.429,
+       "end": 19.084
+      }
+     ]
+    },
+    {
+     "id": "t3",
+     "start": 19.534,
+     "end": 27.615,
+     "parts": [
+      {
+       "text": "And three: when a question asks you to evaluate, or discuss, look at both sides, and finish with a clear, justified conclusion.",
+       "start": 19.534,
+       "end": 27.615
+      }
+     ]
+    }
+   ]
+  },
+  "end": {
+   "duration": 9.626,
+   "lines": [
+    {
+     "id": "L0",
+     "start": 0.0,
+     "end": 9.626,
+     "parts": [
+      {
+       "text": "That's Unit 1: Understanding Business Activity.",
+       "start": 0.0,
+       "end": 2.995
+      },
+      {
+       "text": "You now have the foundation for everything else in IGCSE Business.",
+       "start": 3.255,
+       "end": 7.86
+      },
+      {
+       "text": "Good luck, and keep learning.",
+       "start": 8.12,
+       "end": 9.626
+      }
+     ]
+    }
+   ]
+  }
+ }
+}
