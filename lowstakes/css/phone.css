@@ -55,8 +55,9 @@
   html .rl-msg, html .rl-totals { order: 0; margin: 0; }
 
   /* ---------------------------------------------------------------- poker: nine players, every one readable */
-  html .tbl-wrap:has(.tbl.holdem) { padding: 26px 36px 52px; }
-  html .tbl.holdem { --ar: 2.7; aspect-ratio: 2.7 / 1; width: min(100%, calc((var(--avail) - 78px) * 2.7)); }
+  /* The table is as tall as the space allows (seats hang 14px over the rim, your own cards 30px below) and as wide as the screen. */
+  html .tbl-wrap:has(.tbl.holdem) { padding: 14px 14px 46px; }
+  html .tbl.holdem { --ar: 3.2; aspect-ratio: 3.2 / 1; width: min(100%, calc((var(--avail) - 66px) * 3.2)); }
   html .tbl.holdem .felt { border-width: 0; }
   html .seat { --cw: 22px; }
   html .seat.me { --cw: 42px; }
@@ -81,8 +82,8 @@
   html .center-msg { top: 66%; font-size: 11px; }
 
   /* ---------------------------------------------------------------- blackjack: seven seats along one wide arc */
-  html .bj-wrap { padding: 16px 16px 6px; }
-  html .tbl.blackjack { aspect-ratio: 2.3 / 1; width: min(100%, calc((var(--avail) - 46px) * 2.3)); container-type: inline-size; }
+  html .bj-wrap { padding: 8px 14px 4px; }
+  html .tbl.blackjack { aspect-ratio: 3 / 1; width: min(100%, calc((var(--avail) - 14px) * 3)); container-type: inline-size; }
   html .tbl.blackjack .spot { left: var(--x); top: calc(48% + var(--ay) * 28%); --cwb: clamp(20px, calc(100cqw / (var(--n, 1) + 9)), 30px); --cw: var(--cwb); }
   html .hands.h2, html .hands.h3, html .hands.h4 { --cw: calc(var(--cwb) * .76); gap: 6px; }
   html .tbl.blackjack .hands { transform: translateX(-50%); }

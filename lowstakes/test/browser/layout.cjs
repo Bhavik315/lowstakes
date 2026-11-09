@@ -171,6 +171,35 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await ctx.close();
   }
 
+  // roulette: pressing Spin takes you to the full-screen wheel straight away, and it carries on into the spin
+  {
+    const { ctx, p } = await open(b, { width: 800, height: 300 }, true);
+    await p.addStyleTag({ content: '#banner{display:none!important}' });
+    await practice(p, 'roulette'); await wait(1200);
+    await p.evaluate(() => { const c = window.lowstakes.client; c.act({ type: 'bet', spot: 'red', amount: 25 }); }); await wait(300);
+    await p.locator('[data-act=rl-ready]').dispatchEvent('click'); await wait(900);
+    const ov = await rect(p, '.spin-ov');
+    t('roulette: pressing Spin brings up the full-screen wheel at once', ov && ov.w >= 790 && ov.h >= 290 && /everyone is ready|No more bets/.test(await p.locator('.spin-title').innerText()), JSON.stringify(ov));
+    await p.waitForFunction(() => window.lowstakes.state.game.phase === 'spinning', null, { timeout: 15000 }); await wait(600);
+    t('roulette: the same full-screen wheel carries into the spin ("No more bets")', await p.locator('.spin-ov').count() === 1 && /No more bets/.test(await p.locator('.spin-title').innerText()));
+    await ctx.close();
+  }
+
+  // phone with the browser bars showing (about 800x290 of page): poker and blackjack tables fill the space
+  {
+    const { ctx, p } = await open(b, { width: 800, height: 290 }, true);
+    await p.addStyleTag({ content: '#banner{display:none!important}' });
+    await practice(p, 'holdem'); await wait(1200);
+    const tb = await rect(p, '.tbl.holdem'); const stg = await rect(p, '#stage');
+    t('poker on a short phone screen: the table uses at least 60% of the height there is', tb && stg && tb.h / stg.h >= 0.6, JSON.stringify({ tb, stg }));
+    const me = await rect(p, '.seat.me .plate'); const dk = await rect(p, '#dock');
+    t('poker on a short phone screen: your own plate is fully above the dock', me && dk && me.b <= dk.t + 1, JSON.stringify({ me, dk }));
+    await p.evaluate(() => window.lowstakes.client.setGame('blackjack')); await wait(1500);
+    const bj = await rect(p, '.tbl.blackjack');
+    t('blackjack on a short phone screen: the table uses at least 60% of the height there is', bj && stg && bj.h / stg.h >= 0.6, JSON.stringify(bj));
+    await ctx.close();
+  }
+
   // Coming back from Google lands you on the invite you were opening, not the home page
   {
     const { ctx, p } = await open(b, { width: 1280, height: 800 });

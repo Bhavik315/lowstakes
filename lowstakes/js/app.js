@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=53';
-import { Slots } from './adslots.js?v=53';
-import { Auth } from './auth.js?v=53';
-import { CONFIG } from './config.js?v=53';
-import * as AU from './ui/account-ui.js?v=53';
-import morphdom from '../vendor/morphdom-esm.js?v=53';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=53';
-import { landing, gate } from './ui/landing.js?v=53';
-import { lobby, inviteLink } from './ui/lobby.js?v=53';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=53';
-import * as HU from './ui/holdem-ui.js?v=53';
-import * as BU from './ui/blackjack-ui.js?v=53';
-import * as RU from './ui/roulette-ui.js?v=53';
-import * as CU from './ui/crash-ui.js?v=53';
-import { sound } from './ui/sound.js?v=53';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=53';
-import { WHEEL } from './games/roulette.js?v=53';
-import * as Motion from './ui/motion.js?v=53';
+import { Ads } from './ads.js?v=54';
+import { Slots } from './adslots.js?v=54';
+import { Auth } from './auth.js?v=54';
+import { CONFIG } from './config.js?v=54';
+import * as AU from './ui/account-ui.js?v=54';
+import morphdom from '../vendor/morphdom-esm.js?v=54';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=54';
+import { landing, gate } from './ui/landing.js?v=54';
+import { lobby, inviteLink } from './ui/lobby.js?v=54';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=54';
+import * as HU from './ui/holdem-ui.js?v=54';
+import * as BU from './ui/blackjack-ui.js?v=54';
+import * as RU from './ui/roulette-ui.js?v=54';
+import * as CU from './ui/crash-ui.js?v=54';
+import { sound } from './ui/sound.js?v=54';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=54';
+import { WHEEL } from './games/roulette.js?v=54';
+import * as Motion from './ui/motion.js?v=54';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -642,7 +642,11 @@ document.addEventListener('click', (e) => {
       if (game && game.phase === 'betting' && you && !you.ready) { c.act({ type: 'bet', spot: el.dataset.spot, amount: S.ui.chip }); sound.play('chip'); }
       return;
     case 'rl-undo': case 'rl-clear': case 'rl-rebet': case 'rl-double': case 'rl-ready': case 'rl-unready':
-      c.act({ type: act.slice(3) }); return;
+      c.act({ type: act.slice(3) });
+      // Pressing Spin takes you straight to the big wheel (it waits there for the other players, then spins).
+      if (act === 'rl-ready' && game && game.phase === 'betting' && you && you.total) openSpinView(null, null, true);
+      if (act === 'rl-unready' && SV.early) closeSpinView(true);
+      return;
     default:
   }
 });
@@ -1018,8 +1022,20 @@ function flipFrom(cam) {
   return `translate(${dx}px, ${dy}px) scale(${from.width / to.width})`;
 }
 
-function openSpinView(total, left) {
+function openSpinView(total, left, early = false) {
   if (reduceMotion) return;
+  if (SV.el && SV.early && !early) {
+    // The wheel was already brought up when Spin was pressed: now the spin really starts.
+    SV.early = false;
+    const el = SV.el;
+    const t = el.querySelector('.spin-title span'); if (t) { t.textContent = 'No more bets'; t.style.opacity = ''; }
+    const cam = el.querySelector('.spin-cam');
+    const pushAt = Math.max(0, left - total * 0.42);
+    cam.animate([{ scale: '1' }, { scale: '1.045' }], { duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'ease-in-out', fill: 'forwards' });
+    SV.timers.push(setTimeout(() => { const tt = el.querySelector('.spin-title span'); if (tt && !el.classList.contains('landed')) tt.style.opacity = '.55'; }, 2200));
+    return;
+  }
+  if (SV.el && early) return;
   closeSpinView(true);
   const el = document.createElement('div');
   el.className = 'spin-ov';
@@ -1027,12 +1043,13 @@ function openSpinView(total, left) {
   el.setAttribute('aria-label', 'The wheel is spinning');
   el.innerHTML = `
     <div class="spin-bg"></div>
-    <p class="spin-title" aria-live="assertive"><span class="tt-in">No more bets</span></p>
+    <p class="spin-title" aria-live="assertive"><span class="tt-in">${early ? 'Spinning when everyone is ready…' : 'No more bets'}</span></p>
     <div class="spin-cam">${RU.wheelSvg()}<div class="spin-medal" aria-live="assertive"></div></div>
     <p class="spin-skip">Tap anywhere to close</p>`;
   document.body.appendChild(el);
   W.els = null; // the wheel list now includes the big one
   SV.el = el;
+  SV.early = early;
   el.addEventListener('click', () => closeSpinView());
   const cam = el.querySelector('.spin-cam');
   const box = smallBox();
@@ -1040,10 +1057,12 @@ function openSpinView(total, left) {
   cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0px, 0px) scale(1)' }], { duration: 850, easing: 'cubic-bezier(.2,.8,.2,1)' });
   if (box) box.classList.add('away');
   // A very slow push-in as the ball settles; subtle on purpose.
-  const pushAt = Math.max(0, left - total * 0.42);
-  cam.animate([{ scale: '1' }, { scale: '1.045' }], { duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'ease-in-out', fill: 'forwards' });
+  if (!early) {
+    const pushAt = Math.max(0, left - total * 0.42);
+    cam.animate([{ scale: '1' }, { scale: '1.045' }], { duration: Math.max(800, left - pushAt), delay: pushAt, easing: 'ease-in-out', fill: 'forwards' });
+  }
   sound.play('whoosh');
-  SV.timers.push(setTimeout(() => { const t = el.querySelector('.spin-title span'); if (t && !el.classList.contains('landed')) t.style.opacity = '.55'; }, 2200));
+  if (!early) SV.timers.push(setTimeout(() => { const t = el.querySelector('.spin-title span'); if (t && !el.classList.contains('landed')) t.style.opacity = '.55'; }, 2200));
 }
 
 function revealSpin({ n, net, bet }) {
@@ -1102,7 +1121,7 @@ function closeSpinView(instant = false) {
   const el = SV.el;
   const box = smallBox();
   if (!el) { if (box) box.classList.remove('away'); return; }
-  SV.el = null;
+  SV.el = null; SV.early = false;
   SV.timers.forEach(clearTimeout);
   SV.timers = [];
   const done = () => { el.remove(); W.els = null; if (!SV.el && smallBox()) smallBox().classList.remove('away'); };
