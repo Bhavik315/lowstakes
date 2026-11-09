@@ -121,7 +121,7 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     const start = await rect(p, '[data-mode=host]');
     t('phone upright: "Start a table" is a big full-width button visible without scrolling', start && start.w > 300 && start.h >= 48 && start.b < 844, JSON.stringify(start));
     const cards = await p.evaluate(() => [...document.querySelectorAll('.placard')].map((e) => Math.round(e.getBoundingClientRect().top)));
-    t('phone upright: the four games sit two across', cards.length === 4 && cards[0] === cards[1] && cards[2] === cards[3] && cards[2] > cards[0], JSON.stringify(cards));
+    t('phone upright: the five games sit two across', cards.length === 5 && cards[0] === cards[1] && cards[2] === cards[3] && cards[2] > cards[0] && cards[4] > cards[2], JSON.stringify(cards));
     await p.locator('[data-acct=signin]').first().click(); await wait(500);
     const sheet = await rect(p, '.acct-card');
     t('phone upright: sign-in is a sheet that slides up from the bottom, full width', sheet && sheet.l <= 1 && sheet.r >= 389 && sheet.b >= 843, JSON.stringify(sheet));

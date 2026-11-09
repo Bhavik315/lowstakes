@@ -4,7 +4,7 @@
 //
 // Each slot lists size tiers, biggest first. The first tier that fits the screen is used (width and, if given,
 // height), and the slot swaps to another tier when the window is resized or the phone is turned.
-import { CONFIG } from './config.js?v=62';
+import { CONFIG } from './config.js?v=63';
 
 const KEY = 'ls.adconsent'; // 'yes' | 'no' | unset
 // Ads load for every visitor (there is no "allow ads" question any more).

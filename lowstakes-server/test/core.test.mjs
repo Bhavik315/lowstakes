@@ -323,11 +323,12 @@ test('a refresh that arrives while a result is being saved waits, then applies',
 test('keep-alive: one harmless database call with the secret key, and it never throws', async () => {
   const calls = [];
   const ok = await keepAlive({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'sb_secret_test' }, {
-    fetchFn: async (url, opts) => { calls.push({ url, key: opts.headers.apikey, body: opts.body }); return { ok: true, json: async () => 35 }; },
+    fetchFn: async (url, opts) => { calls.push({ url, key: opts.headers.apikey, body: opts.body }); return { ok: true, json: async () => (/landlords_sweep/.test(url) ? 2 : 35) }; },
   });
-  assert.deepEqual(ok, { ok: true });
-  assert.equal(calls.length, 1);
+  assert.deepEqual(ok, { ok: true, swept: 2 });
+  assert.equal(calls.length, 2, 'the ping, then the sweep that refunds abandoned Landlords matches');
   assert.equal(calls[0].url, 'https://x.supabase.co/rest/v1/rpc/round_gain_cap');
+  assert.equal(calls[1].url, 'https://x.supabase.co/rest/v1/rpc/landlords_sweep');
   assert.equal(calls[0].key, 'sb_secret_test');
   assert.ok(!/user|balance|username/i.test(calls[0].body), 'it asks about no player');
   const down = await keepAlive({ SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SECRET_KEY: 'k' }, { fetchFn: async () => { throw new Error('offline'); } });

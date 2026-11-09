@@ -1,4 +1,4 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=62';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=63';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -14,12 +14,13 @@ export function landing(me, { error = '' } = {}) {
   <section class="hero">
     <div class="hero-copy">
       <h1>Game night, minus the&nbsp;cash.</h1>
-      <p class="lede">Poker, blackjack, roulette and crash with your friends, right in the browser. Sign in with Google, start a table, send the link, deal. Everyone plays with free coins that are worth exactly nothing.</p>
+      <p class="lede">Poker, blackjack, roulette, crash and a property-trading board game with your friends, right in the browser. Sign in with Google, start a table, send the link, deal. Everyone plays with free coins that are worth exactly nothing.</p>
 
       <form class="sit" id="start-form" autocomplete="off" novalidate>
         <p class="form-error" id="form-error" role="alert">${esc(error)}</p>
         <div class="sit-actions">
           <button class="btn btn-primary" type="submit" data-mode="host">Start a table</button>
+          <a class="btn btn-dark" href="#/m/new" id="ll-new">Landlords board game</a>
         </div>
         <p class="rotate-tip">Playing on a phone? Turn it sideways. The tables are made for landscape.</p>
         <div class="join-line">
@@ -45,7 +46,7 @@ export function landing(me, { error = '' } = {}) {
   </section>
 
   <section class="games" id="games">
-    <h2>Four tables, one link</h2>
+    <h2>Five tables, one link</h2>
     <div class="game-row">
       <article class="placard p-holdem">
         <div class="placard-art">${['As', 'Ad'].map((c, i) => card(c, { style: `--i:${i}` })).join('')}</div>
@@ -66,6 +67,11 @@ export function landing(me, { error = '' } = {}) {
         <div class="placard-art">${ROCKET_SVG}</div>
         <h3>Crash</h3>
         <p>A multiplier climbs until it doesn't. Up to twelve of you bet, then race to cash out before the crash.</p>
+      </article>
+      <article class="placard p-landlords">
+        <div class="placard-art"><div class="mini-board"><i></i><i></i><i></i><i></i></div></div>
+        <h3>Landlords</h3>
+        <p>A property-trading board game for four to six friends. Buy streets, build, trade and auction. Private tables, with an optional coin entry fee and a prize pot.</p>
       </article>
     </div>
   </section>

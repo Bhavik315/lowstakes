@@ -20,7 +20,7 @@ const MAX_NAME = 20;
 export function sanitize(v, depth = 0) {
   if (v === null || typeof v === 'boolean') return v;
   if (typeof v === 'number') { if (!Number.isFinite(v) || Math.abs(v) > 1e9) throw new Error('bad'); return v; }
-  if (typeof v === 'string') { if (v.length > 24) throw new Error('bad'); return v; }
+  if (typeof v === 'string') { if (v.length > 64) throw new Error('bad'); return v; } // long enough for a UUID player id
   if (depth > 3) throw new Error('bad');
   if (Array.isArray(v)) { if (v.length > 30) throw new Error('bad'); return v.map((x) => sanitize(x, depth + 1)); }
   if (typeof v === 'object') {

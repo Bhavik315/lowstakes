@@ -1,8 +1,8 @@
 // Punto Banco baccarat. No decisions to make: the cards draw themselves by
 // fixed rule, and everyone just bets on Player, Banker, Tie, or a pair.
-import { Engine } from '../core/engine.js?v=62';
-import { newDeck, shuffle } from '../core/cards.js?v=62';
-import { randInt } from '../core/cards.js?v=62';
+import { Engine } from '../core/engine.js?v=63';
+import { newDeck, shuffle } from '../core/cards.js?v=63';
+import { randInt } from '../core/cards.js?v=63';
 
 // Baccarat point value: ace=1, 2-9 face value, ten/picture=0.
 const pointValue = (c) => {

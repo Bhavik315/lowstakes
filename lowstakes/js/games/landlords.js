@@ -8,11 +8,11 @@
 //
 // All state is plain JSON (no functions, Sets or Dates) so the server can snapshot it and carry on after a restart.
 // Time is always the server clock passed in as `now`; refreshing a page cannot reset a timer.
-import { randInt, shuffle } from '../core/cards.js?v=62';
+import { randInt, shuffle } from '../core/cards.js?v=63';
 import {
   BOARD, OWNABLE, STATIONS, UTILITIES, GROUPS, START, JAIL, VACATION, LUCK, FUND, CARD, INCOME_TAX,
   cleanSettings, groupOf, mortgageValue, unmortgageCost, mortgageInterest, houseCost, isSquareList, MAX_SEATS, MIN_SEATS,
-} from './landlords-data.js?v=62';
+} from './landlords-data.js?v=63';
 
 export const TURN_MS = 300_000; // exactly five minutes per turn, no reserve
 export const RECONNECT_MS = 300_000; // a disconnected seat is kept this long

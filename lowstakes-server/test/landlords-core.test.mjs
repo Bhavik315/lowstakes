@@ -85,7 +85,7 @@ test('in-game cash and wallet coins are separate: nothing in the game moves a wa
 
 test('game requests go through the sanitiser: nesting, giant arrays, odd keys and bad numbers are refused', async () => {
   assert.throws(() => sanitize({ a: { b: { c: { d: { e: 1 } } } } })); assert.throws(() => sanitize({ x: Array(31).fill(1) })); assert.throws(() => sanitize({ constructor: 1 }));
-  assert.throws(() => sanitize(JSON.parse('{"__proto__":{"x":1}}'))); assert.throws(() => sanitize({ n: NaN })); assert.throws(() => sanitize({ n: Infinity })); assert.throws(() => sanitize('x'.repeat(25))); assert.throws(() => sanitize(() => 1));
+  assert.throws(() => sanitize(JSON.parse('{"__proto__":{"x":1}}'))); assert.throws(() => sanitize({ n: NaN })); assert.throws(() => sanitize({ n: Infinity })); assert.throws(() => sanitize('x'.repeat(65))); assert.equal(sanitize('11111111-1111-1111-1111-111111111111'), '11111111-1111-1111-1111-111111111111'); assert.throws(() => sanitize(() => 1));
   assert.deepEqual(sanitize({ type: 'trade', give: { props: [1, 3], cash: 10 }, get: { props: [], cash: 0 } }), { type: 'trade', give: { props: [1, 3], cash: 10 }, get: { props: [], cash: 0 } });
   const s = setup(); await s.fill(4); await s.start(); const me = s.core.game.cur().id; const snap = JSON.stringify(s.core.game.snapshot());
   s.core.receive(me, { t: 'lact', a: JSON.parse('{"type":"roll","__proto__":{"x":1}}') }); s.core.receive(me, { t: 'lact', a: { type: 'build', sq: Array(100).fill(1) } }); s.core.receive(me, { t: 'lact' }); s.core.receive(me, 'junk'); s.core.receive(me, null);

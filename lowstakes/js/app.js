@@ -1,21 +1,22 @@
-import { Ads } from './ads.js?v=62';
-import { Slots } from './adslots.js?v=62';
-import { Auth } from './auth.js?v=62';
-import { CONFIG } from './config.js?v=62';
-import * as AU from './ui/account-ui.js?v=62';
-import morphdom from '../vendor/morphdom-esm.js?v=62';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=62';
-import { landing, gate } from './ui/landing.js?v=62';
-import { lobby, inviteLink } from './ui/lobby.js?v=62';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=62';
-import * as HU from './ui/holdem-ui.js?v=62';
-import * as BU from './ui/blackjack-ui.js?v=62';
-import * as RU from './ui/roulette-ui.js?v=62';
-import * as CU from './ui/crash-ui.js?v=62';
-import { sound } from './ui/sound.js?v=62';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=62';
-import { WHEEL } from './games/roulette.js?v=62';
-import * as Motion from './ui/motion.js?v=62';
+import { Ads } from './ads.js?v=63';
+import { Slots } from './adslots.js?v=63';
+import { Auth } from './auth.js?v=63';
+import { CONFIG } from './config.js?v=63';
+import * as AU from './ui/account-ui.js?v=63';
+import morphdom from '../vendor/morphdom-esm.js?v=63';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=63';
+import { landing, gate } from './ui/landing.js?v=63';
+import { lobby, inviteLink } from './ui/lobby.js?v=63';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=63';
+import * as HU from './ui/holdem-ui.js?v=63';
+import * as BU from './ui/blackjack-ui.js?v=63';
+import * as RU from './ui/roulette-ui.js?v=63';
+import * as CU from './ui/crash-ui.js?v=63';
+import * as LL from './ui/landlords-ui.js?v=63';
+import { sound } from './ui/sound.js?v=63';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=63';
+import { WHEEL } from './games/roulette.js?v=63';
+import * as Motion from './ui/motion.js?v=63';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -57,6 +58,23 @@ const S = {
 function route() {
   const h = location.hash;
   if (S.screen === 'landing' && h && !h.startsWith('#/')) return; // in-page anchors
+  // Landlords tables (the property-trading game) have their own screens.
+  const lm = h.match(/^#\/m\/([A-Za-z0-9]{3,8})/);
+  if (lm) {
+    if (S.client) leave(false);
+    if (!serverEnabled()) { showLanding('Landlords tables are not switched on yet.'); return; }
+    if (!Auth.ready()) {
+      if (Auth.signedIn() && !S.authSettled) { S.authReady.then(() => route()); return; }
+      S.pendingJoin = h;
+      if (Auth.signedIn()) { showLanding('Pick a username and you will join the table.'); AU.openProfile(); }
+      else { showLanding('Sign in with Google to join this table.'); AU.openAuth('signin'); }
+      return;
+    }
+    document.body.classList.remove('on-landing');
+    if (lm[1].toLowerCase() === 'new') LL.openCreate(); else LL.open(cleanCode(lm[1]));
+    return;
+  }
+  if (LL.active()) { LL.close(); document.body.className = ''; }
   const sm = h.match(/^#\/s\/([A-Za-z0-9]{5})/);
   if (sm) {
     const code = cleanCode(sm[1]);
@@ -288,6 +306,7 @@ function onServerStatus(c, st) {
     location.hash = `#/t/${code}`;
     return;
   }
+  if (st === 'landlords') { leave(false); location.hash = `#/m/${code}`; return; } // that code is a Landlords table
   if (st === 'signin') { leave(false); location.hash = '#/'; AU.openAuth('signin', { message: 'Please sign in again to join a table.' }); return; }
   if (st === 'unregistered') { leave(false); location.hash = '#/'; AU.openProfile(); return; }
   if (st === 'elsewhere') { back('You are already at another table. Leave it first (or wait about a minute if you just closed it), then try again.'); return; }
