@@ -1,5 +1,5 @@
-import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES, outOfChips } from './parts.js?v=57';
-import { lastEvent, timerRing } from './holdem-ui.js?v=57';
+import { esc, fmt, signed, card, chipStack, chip, avatar, CHIP_VALUES, outOfChips } from './parts.js?v=58';
+import { lastEvent, timerRing } from './holdem-ui.js?v=58';
 
 const HINT_WORD = { hit: 'hit', stand: 'stand', double: 'double down', split: 'split' };
 

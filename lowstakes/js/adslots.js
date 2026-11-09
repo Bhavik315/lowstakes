@@ -3,10 +3,11 @@
 //
 // Each slot lists size tiers, biggest first. The first tier that fits the screen is used (width and, if given,
 // height), and the slot swaps to another tier when the window is resized or the phone is turned.
-import { CONFIG } from './config.js?v=57';
+import { CONFIG } from './config.js?v=58';
 
 const KEY = 'ls.adconsent'; // 'yes' | 'no' | unset
-const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+// Ads load for every visitor (there is no "allow ads" question any more).
+const read = () => 'yes';
 const write = (v) => { try { localStorage.setItem(KEY, v); } catch {} };
 
 const tiersOf = (name) => { const c = (CONFIG.ads || {})[name]; return Array.isArray(c) ? c : c ? [c] : []; };
@@ -54,22 +55,6 @@ export const Slots = {
   // Fill (or re-size) every slot under `root`. Safe to call again and again.
   mount(root = document) { root.querySelectorAll('.ad-slot').forEach(fill); },
 
-  // A one-time question, shown only when there is ad code to load. Until it is answered, no ad is requested.
-  askConsent(onDone) {
-    if (!this.configured() || read() || document.getElementById('ad-consent')) return;
-    const bar = document.createElement('div');
-    bar.id = 'ad-consent';
-    bar.setAttribute('role', 'dialog');
-    bar.setAttribute('aria-label', 'Ads');
-    bar.innerHTML = `<p>Low Stakes is free because it shows a few ads. They come from an outside ad network, which may use cookies. <a href="privacy.html">Privacy</a></p>
-      <div><button class="btn btn-quiet btn-sm" data-ad="no">No thanks</button><button class="btn btn-primary btn-sm" data-ad="yes">Allow ads</button></div>`;
-    bar.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-ad]');
-      if (!b) return;
-      write(b.dataset.ad);
-      bar.remove();
-      if (onDone) onDone();
-    });
-    document.body.appendChild(bar);
-  },
+  // (kept so older callers still work; ads no longer ask first)
+  askConsent(onDone) { if (onDone) onDone(); },
 };

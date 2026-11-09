@@ -97,21 +97,17 @@ async function toTable(p) {
   await ctx.route('**/js/config.js*', withAds);
   p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   await openPractice(p);
-  t('ads configured: the one-time question appears and no ad is loaded yet', await p.locator('#ad-consent').count() === 1 && await p.locator('.ad-slot iframe').count() === 0);
-  await p.click('#ad-consent [data-ad=no]'); await wait(300);
-  t('"No thanks": the question goes away and still no ad', await p.locator('#ad-consent').count() === 0 && await p.locator('.ad-slot iframe').count() === 0);
-  await p.reload(); await wait(700);
-  t('...and it is remembered', await p.locator('#ad-consent').count() === 0 && await p.locator('.ad-slot iframe').count() === 0);
+  t('ads configured: there is no "allow ads" question, and the ad frame loads straight away', await p.locator('#ad-consent').count() === 0 && await p.locator('.ad-slot iframe').count() >= 1);
   await ctx.close();
 
   ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });
   await ctx.route('**/js/config.js*', withAds);
   p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   await openPractice(p);
-  await p.click('#ad-consent [data-ad=yes]'); await wait(600);
+  await wait(600);
   const frame = p.locator('.ad-slot[data-slot=landing] iframe');
-  t('"Allow ads": the real banner is the laptop size (728 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '728');
-  t('"Allow ads": the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
+  t('the real banner is the laptop size (728 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '728');
+  t('the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
   t('the ad code runs inside the frame, not in the page', await p.frameLocator('.ad-slot[data-slot=landing] iframe').locator('#adtest').count() === 1 && await p.locator('#adtest').count() === 0);
   await toTable(p);
   t('wide table: the ad slot in the chat panel is filled and visible', await p.locator('.chat .ad-slot iframe').count() === 1 && await p.locator('.chat .ad-slot').isVisible());

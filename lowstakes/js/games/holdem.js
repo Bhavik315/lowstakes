@@ -1,8 +1,8 @@
 // No-limit Texas Hold'em, host-authoritative.
-import { Engine } from '../core/engine.js?v=57';
-import { newDeck, shuffle } from '../core/cards.js?v=57';
-import { evaluate } from '../core/evaluate.js?v=57';
-import { holdemBot } from '../bots/holdem-bot.js?v=57';
+import { Engine } from '../core/engine.js?v=58';
+import { newDeck, shuffle } from '../core/cards.js?v=58';
+import { evaluate } from '../core/evaluate.js?v=58';
+import { holdemBot } from '../bots/holdem-bot.js?v=58';
 
 export const MAX_SEATS = 9;
 const NEXT_STREET = { preflop: 'flop', flop: 'turn', turn: 'river' };

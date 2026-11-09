@@ -1,5 +1,5 @@
 // Small markup builders shared by every screen.
-import { Ads } from '../ads.js?v=57';
+import { Ads } from '../ads.js?v=58';
 
 export const ROCKET_SVG = `<svg class="mini-crash" viewBox="0 0 90 90" aria-hidden="true"><g transform="rotate(45 45 45)">
 <path d="M45 70 C37 78 40 88 45 92 C50 88 53 78 45 70Z" fill="#FFB43C"/><path d="M45 70 C41 75 42 82 45 85 C48 82 49 75 45 70Z" fill="#FFF3B0"/>
