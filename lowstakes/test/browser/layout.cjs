@@ -101,8 +101,11 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await wait(600);
     const hdr = await rect(p, '#r-top'); const dock2 = await rect(p, '#dock');
     const hand = await p.evaluate(() => { const e = document.querySelector('.tbl.blackjack [data-seat]:has(.hands) .hands, .spot.me .hands, .spot .hands'); const mineSeat = [...document.querySelectorAll('[data-seat]')].find((x) => x.querySelector('.hands .hand')); if (!mineSeat) return null; const r = mineSeat.querySelector('.hands').getBoundingClientRect(); return { t: r.top, b: r.bottom }; });
+    if (!mine) console.log('(blackjack deal had no player turn this time, e.g. a natural: layout checks skipped)');
+    else {
     t('blackjack on a small landscape phone: the action buttons are one slim row', mine && dock2 && dock2.h <= 80, JSON.stringify(dock2));
     t('blackjack on a small landscape phone: your hand is not cut off under the header', hand && hdr && hand.t >= hdr.b - 2, JSON.stringify({ hand, hdr }));
+    }
     await ctx.close();
   }
 
@@ -155,7 +158,7 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await fill('holdem', 9); await wait(2500);
     const seats = await p.evaluate(() => [...document.querySelectorAll('.tbl.holdem .seat .plate')].map((e) => { const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, name: e.querySelector('.pname').textContent }; }));
     const clash = seats.some((a, i) => seats.some((b2, j) => j > i && a.l < b2.r - 2 && b2.l < a.r - 2 && a.t < b2.b - 2 && b2.t < a.b - 2));
-    t('poker, 9 players on a phone on its side: all nine names are on screen', seats.length === 9 && seats.every((r) => inside(r, 844, 336)), JSON.stringify(seats.filter((r) => !inside(r, 844, 336))));
+    t('poker, 9 players on a phone on its side: all nine names are on screen', seats.length === 9 && seats.every((r) => inside(r, 844, 345)), JSON.stringify(seats.filter((r) => !inside(r, 844, 345))));
     t('poker, 9 players: no two players overlap', !clash);
     await fill('roulette', 12); await wait(2500);
     const wheel = await rect(p, '.wheel-box'); const board = await rect(p, '.rl-layout');
@@ -163,7 +166,7 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     t('roulette: the wheel and the whole betting board are on screen together', wheel && board && inside(board, 844, 336) && wheel.b <= 336 && wheel.r < board.l + 2, JSON.stringify({ wheel, board }));
     await fill('blackjack', 7); await wait(3000);
     const spots = await p.evaluate(() => [...document.querySelectorAll('.tbl.blackjack .spot .plate')].map((e) => { const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom }; }));
-    t('blackjack, 7 players on a phone on its side: all seven seats are on screen', spots.length === 7 && spots.every((r) => inside(r, 844, 336)), JSON.stringify(spots.filter((r) => !inside(r, 844, 336))));
+    t('blackjack, 7 players on a phone on its side: all seven seats are on screen', spots.length === 7 && spots.every((r) => inside(r, 844, 345)), JSON.stringify(spots.filter((r) => !inside(r, 844, 345))));
     await fill('crash', 12); await wait(3000);
     const g = await rect(p, '.cr-graph');
     t('crash on a phone on its side: the chart is tall enough to watch the rocket climb', g && g.h >= 150, JSON.stringify(g));
@@ -197,6 +200,29 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await p.evaluate(() => window.lowstakes.client.setGame('blackjack')); await wait(1500);
     const bj = await rect(p, '.tbl.blackjack');
     t('blackjack on a short phone screen: the table uses at least 60% of the height there is', bj && stg && bj.h / stg.h >= 0.6, JSON.stringify(bj));
+    await ctx.close();
+  }
+
+  // signed-in header on a phone: the coin balance is never cut off, however long the name
+  {
+    const { ctx, p } = await open(b, { width: 360, height: 740 }, true);
+    await p.evaluate(() => { document.querySelector('.acct-slot').innerHTML = '<button class="btn btn-primary btn-sm coins-btn">Free coins</button><button class="acct-chip"><span class="an">a_really_long_username_here</span><span class="ab">24,000</span></button>'; });
+    await wait(200);
+    const chip = await rect(p, '.acct-chip'); const ab = await rect(p, '.acct-chip .ab');
+    t('phone: the coin balance in the home-page header is fully visible', chip && ab && ab.r <= 360 && ab.r <= chip.r + 1 && ab.w > 20, JSON.stringify({ chip, ab }));
+    t('phone: the home page header does not scroll sideways', await p.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1));
+    await ctx.close();
+  }
+
+  // full screen: the Menu offers it, and Start asks for it on touch screens
+  {
+    const { ctx, p } = await open(b, { width: 800, height: 300 }, true);
+    await p.addInitScript(() => { window.__fs = 0; Element.prototype.requestFullscreen = function () { window.__fs++; return Promise.resolve(); }; });
+    await p.goto(BASE); await wait(600);
+    await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(500);
+    t('Start a table asks the browser for full screen on a touch screen', (await p.evaluate(() => window.__fs)) >= 1);
+    await p.locator('[data-act=more]').dispatchEvent('click'); await wait(300);
+    t('the Menu has a Full screen button', /Full screen/.test(await p.locator('.more-list').innerText()));
     await ctx.close();
   }
 

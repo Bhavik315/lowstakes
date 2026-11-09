@@ -1,0 +1,13 @@
+{
+  "name": "Low Stakes",
+  "short_name": "Low Stakes",
+  "description": "Poker, blackjack, roulette and crash with your friends. Free play-money coins only.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#1F150E",
+  "theme_color": "#F0B23E",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

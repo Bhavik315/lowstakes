@@ -3,13 +3,14 @@
    (wheel, chart, table) as big as the space allows, and everything that is a list (players, history) in one scrolling row.
    Loaded after main.css; selectors start with `html` so they win over the older small-screen rules. */
 @media (orientation: landscape) and (max-height: 520px) {
-  :root { --header: 40px; --dock: 54px; --avail: calc(100dvh - 40px - 54px); }
+  :root { --header: 34px; --dock: 48px; --avail: calc(100dvh - 34px - 48px); }
   html .r-top { padding: 0 8px 0 12px; gap: 8px; }
-  html .dock { min-height: var(--dock); padding: 4px 12px calc(4px + env(safe-area-inset-bottom)); gap: 10px; }
+  html .dock { min-height: var(--dock); padding: 3px 12px calc(3px + env(safe-area-inset-bottom)); gap: 10px; }
   html .dock .btn { min-height: 40px; }
   html .dock-note { font-size: 13px; }
-  html .tool, html .icon-btn { min-height: 40px; }
-  html .code-pill { min-height: 32px; height: 32px; }
+  html .tool, html .icon-btn { min-height: 34px; }
+  html .code-pill { min-height: 28px; height: 28px; font-size: 12px; }
+  html .code-pill b { font-size: 14px; }
 
   /* ---------------------------------------------------------------- crash: the chart gets the room */
   html .cr { padding: 4px 10px 6px; gap: 4px; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; max-width: none; }
@@ -56,8 +57,8 @@
 
   /* ---------------------------------------------------------------- poker: nine players, every one readable */
   /* The table is as tall as the space allows (seats hang 14px over the rim, your own cards 30px below) and as wide as the screen. */
-  html .tbl-wrap:has(.tbl.holdem) { padding: 14px 14px 46px; }
-  html .tbl.holdem { --ar: 3.2; aspect-ratio: 3.2 / 1; width: min(100%, calc((var(--avail) - 66px) * 3.2)); }
+  html .tbl-wrap:has(.tbl.holdem) { padding: 16px 34px 44px; }
+  html .tbl.holdem { --ar: 3.2; aspect-ratio: 3.2 / 1; width: min(100%, calc((var(--avail) - 62px) * 3.2)); }
   html .tbl.holdem .felt { border-width: 0; }
   html .seat { --cw: 22px; }
   html .seat.me { --cw: 42px; }
@@ -82,8 +83,8 @@
   html .center-msg { top: 66%; font-size: 11px; }
 
   /* ---------------------------------------------------------------- blackjack: seven seats along one wide arc */
-  html .bj-wrap { padding: 8px 14px 4px; }
-  html .tbl.blackjack { aspect-ratio: 3 / 1; width: min(100%, calc((var(--avail) - 14px) * 3)); container-type: inline-size; }
+  html .bj-wrap { padding: 4px 8px 2px; }
+  html .tbl.blackjack { aspect-ratio: 3 / 1; width: min(100%, calc((var(--avail) - 8px) * 3)); container-type: inline-size; }
   html .tbl.blackjack .spot { left: var(--x); top: calc(48% + var(--ay) * 28%); --cwb: clamp(20px, calc(100cqw / (var(--n, 1) + 9)), 30px); --cw: var(--cwb); }
   html .hands.h2, html .hands.h3, html .hands.h4 { --cw: calc(var(--cwb) * .76); gap: 6px; }
   html .tbl.blackjack .hands { transform: translateX(-50%); }
@@ -99,7 +100,9 @@
   html .spot .tag { bottom: -18px; font-size: 9px; }
   html .hand { padding: 2px; gap: 2px; }
   html .hand .total { top: -8px; right: -10px; transform: scale(.8); }
-  html .dealer-check { font-size: 11px; padding: 4px 10px; top: calc(100% + 2px); }
+  html .dealer { z-index: 9; }
+  html .dealer-check { font-size: 11px; padding: 3px 10px; left: calc(100% + 64px); top: 50%; transform: translateY(-50%); z-index: 9; }
+  html .dealer-check small { display: none; }
 }
 
 /* ================================================================ phones held upright (home page, sign-in, setup)
@@ -172,4 +175,14 @@
 /* In portrait only a live game needs the sideways screen; the lobby (sharing the room code, picking a game) works upright. */
 @media (orientation: portrait) and (max-width: 600px) and (pointer: coarse) {
   html .room:has(#stage[data-game="lobby"]) .rotate-gate { display: none; }
+}
+
+/* The signed-in header (Free coins + name + balance) never cuts the balance off: the name gives way, the balance never. */
+@media (max-width: 700px) {
+  html .l-top { flex-wrap: wrap; row-gap: 8px; }
+  html .l-top .acct-slot:has(.acct-chip) { flex: 1 0 100%; order: 3; width: 100%; }
+  html .l-top .acct-slot .coins-btn { flex: none; }
+  html .l-top .acct-chip { flex: 1 1 auto; min-width: 0; max-width: none; display: flex; justify-content: space-between; gap: 10px; }
+  html .acct-chip .an { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  html .acct-chip .ab { flex: none; }
 }

@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=54';
-import { Slots } from './adslots.js?v=54';
-import { Auth } from './auth.js?v=54';
-import { CONFIG } from './config.js?v=54';
-import * as AU from './ui/account-ui.js?v=54';
-import morphdom from '../vendor/morphdom-esm.js?v=54';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=54';
-import { landing, gate } from './ui/landing.js?v=54';
-import { lobby, inviteLink } from './ui/lobby.js?v=54';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=54';
-import * as HU from './ui/holdem-ui.js?v=54';
-import * as BU from './ui/blackjack-ui.js?v=54';
-import * as RU from './ui/roulette-ui.js?v=54';
-import * as CU from './ui/crash-ui.js?v=54';
-import { sound } from './ui/sound.js?v=54';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=54';
-import { WHEEL } from './games/roulette.js?v=54';
-import * as Motion from './ui/motion.js?v=54';
+import { Ads } from './ads.js?v=55';
+import { Slots } from './adslots.js?v=55';
+import { Auth } from './auth.js?v=55';
+import { CONFIG } from './config.js?v=55';
+import * as AU from './ui/account-ui.js?v=55';
+import morphdom from '../vendor/morphdom-esm.js?v=55';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=55';
+import { landing, gate } from './ui/landing.js?v=55';
+import { lobby, inviteLink } from './ui/lobby.js?v=55';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=55';
+import * as HU from './ui/holdem-ui.js?v=55';
+import * as BU from './ui/blackjack-ui.js?v=55';
+import * as RU from './ui/roulette-ui.js?v=55';
+import * as CU from './ui/crash-ui.js?v=55';
+import { sound } from './ui/sound.js?v=55';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=55';
+import { WHEEL } from './games/roulette.js?v=55';
+import * as Motion from './ui/motion.js?v=55';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -100,6 +100,21 @@ function hostSnapshot(code) {
 }
 
 // ---------------------------------------------------------------- landing + gate
+// Full screen hides the browser's bars (more room for the table). It must be asked for from a tap, so it is called from the
+// Start / Join / Take a seat buttons on touch screens, and from the Menu's "Full screen" button anywhere.
+const isFull = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function goFullscreen() {
+  const el = document.documentElement;
+  const rq = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (!rq || isFull()) return Promise.resolve(false);
+  return Promise.resolve(rq.call(el, { navigationUI: 'hide' })).then(() => {
+    try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch {}
+    return true;
+  }).catch(() => false);
+}
+function leaveFullscreen() { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} }
+const touchScreen = matchMedia('(pointer: coarse)').matches;
+
 function showLanding(error = '') {
   if (!error && S.flash) error = S.flash;
   S.flash = '';
@@ -119,6 +134,7 @@ function showLanding(error = '') {
     e.preventDefault();
     sound.unlock();
     if (!readMe(form)) return;
+    if (touchScreen) goFullscreen();
     const server = serverEnabled() && Auth.ready();
     if (mode === 'join') {
       const c = cleanCode(code.value);
@@ -141,6 +157,7 @@ function showGate(code, opts = {}) {
     e.preventDefault();
     sound.unlock();
     if (!readMe(form)) return;
+    if (touchScreen) goFullscreen();
     joinTable(code);
     showGate(code, { status: 'connecting' });
   });
@@ -537,6 +554,7 @@ function renderPop() {
       <div class="more-list">
         <button class="btn btn-quiet" data-act="scores">Scores</button>
         <button class="btn btn-quiet" data-act="sound">Sound: ${sound.on ? 'on' : 'off'}</button>
+        <button class="btn btn-quiet" data-act="fullscreen">${isFull() ? 'Exit full screen' : 'Full screen'}</button>
         <button class="btn btn-quiet" data-act="copy-link">Copy invite link</button>
         ${isHost ? '<button class="btn btn-quiet" data-act="menu">Table options</button>' : ''}
         <button class="btn btn-quiet danger" data-act="leave">Leave table</button>
@@ -576,6 +594,7 @@ document.addEventListener('click', (e) => {
       return;
     case 'copy-link': closePop(); copyInvite(); return;
     case 'sound': sound.toggle(); renderTable(); return;
+    case 'fullscreen': if (isFull()) leaveFullscreen(); else goFullscreen(); closePop(); return;
     case 'chat':
       S.ui.chatOpen = !S.ui.chatOpen;
       S.ui.unread = 0;
@@ -1023,7 +1042,7 @@ function flipFrom(cam) {
 }
 
 function openSpinView(total, left, early = false) {
-  if (reduceMotion) return;
+  // (shown even when the phone asks for reduced motion: it is the result of your bet, not decoration)
   if (SV.el && SV.early && !early) {
     // The wheel was already brought up when Spin was pressed: now the spin really starts.
     SV.early = false;
@@ -1054,7 +1073,7 @@ function openSpinView(total, left, early = false) {
   const cam = el.querySelector('.spin-cam');
   const box = smallBox();
   // Lift the wheel off the table and carry it to the middle of the screen; the small one steps aside meanwhile.
-  cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0px, 0px) scale(1)' }], { duration: 850, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  cam.animate([{ transform: flipFrom(cam) }, { transform: 'translate(0px, 0px) scale(1)' }], { duration: reduceMotion ? 1 : 850, easing: 'cubic-bezier(.2,.8,.2,1)' });
   if (box) box.classList.add('away');
   // A very slow push-in as the ball settles; subtle on purpose.
   if (!early) {
