@@ -1,10 +1,10 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=60';
-import { Blackjack } from '../games/blackjack.js?v=60';
-import { Roulette } from '../games/roulette.js?v=60';
-import { Crash } from '../games/crash.js?v=60';
+import { Holdem } from '../games/holdem.js?v=61';
+import { Blackjack } from '../games/blackjack.js?v=61';
+import { Roulette } from '../games/roulette.js?v=61';
+import { Crash } from '../games/crash.js?v=61';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 const PREFIX = 'lowstakes-v1-';

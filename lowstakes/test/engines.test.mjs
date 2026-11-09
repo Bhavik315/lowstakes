@@ -838,3 +838,8 @@ test('ad slots: every configured banner is a known Adsterra ad unit, sized to ma
     }
   }
 });
+
+test('the live site requires sign-in', async () => {
+  const { CONFIG } = await import('../js/config.js');
+  assert.equal(CONFIG.requireLogin, true);
+});

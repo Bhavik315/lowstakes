@@ -130,10 +130,12 @@ const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return 
   // ---- signed out: the old browser-run tables still work
   const ctxC = await newCtx(b, mock, null);
   const pC = await ctxC.newPage(); pC.on('pageerror', (e) => errs.push(e.message));
-  await pC.goto(BASE); await wait(800);
-  await pC.click('button[data-mode=host]'); await pC.waitForFunction(() => location.hash.startsWith('#/t/'), null, { timeout: 8000 });
-  await pC.waitForSelector('.lobby', { timeout: 15000 });
-  t('signed out, "Start a table" still opens a browser table with free chips', (await mine(pC)).chips === 1000);
+  await pC.goto(BASE); await wait(1500);
+  t('signed out: the site asks for sign-in and cannot be closed or clicked past', await pC.locator('.ls-acct').count() === 1 && await pC.locator('.acct-x').count() === 0 && await pC.evaluate(() => { const b2 = document.querySelector('[data-mode=host]'); const r = b2.getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!(e && e.closest('.ls-acct')); }));
+  await pC.goto(BASE + '#/t/ABCDE'); await wait(1500);
+  t('signed out: an old browser-table link does not let them in either', await pC.locator('.ls-acct').count() === 1 && await pC.locator('.lobby, .room').count() === 0);
+  await pC.goto(BASE + '#/s/ZZZZZ'); await wait(1500);
+  t('signed out: a wallet-table invite asks for sign-in first', await pC.locator('.ls-acct').count() === 1 && await pC.locator('.lobby').count() === 0);
   console.log(`\npage errors: ${errs.length} ${errs.slice(0, 3)}`);
   console.log(`${pass} passed, ${fail} failed`);
   await b.close();

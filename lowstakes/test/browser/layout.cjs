@@ -19,6 +19,9 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
 
 (async () => {
   const b = await chromium.launch();
+  // These tests play at browser tables without an account, so run them with the login requirement off (accounts.cjs and the e2e test cover it on).
+  const _nc = b.newContext.bind(b);
+  b.newContext = async (o) => { const c = await _nc(o); await c.route('**/js/config.js*', async (route) => { const res = await route.fetch(); await route.fulfill({ response: res, body: (await res.text()).replace('requireLogin: true', 'requireLogin: false') }); }); return c; };
 
   // header stays on one line at tablet / small-laptop widths
   for (const w of [1024, 768]) {

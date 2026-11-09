@@ -21,7 +21,8 @@ async function newCtx(b, mock, { w = 1280, h = 800, requireLogin = false } = {})
     const r = mock.handle(req.method(), req.url(), req.headers(), req.postData());
     return route.fulfill({ status: r.status, headers: { ...cors, ...(r.headers || {}), 'content-type': 'application/json' }, body: r.body === null ? '' : JSON.stringify(r.body) });
   });
-  if (requireLogin) await ctx.route('**/js/config.js*', async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace('requireLogin: false', 'requireLogin: true') }); });
+  // The site now requires sign-in. Most of these tests exercise the signed-out screens, so run them with it off unless asked.
+  await ctx.route('**/js/config.js*', async (route) => { const res = await route.fetch(); route.fulfill({ response: res, body: (await res.text()).replace(/requireLogin: (true|false)/, `requireLogin: ${requireLogin}`) }); });
   return ctx;
 }
 const text = async (p) => (await p.locator('.ls-acct').innerText().catch(() => '')).replace(/\s+/g, ' ');
@@ -252,7 +253,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
   mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
   t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=60'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=61'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();
@@ -262,7 +263,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   ctx = await newCtx(b, mock2, { requireLogin: true });
   p = await ctx.newPage(); p.on('pageerror', e => errs.push(e.message));
   await p.goto(BASE); await wait(1000);
-  t('login required: signed-out visitors cannot reach the games', await p.locator('.ls-acct').count() === 1 && await p.locator('#start-form').count() === 0 && await p.locator('.acct-x').count() === 0);
+  t('login required: signed-out visitors cannot reach the games', await p.locator('.ls-acct').count() === 1 && await p.locator('.acct-x').count() === 0 && await p.evaluate(() => { const b = document.querySelector('[data-mode=host]'); if (!b) return false; const r = b.getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!(e && e.closest('.ls-acct')); }));
   await p.keyboard.press('Escape'); await wait(200);
   t('login required: Escape cannot dismiss it', await p.locator('.ls-acct').count() === 1);
   await p.locator('.ls-acct').click({ position: { x: 5, y: 5 } }); await wait(200);

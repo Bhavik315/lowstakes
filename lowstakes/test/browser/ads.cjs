@@ -7,7 +7,7 @@ const t = (name, ok) => { ok ? pass++ : fail++; console.log(`${ok ? 'PASS' : 'FA
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 // The site's real config now holds the Adsterra codes. Unless a test says otherwise, run with empty slots and the preview boxes on.
 const HTML_RE = /key: '[0-9a-f]{32}'/g;
-const emptyCfg = (route) => route.fetch().then(async (res) => { const body = (await res.text()).replace(HTML_RE, "key: ''").replace('adPreview: false', 'adPreview: true'); await route.fulfill({ response: res, body }); });
+const emptyCfg = (route) => route.fetch().then(async (res) => { const body = (await res.text()).replace(HTML_RE, "key: ''").replace('adPreview: false', 'adPreview: true').replace('requireLogin: true', 'requireLogin: false'); await route.fulfill({ response: res, body }); });
 
 async function openPractice(p) {
   await p.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
@@ -89,7 +89,7 @@ async function toTable(p) {
 
   // ---- with ad code set (config swapped in by the test)
   const withAds = (route) => route.fetch().then(async (res) => {
-    let body = await res.text();
+    const body = (await res.text()).replace('requireLogin: true', 'requireLogin: false');
     await route.fulfill({ response: res, body });
   });
   ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });

@@ -12,7 +12,7 @@ Sign-in is Google only: no passwords, no email sign-up. It runs on Supabase (pro
 A new player signs in with Google, chooses a username (free), and receives a one-time 20,000 coin welcome bonus. The profile shows the wallet balance, recent transactions,
 and username change (5,000 coins, with confirmation). The rules are enforced in the database: `supabase/migrations/0001_accounts_wallet.sql`.
 Supabase setup is in `supabase/README.md` (switch the Email provider off, switch Google on, publish the Google consent screen before opening to the public).
-`requireLogin` is `false` on purpose: signed-in players play at server tables with their wallet coins; signed-out browser tables still run peer-to-peer in the host's browser with their own table chips.
+`requireLogin` is `true`: nobody can open or join a table without signing in with Google and picking a username. Everyone plays at server tables with their wallet coins. (The old peer-to-peer browser tables still exist in the code, but nothing in the site opens one.)
 Turning it on, and moving the games onto a server so payouts can be trusted, is the next stage. Account deletion is not built yet (it is a manual step in Supabase).
 
 The game server (`lowstakes-server/`) runs tables for signed-in players and settles each round into the wallet; see its README. Until `serverUrl` is set in `js/config.js`, tables run in the browser as before.
