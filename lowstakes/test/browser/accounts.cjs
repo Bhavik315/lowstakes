@@ -252,7 +252,7 @@ const rpcRaw = (p, name, body) => p.evaluate(async ({ SB, KEY, name, body }) => 
   await pF.click('.coins-btn'); await wait(300); await pF.click('.acct-card [data-x]'); await wait(300);
   mockF.shift = 99 * 3600e3; await pF.click('.coins-btn'); await wait(900); await pF.click('.acct-card [data-x]'); await wait(300);
   t('the dot comes back when a timer runs out', await pF.locator('.coins-btn .dot').count() === 1);
-  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=52'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
+  const dock = await pF.evaluate(async () => { const m = await import('/lowstakes/js/ui/parts.js?v=53'); return { wallet: m.outOfChips({ room: { walletMode: true, settings: { start: 1000 } } }), free: m.outOfChips({ room: { walletMode: false, settings: { start: 1000 } } }) }; }).catch((e) => ({ error: String(e) }));
   t('at a wallet table, the out-of-coins message offers free coins (and no free rebuy)', /data-act="free-coins"/.test(dock.wallet || '') && !/data-act="rebuy"/.test(dock.wallet || ''), JSON.stringify(dock).slice(0, 200));
   t('at a browser table the free rebuy is unchanged', /data-act="rebuy"/.test(dock.free || ''));
   await ctxF.close();

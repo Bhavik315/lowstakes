@@ -1,0 +1,174 @@
+/* Low Stakes: phones on their side (and any short, wide window).
+   The tables are the same designs as on a laptop, re-fitted to ~300px of height: a slim header and dock, the main thing
+   (wheel, chart, table) as big as the space allows, and everything that is a list (players, history) in one scrolling row.
+   Loaded after main.css; selectors start with `html` so they win over the older small-screen rules. */
+@media (orientation: landscape) and (max-height: 520px) {
+  :root { --header: 40px; --dock: 54px; --avail: calc(100dvh - 40px - 54px); }
+  html .r-top { padding: 0 8px 0 12px; gap: 8px; }
+  html .dock { min-height: var(--dock); padding: 4px 12px calc(4px + env(safe-area-inset-bottom)); gap: 10px; }
+  html .dock .btn { min-height: 40px; }
+  html .dock-note { font-size: 13px; }
+  html .tool, html .icon-btn { min-height: 40px; }
+  html .code-pill { min-height: 32px; height: 32px; }
+
+  /* ---------------------------------------------------------------- crash: the chart gets the room */
+  html .cr { padding: 4px 10px 6px; gap: 4px; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; max-width: none; }
+  html .cr-hist { min-height: 22px; gap: 4px; }
+  html .cr-hist li { font-size: 11px; padding: 2px 8px; }
+  html .cr-graph { min-height: 0; border-radius: 12px; }
+  html .cr-roster { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 5px; padding: 0 0 2px; scrollbar-width: none; scroll-snap-type: x proximity; }
+  html .cr-roster::-webkit-scrollbar { display: none; }
+  html .cr-p { flex: 0 0 auto; min-width: 158px; grid-template-columns: 8px minmax(0, 1fr) auto auto; grid-template-areas: none; gap: 0 6px; padding: 3px 8px; font-size: 11.5px; scroll-snap-align: start; }
+  html .cr-p i, html .cr-p .n, html .cr-p .b, html .cr-p .s { grid-area: auto; }
+  html .cr-p .s { min-width: 64px; text-align: right; font-size: 11.5px; }
+  html .cr-read { top: 6%; left: 54px; right: auto; text-align: left; }
+  html .cr-mult { font-size: clamp(34px, 17vh, 68px); }
+  html .cr-sub { margin-top: 2px; font-size: 12px; }
+  html .cr-auto span { display: inline; font-size: 11px; }
+
+  /* ---------------------------------------------------------------- roulette: a big wheel beside a board that fits */
+  html .rl { grid-template-columns: minmax(150px, 30%) minmax(0, 1fr); gap: 10px; align-items: center; padding: 4px 10px 6px; height: 100%; max-width: none; overflow: hidden; }
+  html .rl-wheel { gap: 4px; align-content: center; }
+  html .wheel-box { width: min(100%, calc(var(--avail) - 34px)); }
+  html .history { max-width: 100%; gap: 3px; flex-wrap: nowrap; overflow: hidden; }
+  html .history li { width: 20px; height: 20px; font-size: 10px; }
+  html .history li:first-child { width: 24px; height: 24px; font-size: 11.5px; }
+  html .history li:nth-child(n+9) { display: none; }
+  html .rl { grid-template-rows: minmax(0, 1fr); }
+  html .rl-board { align-self: stretch; grid-template-rows: auto minmax(0, 1fr) auto; gap: 4px; }
+  html .rl-msg { font-size: 13px; min-height: 22px; gap: 6px; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+  html .big-n { min-width: 30px; height: 26px; font-size: 15px; border-radius: 7px; padding: 0 6px; }
+  html .rl-layout {
+    grid-template-columns: 1.1fr repeat(12, minmax(0, 1fr)) 1.3fr; grid-template-rows: repeat(3, minmax(0, 1fr)) minmax(0, .9fr) minmax(0, .9fr);
+    align-self: center; height: 100%; max-height: calc(var(--avail) - 62px); padding: 5px; gap: 2px; border-radius: 10px;
+    box-shadow: 0 0 0 4px var(--rail), 0 0 0 5px #120904, 0 14px 24px -10px rgba(0, 0, 0, .7);
+  }
+  html .rc { grid-column: var(--c) / span var(--cs); grid-row: var(--r) / span var(--rs); font-size: 12px; border-radius: 4px; border-width: 1px; }
+  html .rc.num { font-size: 12.5px; }
+  html .rc.out { font-size: 10.5px; }
+  html .rc.dozen .rc-l, html .rc.even-money .rc-l, html .rc.col .rc-l { writing-mode: horizontal-tb; transform: none; }
+  html .rc.o-red .rc-l, html .rc.o-black .rc-l { width: 14px; height: 14px; transform: rotate(45deg); }
+  html .rl-totals { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 4px; margin: 0; padding: 0; scrollbar-width: none; font-size: 11px; }
+  html .rl-totals::-webkit-scrollbar { display: none; }
+  html .rl-totals li { flex: 0 0 auto; padding: 2px 8px; max-width: none; grid-template-columns: 8px auto auto auto auto; gap: 5px; }
+  html .rl-totals .rn { max-width: 70px; }
+  html .rl-msg, html .rl-totals { order: 0; margin: 0; }
+
+  /* ---------------------------------------------------------------- poker: nine players, every one readable */
+  html .tbl-wrap:has(.tbl.holdem) { padding: 26px 36px 52px; }
+  html .tbl.holdem { --ar: 2.7; aspect-ratio: 2.7 / 1; width: min(100%, calc((var(--avail) - 78px) * 2.7)); }
+  html .tbl.holdem .felt { border-width: 0; }
+  html .seat { --cw: 22px; }
+  html .seat.me { --cw: 42px; }
+  html .seat.me .card + .card { margin-left: calc(var(--cw) * -.28); }
+  html .plate { min-width: 0; padding: 2px 9px 2px 2px; gap: 5px; border-width: 1px; box-shadow: 0 3px 8px rgba(0, 0, 0, .4); }
+  html .avatar { --s: 26px; }
+  html .seat.side .plate-text, html .spot .plate-text { display: flex; }
+  html .seat .pname, html .seat.side .pname, html .spot .pname { display: block; font-size: 10.5px; max-width: 6.5ch; }
+  html .seat .pchips, html .spot .pchips { font-size: 10.5px; }
+  html .seat:not(.me) .card.down { display: none; }           /* face-down cards say little; folded plates already dim */
+  html .seat:not(.me) .seat-cards { height: auto; margin: 0; }
+  html .tag { font-size: 9.5px; padding: 1px 6px; margin-top: 2px; }
+  html .seat.top .tag { margin: 0 0 2px; }
+  html .bet { gap: 3px; }
+  html .bet b { font-size: 10px; padding: 0 5px; }
+  html .bet .stack { --chip: 12px; }
+  html .dealer-btn { width: 18px; height: 18px; font-size: 10px; }
+  html .board { --cw: clamp(26px, 4.4vw, 38px); top: 41%; }
+  html .pot { top: 62%; gap: 4px; }
+  html .pot .stack { display: none; }
+  html .pot span { font-size: 11px; padding: 1px 8px; }
+  html .center-msg { top: 66%; font-size: 11px; }
+
+  /* ---------------------------------------------------------------- blackjack: seven seats along one wide arc */
+  html .bj-wrap { padding: 16px 16px 6px; }
+  html .tbl.blackjack { aspect-ratio: 2.3 / 1; width: min(100%, calc((var(--avail) - 46px) * 2.3)); container-type: inline-size; }
+  html .tbl.blackjack .spot { left: var(--x); top: calc(48% + var(--ay) * 28%); --cwb: clamp(20px, calc(100cqw / (var(--n, 1) + 9)), 30px); --cw: var(--cwb); }
+  html .hands.h2, html .hands.h3, html .hands.h4 { --cw: calc(var(--cwb) * .76); gap: 6px; }
+  html .tbl.blackjack .hands { transform: translateX(-50%); }
+  html .dealer { --cw: clamp(28px, 5.4cqw, 44px); top: 2%; gap: 8px; }
+  html .shoe { width: 22px; height: 30px; }
+  html .felt-arc { display: block; }
+  html .felt-arc text { font-size: 22px; }
+  html .felt-arc text.small { font-size: 12px; }
+  html .spot .plate { flex-direction: row; align-items: center; padding: 2px 9px 2px 2px; gap: 5px; border-radius: 999px; }
+  html .circle { width: 30px; height: 30px; }
+  html .circle .stack { --chip: 12px; }
+  html .circle b { font-size: 9.5px; bottom: -6px; padding: 0 4px; }
+  html .spot .tag { bottom: -18px; font-size: 9px; }
+  html .hand { padding: 2px; gap: 2px; }
+  html .hand .total { top: -8px; right: -10px; transform: scale(.8); }
+  html .dealer-check { font-size: 11px; padding: 4px 10px; top: calc(100% + 2px); }
+}
+
+/* ================================================================ phones held upright (home page, sign-in, setup)
+   One column, thumb-sized, in the order a visitor needs it: who we are and Sign in on one slim row, then the pitch and
+   the two big buttons, then a compact picture, then the games as a 2-column grid. */
+@media (max-width: 700px) and (orientation: portrait) {
+  html .landing { overflow-x: clip; }
+  html .l-top { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; }
+  html .l-top .wordmark { font-size: 20px; min-height: 40px; }
+  html .l-top .acct-slot { width: auto; margin: 0; flex: none; display: flex; gap: 8px; align-items: center; }
+  html .l-top .acct-slot .btn { flex: none; min-height: 40px; padding: 0 14px; font-size: 14px; white-space: nowrap; }
+  html .l-top .acct-chip { max-width: 46vw; }
+  html .hero { display: flex; flex-direction: column; gap: 0; padding: 6px 16px 26px; }
+  html .hero-copy { order: 1; }
+  html .hero h1 { font-size: clamp(40px, 12.5vw, 58px); line-height: .98; }
+  html .hero h1 br { display: none; }
+  html .lede { font-size: 16px; line-height: 1.45; margin-top: 12px; }
+  html .sit { margin-top: 18px; gap: 12px; max-width: none; }
+  html .sit-actions { display: grid; grid-template-columns: 1fr; }
+  html .sit-actions .btn { width: 100%; min-height: 54px; font-size: 17px; justify-content: center; }
+  html .rotate-tip { display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(16, 48, 42, .09); font-size: 13.5px; }
+  html .join-line { padding-top: 14px; }
+  html .join-line label { flex: 1 0 100%; }
+  html .code-input { display: flex; width: 100%; gap: 8px; }
+  html .code-input input { flex: 1; min-width: 0; min-height: 48px; }
+  html .code-input .btn { min-height: 48px; }
+  html .hero-table { display: none; } /* decorative; the pitch and the buttons come first on a small screen */
+  html .games { padding: 12px 16px 30px; }
+  html .games h2 { font-size: 28px; margin-bottom: 14px; }
+  html .game-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  html .placard { border-radius: 16px; padding-bottom: 14px; display: flex; flex-direction: column; }
+  html .placard-art { height: 96px; --cw: 40px; }
+  html .placard-art .card { margin: 0 -7px; }
+  html .placard .mini-wheel { width: 64px; height: 64px; box-shadow: 0 0 0 4px #3b2014, 0 0 0 5px #160c06; }
+  html .placard .mini-crash { width: 70px; height: 70px; }
+  html .placard h3 { font-size: 20px; margin: 12px 12px 4px; }
+  html .placard p { margin: 0 12px; font-size: 13px; line-height: 1.35; }
+  html .ad-landing { margin: 0 auto 30px; }
+  html .l-foot { padding: 24px 16px 28px; }
+  html .l-foot p { font-size: 14px; }
+  html .l-foot a { display: inline-block; padding: 10px 6px; }
+
+  /* sign-in and the account screens slide up from the bottom, like a phone sheet */
+  html .ls-acct { align-items: end; padding: 0; }
+  html .ls-acct .acct-card, html .ls-acct .ls-modal-card { width: 100%; max-width: none; border-radius: 22px 22px 0 0; border-width: 2px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); max-height: 92dvh; overflow-y: auto; animation: sheet-up .28s var(--ease); }
+  html .ls-acct .acct-card::before { content: ''; display: block; width: 40px; height: 4px; border-radius: 2px; background: rgba(16, 48, 42, .25); margin: -8px auto 14px; }
+  html .ls-acct .acct-card.wide::before { background: rgba(245, 235, 221, .3); }
+  html .ls-acct h2 { font-size: 26px; padding-right: 36px; }
+  html .btn-google { min-height: 56px; }
+  html .gate { padding: 18px 16px; }
+  html .gate-card { width: 100%; }
+
+  /* game setup (lobby): the room code and the Copy button first, then the seats, then the games */
+  html .lobby { display: flex; flex-direction: column; gap: 22px; padding: 16px 16px 28px; }
+  html .lobby-code { font-size: 48px; margin-bottom: 4px; }
+  html .invite { flex-direction: column; align-items: stretch; }
+  html .invite input { min-height: 48px; }
+  html .invite .btn { width: 100%; min-height: 52px; justify-content: center; }
+  html .lobby-games, html .lobby-seats, html .lobby-invite { width: 100%; }
+  html .pick-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  html .pick { grid-template-columns: 1fr; grid-template-rows: auto auto auto; border-radius: 16px; }
+  html .pick-art { grid-row: auto; height: 84px; --cw: 36px; }
+  html .pick-name { font-size: 16px; padding: 10px 12px 0; }
+  html .pick-blurb { font-size: 12px; padding: 2px 12px 12px; }
+  html .settings { grid-template-columns: 1fr; gap: 10px; }
+  html .lobby .btn-primary.btn-wide { min-height: 56px; font-size: 18px; }
+}
+@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } }
+
+/* In portrait only a live game needs the sideways screen; the lobby (sharing the room code, picking a game) works upright. */
+@media (orientation: portrait) and (max-width: 600px) and (pointer: coarse) {
+  html .room:has(#stage[data-game="lobby"]) .rotate-gate { display: none; }
+}

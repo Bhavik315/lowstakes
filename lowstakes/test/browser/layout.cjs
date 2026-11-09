@@ -106,6 +106,71 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await ctx.close();
   }
 
+  // phone upright: home page, sign-in sheet and lobby are laid out for a thumb; a live game asks for landscape
+  {
+    const { ctx, p } = await open(b, { width: 390, height: 844 }, true);
+    const top = await rect(p, '.l-top'); const btn = await rect(p, '.l-top .acct-slot .btn');
+    t('phone upright: Sign in sits on the same slim row as the logo (not a full-width bar)', top && btn && top.h < 70 && btn.w < 260, JSON.stringify({ top, btn }));
+    t('phone upright: the home page does not scroll sideways', await p.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1));
+    const start = await rect(p, '[data-mode=host]');
+    t('phone upright: "Start a table" is a big full-width button visible without scrolling', start && start.w > 300 && start.h >= 48 && start.b < 844, JSON.stringify(start));
+    const cards = await p.evaluate(() => [...document.querySelectorAll('.placard')].map((e) => Math.round(e.getBoundingClientRect().top)));
+    t('phone upright: the four games sit two across', cards.length === 4 && cards[0] === cards[1] && cards[2] === cards[3] && cards[2] > cards[0], JSON.stringify(cards));
+    await p.locator('[data-acct=signin]').first().click(); await wait(500);
+    const sheet = await rect(p, '.acct-card');
+    t('phone upright: sign-in is a sheet that slides up from the bottom, full width', sheet && sheet.l <= 1 && sheet.r >= 389 && sheet.b >= 843, JSON.stringify(sheet));
+    await p.keyboard.press('Escape'); await p.locator('[data-x]').first().click().catch(() => {}); await wait(300);
+    await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(600);
+    t('phone upright: the game-setup screen works upright (no "turn your phone" cover)', !(await p.locator('.rotate-gate').isVisible()));
+    t('phone upright: the lobby does not scroll sideways', await p.evaluate(() => { const s = document.getElementById('stage'); return s.scrollWidth <= s.clientWidth + 1; }));
+    await p.evaluate(() => window.lowstakes.client.addBot()); await wait(300);
+    await p.evaluate(() => window.lowstakes.client.setGame('holdem')); await wait(900);
+    t('phone upright: once a game starts, the "turn your phone sideways" cover appears', await p.locator('.rotate-gate').isVisible());
+    await ctx.close();
+  }
+
+  // a chat bubble follows its sender while the page scrolls
+  {
+    const { ctx, p } = await open(b, { width: 700, height: 420 });
+    await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(500);
+    await p.evaluate(() => { const c = window.lowstakes.client; for (let i = 0; i < 6; i++) c.addBot(); });
+    await wait(400);
+    await p.evaluate(() => document.getElementById('stage').scrollTo(0, 0));
+    await p.evaluate(() => window.lowstakes.client.say('hello there')); await wait(500);
+    const dist = async () => p.evaluate(() => { const bu = document.querySelector('#fx .bubble'); const me = document.querySelector('#stage .lp.me, #stage [data-seat]'); if (!bu || !me) return null; const a = bu.getBoundingClientRect(), r = me.getBoundingClientRect(); return { dy: Math.round(r.top - a.bottom), hidden: bu.style.visibility === 'hidden' }; });
+    const d0 = await dist();
+    await p.evaluate(() => document.getElementById('stage').scrollBy(0, 30)); await wait(150);
+    const d1 = await dist();
+    t('chat bubble stays on top of its sender while the page scrolls', d0 && d1 && Math.abs(d0.dy - d1.dy) <= 4, JSON.stringify({ d0, d1 }));
+    await ctx.close();
+  }
+
+  // full tables on a phone on its side: everyone is on screen, readable, and the main thing is big
+  {
+    const { ctx, p } = await open(b, { width: 844, height: 390 }, true);
+    await p.addStyleTag({ content: '#banner{display:none!important}' });
+    await p.locator('button[data-mode=host]').dispatchEvent('click'); await p.waitForSelector('.lobby'); await wait(400);
+    const fill = (g, cap) => p.evaluate(([g, cap]) => { const c = window.lowstakes.client; c.endGame(); const pl = window.lowstakes.state.room.players; const extra = pl.filter((x) => x.bot).slice(Math.max(0, cap - 1)); for (const x of extra) c.removePlayer(x.id); const have = pl.length - extra.length; for (let i = have; i < cap; i++) c.addBot(); c.setGame(g); }, [g, cap]);
+    const inside = (r, w, h) => r && r.l >= -1 && r.t >= 40 - 1 && r.r <= w + 1 && r.b <= h + 1;
+    await fill('holdem', 9); await wait(2500);
+    const seats = await p.evaluate(() => [...document.querySelectorAll('.tbl.holdem .seat .plate')].map((e) => { const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, name: e.querySelector('.pname').textContent }; }));
+    const clash = seats.some((a, i) => seats.some((b2, j) => j > i && a.l < b2.r - 2 && b2.l < a.r - 2 && a.t < b2.b - 2 && b2.t < a.b - 2));
+    t('poker, 9 players on a phone on its side: all nine names are on screen', seats.length === 9 && seats.every((r) => inside(r, 844, 336)), JSON.stringify(seats.filter((r) => !inside(r, 844, 336))));
+    t('poker, 9 players: no two players overlap', !clash);
+    await fill('roulette', 12); await wait(2500);
+    const wheel = await rect(p, '.wheel-box'); const board = await rect(p, '.rl-layout');
+    t('roulette on a phone on its side: the wheel is big (about 40% of the screen height or more)', wheel && wheel.h >= 150, JSON.stringify(wheel));
+    t('roulette: the wheel and the whole betting board are on screen together', wheel && board && inside(board, 844, 336) && wheel.b <= 336 && wheel.r < board.l + 2, JSON.stringify({ wheel, board }));
+    await fill('blackjack', 7); await wait(3000);
+    const spots = await p.evaluate(() => [...document.querySelectorAll('.tbl.blackjack .spot .plate')].map((e) => { const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom }; }));
+    t('blackjack, 7 players on a phone on its side: all seven seats are on screen', spots.length === 7 && spots.every((r) => inside(r, 844, 336)), JSON.stringify(spots.filter((r) => !inside(r, 844, 336))));
+    await fill('crash', 12); await wait(3000);
+    const g = await rect(p, '.cr-graph');
+    t('crash on a phone on its side: the chart is tall enough to watch the rocket climb', g && g.h >= 150, JSON.stringify(g));
+    t('crash: all twelve players are reachable in one swipeable row', await p.evaluate(() => { const r = document.querySelector('.cr-roster'); return r && r.children.length === 12 && r.scrollWidth > r.clientWidth && getComputedStyle(r).overflowX !== 'visible'; }));
+    await ctx.close();
+  }
+
   // Coming back from Google lands you on the invite you were opening, not the home page
   {
     const { ctx, p } = await open(b, { width: 1280, height: 800 });

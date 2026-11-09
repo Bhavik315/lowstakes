@@ -2,9 +2,9 @@
 // what the dice do. Core table: Pass/Don't Pass, Field, Place and Hardways.
 // (Come/Don't Come are a deliberate omission — they'd double the state
 // machine for a bet most casual tables barely use.)
-import { Engine } from '../core/engine.js?v=52';
-import { rollTwo, isHard } from '../core/dice.js?v=52';
-import { randInt } from '../core/cards.js?v=52';
+import { Engine } from '../core/engine.js?v=53';
+import { rollTwo, isHard } from '../core/dice.js?v=53';
+import { randInt } from '../core/cards.js?v=53';
 
 export const PLACE_NUMS = [4, 5, 6, 8, 9, 10];
 export const HARD_NUMS = [4, 6, 8, 10];

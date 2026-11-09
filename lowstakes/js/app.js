@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=52';
-import { Slots } from './adslots.js?v=52';
-import { Auth } from './auth.js?v=52';
-import { CONFIG } from './config.js?v=52';
-import * as AU from './ui/account-ui.js?v=52';
-import morphdom from '../vendor/morphdom-esm.js?v=52';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=52';
-import { landing, gate } from './ui/landing.js?v=52';
-import { lobby, inviteLink } from './ui/lobby.js?v=52';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=52';
-import * as HU from './ui/holdem-ui.js?v=52';
-import * as BU from './ui/blackjack-ui.js?v=52';
-import * as RU from './ui/roulette-ui.js?v=52';
-import * as CU from './ui/crash-ui.js?v=52';
-import { sound } from './ui/sound.js?v=52';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=52';
-import { WHEEL } from './games/roulette.js?v=52';
-import * as Motion from './ui/motion.js?v=52';
+import { Ads } from './ads.js?v=53';
+import { Slots } from './adslots.js?v=53';
+import { Auth } from './auth.js?v=53';
+import { CONFIG } from './config.js?v=53';
+import * as AU from './ui/account-ui.js?v=53';
+import morphdom from '../vendor/morphdom-esm.js?v=53';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=53';
+import { landing, gate } from './ui/landing.js?v=53';
+import { lobby, inviteLink } from './ui/lobby.js?v=53';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=53';
+import * as HU from './ui/holdem-ui.js?v=53';
+import * as BU from './ui/blackjack-ui.js?v=53';
+import * as RU from './ui/roulette-ui.js?v=53';
+import * as CU from './ui/crash-ui.js?v=53';
+import { sound } from './ui/sound.js?v=53';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=53';
+import { WHEEL } from './games/roulette.js?v=53';
+import * as Motion from './ui/motion.js?v=53';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -857,19 +857,34 @@ function showReaction(msg) {
   speech(msg.pid, REACT_LABEL[msg.r] || msg.r, true);
 }
 
+// A short bubble over a player's seat. It follows the seat while the table scrolls or resizes, and hides if the seat is
+// scrolled out of view, so it always stays on top of the name of whoever spoke.
 function speech(pid, text, isReact = false) {
   const fx = document.getElementById('fx');
-  const anchor = document.querySelector(`#stage [data-seat="${CSS.escape(pid)}"], #stage [data-pid="${CSS.escape(pid)}"]`);
-  if (!fx || !anchor) return;
-  const r = anchor.getBoundingClientRect();
+  if (!fx) return;
+  const sel = `#stage [data-seat="${CSS.escape(pid)}"], #stage [data-pid="${CSS.escape(pid)}"]`;
+  if (!document.querySelector(sel)) return;
   const el = document.createElement('div');
   el.className = `bubble${isReact ? ' react' : ''}`;
   el.textContent = text.length > 44 ? `${text.slice(0, 42)}…` : text;
-  el.style.left = `${r.left + r.width / 2}px`;
-  el.style.top = `${r.top}px`;
   fx.appendChild(el);
-  setTimeout(() => el.classList.add('out'), isReact ? 1800 : 3200);
-  setTimeout(() => el.remove(), isReact ? 2300 : 3700);
+  let raf = 0;
+  const place = () => {
+    const anchor = document.querySelector(sel);
+    const area = document.getElementById('stage');
+    if (!anchor || !area || !el.isConnected) { el.remove(); return; }
+    const r = anchor.getBoundingClientRect();
+    const v = area.getBoundingClientRect();
+    const inView = r.bottom > v.top + 4 && r.top < v.bottom - 4 && r.right > v.left && r.left < v.right;
+    el.style.left = `${Math.min(Math.max(r.left + r.width / 2, v.left + 40), v.right - 40)}px`;
+    el.style.top = `${Math.max(r.top, v.top + 24)}px`;
+    el.style.visibility = inView ? '' : 'hidden';
+    raf = requestAnimationFrame(place);
+  };
+  place();
+  const life = isReact ? 1800 : 3200;
+  setTimeout(() => el.classList.add('out'), life);
+  setTimeout(() => { cancelAnimationFrame(raf); el.remove(); }, life + (isReact ? 500 : 500));
 }
 
 let titleTimer = 0;

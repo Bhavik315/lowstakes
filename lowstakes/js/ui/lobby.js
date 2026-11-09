@@ -1,5 +1,5 @@
-import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=52';
-import { GAME_NAMES, limitFor } from '../net/room.js?v=52';
+import { esc, fmt, signed, avatar, card, ROCKET_SVG } from './parts.js?v=53';
+import { GAME_NAMES, limitFor } from '../net/room.js?v=53';
 
 const BLURB = {
   holdem: 'Texas Hold’em, no-limit. Two to nine players.',
