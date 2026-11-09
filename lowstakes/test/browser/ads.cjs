@@ -58,6 +58,7 @@ async function toTable(p) {
   t('phone portrait: the table is covered by "Turn your phone sideways"', await p.locator('.rotate-gate').isVisible() && /sideways/i.test(await p.locator('.rotate-gate').innerText()));
   const hit = await p.evaluate(() => { const e = document.elementFromPoint(195, 780); return !!(e && e.closest('.rotate-gate')); });
   t('phone portrait: nothing under it can be tapped', hit);
+  await p.evaluate(() => { if (document.fullscreenElement) return document.exitFullscreen(); }); await wait(300);
   await p.setViewportSize({ width: 844, height: 390 }); await wait(500);
   t('phone landscape: the cover goes away and the table is playable', await p.locator('.rotate-gate').isHidden() && await p.locator('#dock').isVisible());
   t('phone landscape: the chat panel opens from the Chat button', await (async () => { await p.locator('[data-act=chat].tool').dispatchEvent('click'); await wait(400); return p.locator('#chat-input').isVisible(); })());
