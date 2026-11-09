@@ -101,15 +101,13 @@ kbd {
   text-decoration: none; color: var(--ink);
 }
 .wordmark::before {
-  content: ''; width: .82em; height: .82em; border-radius: 50%; margin-right: .2em;
-  background:
-    radial-gradient(circle, var(--paper) 0 34%, transparent 35%),
-    radial-gradient(circle, var(--vermilion) 0 58%, transparent 59%),
-    repeating-conic-gradient(var(--vermilion) 0 30deg, var(--paper) 30deg 45deg);
-  box-shadow: 0 2px 0 var(--ink);
+  /* the Low Stakes chip */
+  content: ''; width: 1.12em; height: 1.12em; margin-right: .16em; flex: none;
+  background: url(../img/logo-chip-192.png) center / contain no-repeat;
+  filter: drop-shadow(0 2px 0 rgba(16, 48, 42, .35));
 }
 .wordmark.sm { font-size: 22px; color: var(--mustard); }
-.wordmark.sm::before { box-shadow: none; }
+.wordmark.sm::before { filter: none; }
 
 /* ------------------------------------------------------------ landing */
 .landing {

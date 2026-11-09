@@ -843,3 +843,16 @@ test('the live site requires sign-in', async () => {
   const { CONFIG } = await import('../js/config.js');
   assert.equal(CONFIG.requireLogin, true);
 });
+
+test('logo: every icon the pages and the manifest point at exists', async () => {
+  const { readFileSync, existsSync } = await import('node:fs');
+  const root = new URL('../', import.meta.url);
+  const need = (p) => assert.ok(existsSync(new URL(p, root)), p);
+  const files = ['index.html', 'privacy.html', 'terms.html'].map((f) => readFileSync(new URL(f, root), 'utf8'));
+  for (const html of files) for (const m of html.matchAll(/<link rel="(?:icon|apple-touch-icon)"[^>]*href="(img\/[^"]+)"/g)) need(m[1]);
+  assert.match(files[0], /rel="apple-touch-icon"/);
+  assert.match(files[0], /og:image" content="https:\/\/lowstakes\.pages\.dev\/img\/icon-512\.png"/);
+  const man = JSON.parse(readFileSync(new URL('manifest.webmanifest', root), 'utf8'));
+  for (const ic of man.icons) need(ic.src);
+  need('img/logo-chip-192.png');
+});
