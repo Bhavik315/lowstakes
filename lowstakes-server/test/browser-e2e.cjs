@@ -67,6 +67,18 @@ const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return 
   await pB.evaluate(() => window.lowstakes.client.send({ t: 'cmd', c: 'setGame', gameId: 'crash' })); await wait(500);
   t('a forged owner command from a non-owner is refused with a notice', (await pA.evaluate(() => window.lowstakes.state.room.gameId)) === null && /Only the table owner/.test(await pB.locator('#toast').innerText()));
 
+  // ---- chat: stays in the chat box for everyone, and a short bubble pops over the sender
+  await pA.fill('#chat-input', 'hello Bob, ready for a game?'); await pA.press('#chat-input', 'Enter'); await wait(700);
+  t('chat: your message stays in your chat box', /Alice_1\s+hello Bob, ready for a game\?/.test(await pA.locator('#chat-list').innerText()));
+  t('chat: and in your friend\'s chat box', /Alice_1\s+hello Bob, ready for a game\?/.test(await pB.locator('#chat-list').innerText()));
+  t('chat: the typing box is cleared, ready for the next message', (await pA.inputValue('#chat-input')) === '');
+  t('chat: a bubble with the message shows over the sender, for the sender', await pA.locator('#fx .bubble', { hasText: 'hello Bob' }).count() === 1);
+  t('chat: and over the sender, for the friend', await pB.locator('#fx .bubble', { hasText: 'hello Bob' }).count() === 1);
+  await pB.fill('#chat-input', 'x'.repeat(120)); await pB.press('#chat-input', 'Enter'); await wait(600);
+  t('chat: a long message shows only a short bubble', (await pB.locator('#fx .bubble').last().innerText()).length <= 44 && /…$/.test(await pB.locator('#fx .bubble').last().innerText()));
+  await wait(3800);
+  t('chat: bubbles fade away but the messages stay in the chat box', await pA.locator('#fx .bubble').count() === 0 && /hello Bob/.test(await pA.locator('#chat-list').innerText()));
+
   // ---- Alice can't be at two tables
   const pA2 = await ctxA.newPage(); pA2.on('pageerror', (e) => errs.push(e.message));
   await pA2.goto(BASE); await wait(1200);
@@ -82,6 +94,8 @@ const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return 
   t('placing a bet changes the table chips but not the wallet yet', me.chips === 19975 && (await wal(A)).balance === 20000, JSON.stringify(me));
   await pB.waitForSelector('.rl', { timeout: 10000 });
   await pB.click('#dock [data-v="25"]'); await pB.click('[data-spot="black"]', { timeout: 5000 });
+  await pB.fill('#chat-input', 'good luck'); await pB.press('#chat-input', 'Enter'); await wait(600);
+  t('chat at the roulette table: a bubble shows over the sender in the player strip', await pA.locator('#fx .bubble', { hasText: 'good luck' }).count() === 1);
   await pA.click('[data-act=rl-ready]', { timeout: 5000 });
   await pB.click('[data-act=rl-ready]', { timeout: 5000 });
   await pA.waitForFunction(() => window.lowstakes.state.game.phase === 'result', null, { timeout: 30000 });

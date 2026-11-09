@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=47';
-import { Slots } from './adslots.js?v=47';
-import { Auth } from './auth.js?v=47';
-import { CONFIG } from './config.js?v=47';
-import * as AU from './ui/account-ui.js?v=47';
-import morphdom from '../vendor/morphdom-esm.js?v=47';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=47';
-import { landing, gate } from './ui/landing.js?v=47';
-import { lobby, inviteLink } from './ui/lobby.js?v=47';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=47';
-import * as HU from './ui/holdem-ui.js?v=47';
-import * as BU from './ui/blackjack-ui.js?v=47';
-import * as RU from './ui/roulette-ui.js?v=47';
-import * as CU from './ui/crash-ui.js?v=47';
-import { sound } from './ui/sound.js?v=47';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=47';
-import { WHEEL } from './games/roulette.js?v=47';
-import * as Motion from './ui/motion.js?v=47';
+import { Ads } from './ads.js?v=48';
+import { Slots } from './adslots.js?v=48';
+import { Auth } from './auth.js?v=48';
+import { CONFIG } from './config.js?v=48';
+import * as AU from './ui/account-ui.js?v=48';
+import morphdom from '../vendor/morphdom-esm.js?v=48';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=48';
+import { landing, gate } from './ui/landing.js?v=48';
+import { lobby, inviteLink } from './ui/lobby.js?v=48';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=48';
+import * as HU from './ui/holdem-ui.js?v=48';
+import * as BU from './ui/blackjack-ui.js?v=48';
+import * as RU from './ui/roulette-ui.js?v=48';
+import * as CU from './ui/crash-ui.js?v=48';
+import { sound } from './ui/sound.js?v=48';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=48';
+import { WHEEL } from './games/roulette.js?v=48';
+import * as Motion from './ui/motion.js?v=48';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -473,11 +473,14 @@ function renderChat() {
   const chat = S.state.room.chat;
   const newest = chat.length ? chat[chat.length - 1].id : 0;
   if (newest > S.seenChat) {
-    const fresh = chat.filter((m) => m.id > S.seenChat && m.pid && m.pid !== S.state.you);
+    const fresh = chat.filter((m) => m.id > S.seenChat && m.pid);
     if (S.seenChat && fresh.length) {
-      if (!S.ui.chatOpen) { S.ui.unread += fresh.length; morphdom(document.getElementById('r-top'), `<header class="r-top" id="r-top">${headerHtml()}</header>`, morphOpts); }
-      sound.play('message');
-      for (const m of fresh) speech(m.pid, m.text);
+      const others = fresh.filter((m) => m.pid !== S.state.you);
+      if (others.length) {
+        if (!S.ui.chatOpen) { S.ui.unread += others.length; morphdom(document.getElementById('r-top'), `<header class="r-top" id="r-top">${headerHtml()}</header>`, morphOpts); }
+        sound.play('message');
+      }
+      for (const m of fresh) speech(m.pid, m.text); // a short bubble over the sender, you included
     }
     S.seenChat = newest;
   }
@@ -852,12 +855,12 @@ function showReaction(msg) {
 
 function speech(pid, text, isReact = false) {
   const fx = document.getElementById('fx');
-  const anchor = document.querySelector(`#stage [data-seat="${CSS.escape(pid)}"]`);
+  const anchor = document.querySelector(`#stage [data-seat="${CSS.escape(pid)}"], #stage [data-pid="${CSS.escape(pid)}"]`);
   if (!fx || !anchor) return;
   const r = anchor.getBoundingClientRect();
   const el = document.createElement('div');
   el.className = `bubble${isReact ? ' react' : ''}`;
-  el.textContent = text.length > 60 ? `${text.slice(0, 58)}…` : text;
+  el.textContent = text.length > 44 ? `${text.slice(0, 42)}…` : text;
   el.style.left = `${r.left + r.width / 2}px`;
   el.style.top = `${r.top}px`;
   fx.appendChild(el);

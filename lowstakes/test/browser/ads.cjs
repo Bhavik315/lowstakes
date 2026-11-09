@@ -33,6 +33,7 @@ async function toTable(p) {
   t('the chat panel shows a highlighted placeholder (and no real ad) without ad code', await p.locator('.chat .ad-ph:visible').count() === 1 && await p.locator('.chat .ad-slot iframe').count() === 0);
   await p.fill('#chat-input', 'hello table'); await p.press('#chat-input', 'Enter'); await wait(400);
   t('a typed message shows up in the chat', /hello table/.test(await p.locator('#chat-list').innerText()));
+  t('and a short bubble pops up over your seat at the poker table', await p.locator('#fx .bubble', { hasText: 'hello table' }).count() === 1);
   await ctx.close();
 
   // ---- phones: portrait is blocked at the table, landscape works
