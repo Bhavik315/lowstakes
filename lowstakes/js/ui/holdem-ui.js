@@ -1,4 +1,4 @@
-import { esc, fmt, card, chipStack, avatar, outOfChips } from './parts.js?v=46';
+import { esc, fmt, card, chipStack, avatar, outOfChips } from './parts.js?v=47';
 
 // Time between cards when dealing round the table (keep in step with the engine).
 export const DEAL_GAP = 200;

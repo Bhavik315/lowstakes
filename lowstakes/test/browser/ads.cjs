@@ -35,13 +35,39 @@ async function toTable(p) {
   t('a typed message shows up in the chat', /hello table/.test(await p.locator('#chat-list').innerText()));
   await ctx.close();
 
-  // ---- phone: the chat panel slides in from the Chat button
-  ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  // ---- phones: portrait is blocked at the table, landscape works
+  ctx = await b.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
-  await openPractice(p); await toTable(p);
-  t('phone: chat starts closed', !(await p.evaluate(() => document.getElementById('room').classList.contains('chat-open'))));
-  await p.locator('[data-act=chat].tool').dispatchEvent('click'); await wait(400);
-  t('phone: the Chat button opens it', await p.evaluate(() => document.getElementById('room').classList.contains('chat-open')) && await p.locator('#chat-input').isVisible());
+  await openPractice(p);
+  t('phone portrait: the home page nudges you to turn the phone', await p.locator('.rotate-tip').isVisible());
+  t('phone portrait: home page ad slot uses the small 320x50 size', /320×50/.test(await p.locator('.ad-slot[data-slot=landing]').innerText()));
+  await p.locator('button[data-mode=bots]').dispatchEvent('click'); await wait(1400);
+  t('phone portrait: the table is covered by "Turn your phone sideways"', await p.locator('.rotate-gate').isVisible() && /sideways/i.test(await p.locator('.rotate-gate').innerText()));
+  const hit = await p.evaluate(() => { const e = document.elementFromPoint(195, 780); return !!(e && e.closest('.rotate-gate')); });
+  t('phone portrait: nothing under it can be tapped', hit);
+  await p.setViewportSize({ width: 844, height: 390 }); await wait(500);
+  t('phone landscape: the cover goes away and the table is playable', await p.locator('.rotate-gate').isHidden() && await p.locator('#dock').isVisible());
+  t('phone landscape: the chat panel opens from the Chat button', await (async () => { await p.locator('[data-act=chat].tool').dispatchEvent('click'); await wait(400); return p.locator('#chat-input').isVisible(); })());
+  t('phone landscape: the chat panel gets the small 320x50 ad slot', /320×50/.test(await p.locator('.chat .ad-slot').innerText()));
+  await ctx.close();
+
+  // ---- ad sizes follow the screen
+  ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });
+  p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
+  await openPractice(p);
+  const lt = async (slot) => (await p.locator(`.ad-slot[data-slot=${slot}]`).innerText()).replace(/\s+/g, ' ');
+  t('laptop: home page gets the big 970x90 banner', /970×90/.test(await lt('landing')));
+  await p.setViewportSize({ width: 900, height: 700 }); await wait(700);
+  t('smaller window: it swaps to 728x90', /728×90/.test(await lt('landing')));
+  await p.setViewportSize({ width: 360, height: 640 }); await wait(700);
+  t('phone-sized window: it swaps to 320x50', /320×50/.test(await lt('landing')));
+  await p.setViewportSize({ width: 1366, height: 800 }); await wait(700);
+  await toTable(p);
+  t('laptop table: side ad is 300x250', /300×250/.test(await p.locator('.chat .ad-slot').innerText()));
+  await p.setViewportSize({ width: 1366, height: 1150 }); await wait(700);
+  t('very tall screen: the side ad grows to 300x600', /300×600/.test(await p.locator('.chat .ad-slot').innerText()));
+  await p.setViewportSize({ width: 1366, height: 640 }); await wait(700);
+  t('short laptop window: the side ad drops to the slim 320x50 so the chat keeps its room', /320×50/.test(await p.locator('.chat .ad-slot').innerText()));
   await ctx.close();
 
   // ---- with ad code set (config swapped in by the test)
@@ -67,6 +93,7 @@ async function toTable(p) {
   await openPractice(p);
   await p.click('#ad-consent [data-ad=yes]'); await wait(600);
   const frame = p.locator('.ad-slot[data-slot=landing] iframe');
+  t('"Allow ads": the real banner is the laptop size (970 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '970');
   t('"Allow ads": the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
   t('the ad code runs inside the frame, not in the page', await p.frameLocator('.ad-slot[data-slot=landing] iframe').locator('#adtest').count() === 1 && await p.locator('#adtest').count() === 0);
   await toTable(p);
@@ -74,8 +101,6 @@ async function toTable(p) {
   const box = await p.locator('.chat .ad-slot iframe').boundingBox();
   const stage = await p.locator('#stage').boundingBox();
   t('the ad sits beside the stage, not over it', box && stage && box.x >= stage.x + stage.width - 2);
-  await p.setViewportSize({ width: 390, height: 844 }); await wait(500);
-  t('phone-width table: the ad is not shown', await p.locator('.chat .ad-slot').isHidden());
   await ctx.close();
 
   console.log(`\npage errors: ${errs.length}`, errs.slice(0, 3).join(' | '));

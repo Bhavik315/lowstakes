@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=46';
-import { Slots } from './adslots.js?v=46';
-import { Auth } from './auth.js?v=46';
-import { CONFIG } from './config.js?v=46';
-import * as AU from './ui/account-ui.js?v=46';
-import morphdom from '../vendor/morphdom-esm.js?v=46';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=46';
-import { landing, gate } from './ui/landing.js?v=46';
-import { lobby, inviteLink } from './ui/lobby.js?v=46';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=46';
-import * as HU from './ui/holdem-ui.js?v=46';
-import * as BU from './ui/blackjack-ui.js?v=46';
-import * as RU from './ui/roulette-ui.js?v=46';
-import * as CU from './ui/crash-ui.js?v=46';
-import { sound } from './ui/sound.js?v=46';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=46';
-import { WHEEL } from './games/roulette.js?v=46';
-import * as Motion from './ui/motion.js?v=46';
+import { Ads } from './ads.js?v=47';
+import { Slots } from './adslots.js?v=47';
+import { Auth } from './auth.js?v=47';
+import { CONFIG } from './config.js?v=47';
+import * as AU from './ui/account-ui.js?v=47';
+import morphdom from '../vendor/morphdom-esm.js?v=47';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=47';
+import { landing, gate } from './ui/landing.js?v=47';
+import { lobby, inviteLink } from './ui/lobby.js?v=47';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=47';
+import * as HU from './ui/holdem-ui.js?v=47';
+import * as BU from './ui/blackjack-ui.js?v=47';
+import * as RU from './ui/roulette-ui.js?v=47';
+import * as CU from './ui/crash-ui.js?v=47';
+import { sound } from './ui/sound.js?v=47';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=47';
+import { WHEEL } from './games/roulette.js?v=47';
+import * as Motion from './ui/motion.js?v=47';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -325,6 +325,12 @@ function showTable() {
   </div>
   <div class="dock" id="dock"></div>
   <div class="banner" id="banner" role="status"></div>
+  <div class="rotate-gate" role="alert">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="22" y="6" width="20" height="36" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M30 37h4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M12 50c6 8 22 10 34 2m0 0l-7-1m7 1l-1-7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2>Turn your phone sideways</h2>
+    <p>The tables are built for landscape: a bigger table, bigger buttons and room for everything.</p>
+    <button class="btn btn-quiet btn-sm" data-act="leave">Leave the table</button>
+  </div>
 </div>
 <div class="fx" id="fx" aria-hidden="true"></div>
 <div id="pop"></div>`;

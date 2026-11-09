@@ -1,4 +1,4 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=46';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=47';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 
@@ -22,6 +22,7 @@ export function landing(me, { error = '' } = {}) {
           <button class="btn btn-primary" type="submit" data-mode="host">Start a table</button>
           <button class="btn btn-quiet" type="submit" data-mode="bots">Practise against bots</button>
         </div>
+        <p class="rotate-tip">Playing on a phone? Turn it sideways. The tables are made for landscape.</p>
         <div class="join-line">
           <label for="code">Got a table code?</label>
           <div class="code-input">

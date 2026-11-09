@@ -1,5 +1,5 @@
-import { esc, fmt, avatar, chip, CHIP_VALUES } from './parts.js?v=46';
-import { PLACE_NUMS, HARD_NUMS, HARD_PAYS } from '../games/craps.js?v=46';
+import { esc, fmt, avatar, chip, CHIP_VALUES } from './parts.js?v=47';
+import { PLACE_NUMS, HARD_NUMS, HARD_PAYS } from '../games/craps.js?v=47';
 
 const DOTS = {
   1: [[50, 50]],

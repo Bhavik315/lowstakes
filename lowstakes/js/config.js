@@ -12,14 +12,27 @@ export const CONFIG = {
   // When true, nobody can use the site without an account. Keep false until the games run on the
   // server and use the wallet; until then game chips are separate from the wallet.
   requireLogin: false,
-  // Ad slots. Each one stays hidden until it has ad code (and the visitor has allowed ads). Paste the network's
-  // banner snippet into `html` and set the size it was made for. Slots: rail (beside live tables, wide screens only),
-  // landing (home page), lobby (before a game starts). Ads load inside a sandboxed frame, away from the game.
-  // `mobile` is the smaller size used on screens under 760px wide (leave its html empty to show nothing there).
+  // Ad slots. Each one stays hidden until it has ad code (and the visitor has allowed ads). Every slot has size
+  // tiers, biggest first: the first tier that fits the screen (minW / minH in pixels) is used, and it swaps when the
+  // window is resized or a phone is turned. Paste the network's banner snippet for that exact size into `html`.
+  // Slots: landing (home page), lobby (game setup), rail (beside the live table). Ad code loads inside a sandboxed
+  // frame, away from the game.
   ads: {
-    rail: { w: 300, h: 250, html: '' },
-    landing: { w: 728, h: 90, html: '', mobile: { w: 320, h: 100, html: '' } },
-    lobby: { w: 300, h: 250, html: '' },
+    landing: [
+      { minW: 1100, w: 970, h: 90, html: '' },
+      { minW: 760, w: 728, h: 90, html: '' },
+      { minW: 0, w: 320, h: 50, html: '' },
+    ],
+    lobby: [
+      { minW: 1100, w: 728, h: 90, html: '' },
+      { minW: 760, w: 468, h: 60, html: '' },
+      { minW: 0, w: 320, h: 50, html: '' },
+    ],
+    rail: [
+      { minW: 1180, minH: 1100, w: 300, h: 600, html: '' },
+      { minW: 1180, minH: 700, w: 300, h: 250, html: '' },
+      { minW: 0, w: 320, h: 50, html: '' },
+    ],
   },
   // While true, every empty slot shows a bright dashed "ad goes here" box so you can see the layout. Set to false
   // before you want a clean site (slots with no ad code then stay invisible).

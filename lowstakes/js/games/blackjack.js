@@ -1,7 +1,7 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=46';
-import { newDeck, shuffle } from '../core/cards.js?v=46';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=46';
+import { Engine } from '../core/engine.js?v=47';
+import { newDeck, shuffle } from '../core/cards.js?v=47';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=47';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
