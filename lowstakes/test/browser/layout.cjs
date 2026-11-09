@@ -81,6 +81,42 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
     await ctx.close();
   }
 
+  // small landscape phone: the action buttons share one slim row and your cards stay in view
+  {
+    const { ctx, p } = await open(b, { width: 667, height: 375 }, true);
+    await p.addStyleTag({ content: '#banner{display:none!important}' });
+    await practice(p);
+    let mine = false;
+    for (let i = 0; i < 80 && !mine; i++) { mine = await p.evaluate(() => { const g = window.lowstakes.state && window.lowstakes.state.game; return !!(g && g.you && g.you.myTurn); }); if (!mine) await wait(500); }
+    await wait(500);
+    const dock = await rect(p, '#dock');
+    t('poker on a small landscape phone: your turn dock is one slim row', mine && dock && dock.h <= 80, JSON.stringify(dock));
+    const cards = await rect(p, '.seat.me .seat-cards');
+    t('poker on a small landscape phone: your hole cards are above the dock, not hidden behind it', cards && dock && cards.t < dock.t - 20, JSON.stringify({ cards, dock }));
+    await p.evaluate(() => window.lowstakes.client.setGame('blackjack')); await wait(800);
+    await p.evaluate(() => { window.lowstakes.client.act({ type: 'add', amount: 25 }); window.lowstakes.client.act({ type: 'ready' }); });
+    mine = false;
+    for (let i = 0; i < 80 && !mine; i++) { mine = await p.evaluate(() => { const g = window.lowstakes.state && window.lowstakes.state.game; return !!(g && g.phase === 'playing' && g.you && g.you.myTurn); }); if (!mine) await wait(400); }
+    await wait(600);
+    const hdr = await rect(p, '#r-top'); const dock2 = await rect(p, '#dock');
+    const hand = await p.evaluate(() => { const e = document.querySelector('.tbl.blackjack [data-seat]:has(.hands) .hands, .spot.me .hands, .spot .hands'); const mineSeat = [...document.querySelectorAll('[data-seat]')].find((x) => x.querySelector('.hands .hand')); if (!mineSeat) return null; const r = mineSeat.querySelector('.hands').getBoundingClientRect(); return { t: r.top, b: r.bottom }; });
+    t('blackjack on a small landscape phone: the action buttons are one slim row', mine && dock2 && dock2.h <= 80, JSON.stringify(dock2));
+    t('blackjack on a small landscape phone: your hand is not cut off under the header', hand && hdr && hand.t >= hdr.b - 2, JSON.stringify({ hand, hdr }));
+    await ctx.close();
+  }
+
+  // Coming back from Google lands you on the invite you were opening, not the home page
+  {
+    const { ctx, p } = await open(b, { width: 1280, height: 800 });
+    await p.evaluate(() => { sessionStorage.setItem('ls.back', '#/s/ABCDE'); });
+    await p.goto(BASE + '#access_token=tok&refresh_token=rt&expires_in=3600&token_type=bearer'); await wait(1500);
+    t('after signing in with Google you are returned to the table invite you were opening', (await p.evaluate(() => location.hash)) === '#/s/ABCDE', await p.evaluate(() => location.hash));
+    await p.evaluate(() => { sessionStorage.setItem('ls.back', '#/s/<script>'); });
+    await p.goto(BASE + '#access_token=tok2&refresh_token=rt&expires_in=3600&token_type=bearer'); await wait(1500);
+    t('a remembered address that is not a table invite is ignored', (await p.evaluate(() => location.hash)) === '#/', await p.evaluate(() => location.hash));
+    await ctx.close();
+  }
+
   console.log(`\npage errors: ${errs.length} ${errs.slice(0, 3).join(' | ')}`);
   console.log(`${pass} passed, ${fail} failed`);
   await b.close();

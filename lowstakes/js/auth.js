@@ -3,7 +3,7 @@
 // The browser only ever holds a session token. Username and balance are read from the database,
 // and every change (registration bonus, username fee, later game payouts) happens in database
 // functions that check who is asking. Nothing here is trusted by the backend.
-import { CONFIG } from './config.js?v=50';
+import { CONFIG } from './config.js?v=51';
 
 const STORE = 'ls.auth';
 const FEE = 5000;
@@ -115,7 +115,10 @@ export const Auth = {
     const h = location.hash.replace(/^#/, '');
     if (!/(^|&)(access_token|error)=/.test(h)) return null;
     const q = new URLSearchParams(h);
-    history.replaceState(null, '', location.pathname + location.search + '#/');
+    // Back to where they were going (an invite link to a table), not just the home page.
+    let back = '#/';
+    try { const b = sessionStorage.getItem('ls.back'); sessionStorage.removeItem('ls.back'); if (/^#\/[st]\/[A-Za-z0-9]{5}$/.test(b || '')) back = b; } catch {}
+    history.replaceState(null, '', location.pathname + location.search + back);
     if (q.get('error')) return { error: q.get('error_code') || q.get('error'), type: q.get('type') || '' };
     setSession({ access_token: q.get('access_token'), refresh_token: q.get('refresh_token'), expires_in: q.get('expires_in') });
     return { type: q.get('type') || 'oauth', error: '' };
@@ -135,8 +138,6 @@ export const Auth = {
     emit();
   },
 
-  // Sends the player to Google (via Supabase). They come back to this page with tokens in the address,
-  // which consumeLink() picks up.
   // A valid access token for the game server (refreshed first if it is about to expire).
   async accessToken() {
     if (!session) throw new AuthError(401, 'not_authenticated');
@@ -144,7 +145,10 @@ export const Auth = {
     return session.access_token;
   },
 
+  // Sends the player to Google (via Supabase). They come back to this page with tokens in the address,
+  // which consumeLink() picks up. If they were opening an invite link, that link is remembered so they land on it.
   signInWithGoogle() {
+    try { if (/^#\/[st]\/[A-Za-z0-9]{5}$/.test(location.hash)) sessionStorage.setItem('ls.back', location.hash); } catch {}
     const back = encodeURIComponent(location.origin + location.pathname);
     location.href = `${CONFIG.supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${back}`;
   },

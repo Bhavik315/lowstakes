@@ -1,4 +1,4 @@
-import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=50';
+import { esc, card, chipStack, ROCKET_SVG } from './parts.js?v=51';
 
 const HERO_HAND = ['Ah', 'Kh', 'Qh', 'Jh', 'Th'];
 

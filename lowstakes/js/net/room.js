@@ -1,10 +1,10 @@
 // Rooms are peer-to-peer. The person who starts a table is the host: their
 // browser runs the game and sends every guest a personal view of the table
 // (so nobody's browser ever receives another player's hidden cards).
-import { Holdem } from '../games/holdem.js?v=50';
-import { Blackjack } from '../games/blackjack.js?v=50';
-import { Roulette } from '../games/roulette.js?v=50';
-import { Crash } from '../games/crash.js?v=50';
+import { Holdem } from '../games/holdem.js?v=51';
+import { Blackjack } from '../games/blackjack.js?v=51';
+import { Roulette } from '../games/roulette.js?v=51';
+import { Crash } from '../games/crash.js?v=51';
 
 const GAMES = { holdem: Holdem, blackjack: Blackjack, roulette: Roulette, crash: Crash };
 const PREFIX = 'lowstakes-v1-';
@@ -181,7 +181,7 @@ export class Host extends Emitter {
       if (old && old !== conn) try { old.close(); } catch {}
       p.connected = true;
       p.name = cleanName(msg.name) || p.name;
-      if (msg.color) p.color = msg.color;
+      p.color = cleanColor(msg.color, p.color);
       this.system(`${p.name} is back.`);
       if (this.engine && this.engine.onPlayersChanged) this.engine.onPlayersChanged();
     }
@@ -318,7 +318,7 @@ export class Host extends Emitter {
 
   addPlayer({ id, name, color, bot = false, style }) {
     const p = {
-      id, name: cleanName(name) || 'Player', color: color || COLORS[this.room.players.length % COLORS.length],
+      id, name: cleanName(name) || 'Player', color: cleanColor(color, COLORS[this.room.players.length % COLORS.length]),
       bot, style, connected: true, chips: this.room.settings.start, buyins: 1,
     };
     this.room.players.push(p);
@@ -574,6 +574,9 @@ export class Guest extends Emitter {
 
 export const REACTIONS = ['nice', 'lol', 'ouch', 'gg', 'bluff', 'wow'];
 export const GAME_NAMES = { holdem: 'Poker', blackjack: 'Blackjack', roulette: 'Roulette', crash: 'Crash' };
+
+// A colour from a guest is only ever used if it is a plain #rrggbb (it ends up inside a style attribute everyone sees).
+const cleanColor = (c, fallback) => (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c) ? c : fallback);
 
 function cleanName(n) {
   return String(n || '').replace(/\s+/g, ' ').trim().slice(0, 16);

@@ -1,7 +1,7 @@
 // Multiplayer blackjack: everyone plays their own hands against one dealer.
-import { Engine } from '../core/engine.js?v=50';
-import { newDeck, shuffle } from '../core/cards.js?v=50';
-import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=50';
+import { Engine } from '../core/engine.js?v=51';
+import { newDeck, shuffle } from '../core/cards.js?v=51';
+import { handValue, isNatural, cardValue, basicStrategy } from '../core/blackjack-rules.js?v=51';
 
 export const BJ_SEATS = 7;
 const GAP = 280;
@@ -166,7 +166,7 @@ export class Blackjack extends Engine {
 
   play(seat, type, auto = false) {
     const opt = this.options(seat);
-    if (!opt[type]) return false;
+    if (!Object.hasOwn(opt, type) || !opt[type]) return false; // (not 'constructor', 'toString'... from the prototype)
     const hand = seat.hands[this.turn.hand];
     const p = this.player(seat.pid);
     const who = this.name(seat.pid);

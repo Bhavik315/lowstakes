@@ -797,3 +797,31 @@ test('roulette: every spot on the layout pays exactly right, and the house alway
     assert.ok(Math.abs(ev - -1 / 37) < 1e-9, `${sp}: expected value ${ev} should be -1/37`);
   }
 });
+
+test('blackjack: made-up action names like "constructor" or "toString" do nothing', () => {
+  const room = makeRoom(1, false);
+  const g = new Blackjack(room, { timer: 0, min: 10 });
+  const clock = { t: 0 };
+  g.now = () => clock.t; g.jobs.forEach((j) => (j.at = 0));
+  g.handle('p0', { type: 'bet', amount: 10 }); g.handle('p0', { type: 'ready' });
+  for (let i = 0; i < 400 && g.phase !== 'playing'; i++) { clock.t += 50; g.tick(); }
+  if (g.phase !== 'playing' || !g.turn) return; // blackjack on the deal: nothing to check
+  const before = JSON.stringify(g.seats[0].hands);
+  for (const type of ['constructor', 'toString', '__proto__', 'hasOwnProperty', 'valueOf']) assert.equal(g.handle('p0', { type }), false, type);
+  assert.equal(JSON.stringify(g.seats[0].hands), before);
+});
+
+test('a guest cannot smuggle CSS or markup through the colour or name they send', () => {
+  const h = mkHost();
+  try {
+    const bad = '#fff;position:fixed;inset:0;background:red';
+    assert.ok(h.join('g1', { name: '<img src=x onerror=1>'.repeat(3), color: bad }, fakeConn()));
+    const g = h.room.players.find((p) => p.id === 'g1');
+    assert.match(g.color, /^#[0-9a-fA-F]{6}$/);
+    assert.ok(g.name.length <= 16);
+    h.join('g1', { name: 'Back', color: 'javascript:alert(1)' }, fakeConn());
+    assert.match(h.room.players.find((p) => p.id === 'g1').color, /^#[0-9a-fA-F]{6}$/);
+    h.join('g2', { name: 'Ok', color: '#12ab9F' }, fakeConn());
+    assert.equal(h.room.players.find((p) => p.id === 'g2').color, '#12ab9F');
+  } finally { h.close(); }
+});

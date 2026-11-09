@@ -1796,3 +1796,17 @@ input[type=range]::-moz-range-thumb {
   .dock-tip { display: none; }
   .dock-hand span, .dock-hand small { white-space: nowrap; }
 }
+@media (max-height: 520px) and (orientation: landscape) and (max-width: 740px) {
+  /* Small phones on their side: the action buttons share one slim row, so your own cards stay in view above the dock. */
+  .dock-mid.acts { display: flex; flex-wrap: nowrap; gap: 8px; }
+  .dock-mid.acts > .btn { width: auto; flex: 1 1 0; min-width: 0; padding: 0 10px; }
+  .dock-mid.acts .raise { grid-column: auto; display: flex; flex-direction: row; align-items: center; flex: 2 1 0; gap: 8px; min-width: 0; }
+  .dock-mid.acts .raise .raise-row { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .dock-mid.acts .presets .chip-btn:not(:last-child) { display: none; } /* the slider covers the in-between sizes; All in stays */
+  .dock[data-game=holdem] input[type=range] { width: auto; flex: 1; min-width: 60px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  /* Blackjack on a short screen: leave room above the table so a hand at an end seat is not cut off at the top. */
+  .bj-wrap { padding-top: 54px; }
+  .tbl.blackjack { width: min(100%, calc((100dvh - var(--header) - 60px - 30px - 50px) * 2)); }
+}
