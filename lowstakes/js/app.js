@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=48';
-import { Slots } from './adslots.js?v=48';
-import { Auth } from './auth.js?v=48';
-import { CONFIG } from './config.js?v=48';
-import * as AU from './ui/account-ui.js?v=48';
-import morphdom from '../vendor/morphdom-esm.js?v=48';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=48';
-import { landing, gate } from './ui/landing.js?v=48';
-import { lobby, inviteLink } from './ui/lobby.js?v=48';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=48';
-import * as HU from './ui/holdem-ui.js?v=48';
-import * as BU from './ui/blackjack-ui.js?v=48';
-import * as RU from './ui/roulette-ui.js?v=48';
-import * as CU from './ui/crash-ui.js?v=48';
-import { sound } from './ui/sound.js?v=48';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=48';
-import { WHEEL } from './games/roulette.js?v=48';
-import * as Motion from './ui/motion.js?v=48';
+import { Ads } from './ads.js?v=49';
+import { Slots } from './adslots.js?v=49';
+import { Auth } from './auth.js?v=49';
+import { CONFIG } from './config.js?v=49';
+import * as AU from './ui/account-ui.js?v=49';
+import morphdom from '../vendor/morphdom-esm.js?v=49';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=49';
+import { landing, gate } from './ui/landing.js?v=49';
+import { lobby, inviteLink } from './ui/lobby.js?v=49';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=49';
+import * as HU from './ui/holdem-ui.js?v=49';
+import * as BU from './ui/blackjack-ui.js?v=49';
+import * as RU from './ui/roulette-ui.js?v=49';
+import * as CU from './ui/crash-ui.js?v=49';
+import { sound } from './ui/sound.js?v=49';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=49';
+import { WHEEL } from './games/roulette.js?v=49';
+import * as Motion from './ui/motion.js?v=49';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -212,6 +212,7 @@ function wire(client) {
   S.state = null;
   S.gameKey = null;
   S.seenChat = 0;
+  S.chatReady = false;
   S.ui.unread = 0;
   client.on('state', (msg) => { if (S.client === client) onState(msg); });
   client.on('status', (st) => { if (S.client === client) onStatus(st); });
@@ -474,7 +475,7 @@ function renderChat() {
   const newest = chat.length ? chat[chat.length - 1].id : 0;
   if (newest > S.seenChat) {
     const fresh = chat.filter((m) => m.id > S.seenChat && m.pid);
-    if (S.seenChat && fresh.length) {
+    if (S.chatReady && fresh.length) {
       const others = fresh.filter((m) => m.pid !== S.state.you);
       if (others.length) {
         if (!S.ui.chatOpen) { S.ui.unread += others.length; morphdom(document.getElementById('r-top'), `<header class="r-top" id="r-top">${headerHtml()}</header>`, morphOpts); }
@@ -484,9 +485,10 @@ function renderChat() {
     }
     S.seenChat = newest;
   }
+  S.chatReady = true; // from now on new messages get a bubble (the very first one included)
   const atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
   morphdom(list, `<ol class="chat-list" id="chat-list">${chat.map((m) => m.pid
-    ? `<li id="m${m.id}" class="msg${m.pid === S.state.you ? ' mine' : ''}"><b style="--c:${esc(m.color)}">${esc(m.name)}</b> ${esc(m.text)}</li>`
+    ? `<li id="m${m.id}" class="msg${m.pid === S.state.you ? ' own' : ''}"><b style="--c:${esc(m.color)}">${esc(m.name)}</b> ${esc(m.text)}</li>`
     : `<li id="m${m.id}" class="msg sys">${esc(m.text)}</li>`).join('')}</ol>`);
   if (atBottom) list.scrollTop = list.scrollHeight;
 }

@@ -33,7 +33,17 @@ async function toTable(p) {
   t('the chat panel shows a highlighted placeholder (and no real ad) without ad code', await p.locator('.chat .ad-ph:visible').count() === 1 && await p.locator('.chat .ad-slot iframe').count() === 0);
   await p.fill('#chat-input', 'hello table'); await p.press('#chat-input', 'Enter'); await wait(400);
   t('a typed message shows up in the chat', /hello table/.test(await p.locator('#chat-list').innerText()));
-  t('and a short bubble pops up over your seat at the poker table', await p.locator('#fx .bubble', { hasText: 'hello table' }).count() === 1);
+  t('your own message sits inside the chat panel (not floating over the table)', await p.evaluate(() => { const li = document.querySelector('#chat-list li.own'); const c = document.querySelector('.chat'); if (!li || !c) return false; const a = li.getBoundingClientRect(), b = c.getBoundingClientRect(); return a.width > 0 && a.left >= b.left - 1 && a.right <= b.right + 1 && a.top >= b.top - 1 && a.bottom <= b.bottom + 1 && getComputedStyle(li).position !== 'absolute'; }));
+    t('and a short bubble pops up over your seat at the poker table', await p.locator('#fx .bubble', { hasText: 'hello table' }).count() === 1);
+  await ctx.close();
+
+  // ---- the very first message at a brand-new table also gets a bubble
+  ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });
+  p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
+  await openPractice(p);
+  await p.locator('button[data-mode=host]').click(); await p.waitForSelector('.lobby'); await wait(600);
+  await p.fill('#chat-input', 'first!'); await p.press('#chat-input', 'Enter'); await wait(600);
+  t('first message at a new table: it is in the chat box and shows a bubble', /first!/.test(await p.locator('#chat-list').innerText()) && await p.locator('#fx .bubble', { hasText: 'first!' }).count() === 1);
   await ctx.close();
 
   // ---- phones: portrait is blocked at the table, landscape works
