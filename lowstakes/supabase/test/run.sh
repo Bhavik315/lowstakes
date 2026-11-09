@@ -22,4 +22,8 @@ $P -f "$here/../migrations/0001_accounts_wallet.sql" >/dev/null
 $P -f "$here/../migrations/0002_table_rounds.sql" >/dev/null
 $P -f "$here/../migrations/0003_free_packs.sql" >/dev/null
 $P -f "$here/packs.test.sql"
+# fourth database: Landlords (migration 0004) on top of 0001-0003
+$P -c "drop schema public cascade; create schema public; grant usage on schema public to anon, authenticated, service_role; delete from auth.users;" >/dev/null
+for m in 0001_accounts_wallet 0002_table_rounds 0003_free_packs 0004_landlords; do $P -f "$here/../migrations/$m.sql" >/dev/null; done
+$P -f "$here/landlords.test.sql"
 export P; bash "$here/race.sh"

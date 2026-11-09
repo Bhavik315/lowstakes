@@ -11,6 +11,7 @@ const FILES = [
   'core/engine.js', 'core/cards.js', 'core/evaluate.js', 'core/blackjack-rules.js',
   'bots/holdem-bot.js',
   'games/holdem.js', 'games/blackjack.js', 'games/roulette.js', 'games/crash.js',
+  'games/landlords-data.js', 'games/landlords.js',
 ];
 rmSync(to, { recursive: true, force: true });
 for (const f of FILES) {

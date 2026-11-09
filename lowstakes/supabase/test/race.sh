@@ -67,3 +67,50 @@ n=$($P -tA -c "select count(*) from transactions where user_id='$W' and type='fr
 echo "RACE free pack x30: balance=$bal claims=$n (want 25000 / 1)"
 [ "$bal" = 25000 ] && [ "$n" = 1 ] || exit 1
 echo "RACE ALL OK"
+
+# 7. Landlords (migration 0004): ten players race to join a six-seat table, the same finish and cancel are fired thirty times,
+#    and a finish races a cancel. Nobody is ever charged twice, the table never exceeds six, the pot is paid at most once.
+if [ -f "$(dirname "$0")/../migrations/0004_landlords.sql" ]; then
+  W() { echo "00000000-0000-0000-0000-0000000e00$1"; }
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    id=$(printf '00000000-0000-0000-0000-0000000e%04d' $i)
+    $P -c "insert into auth.users(id,email,email_confirmed_at) values ('$id','ll$i@race.com',now())" >/dev/null
+    echo "set role authenticated; select set_config('request.jwt.claim.sub','$id',false); select complete_registration('LRace_$i');" | $P >/dev/null
+  done
+  uid() { printf '00000000-0000-0000-0000-0000000e%04d' "$1"; }
+  echo "set role service_role; select landlords_create('$(uid 1)','RACEA',1000);" | $P >/dev/null
+  for i in 2 3 4 5 6 7 8 9 10; do ( echo "set role service_role; select landlords_join('$(uid $i)','RACEA');" | $P >/dev/null 2>&1 ) & done; wait
+  n=$($P -tA -c "select count(*) from landlord_entries e join landlord_matches m on m.id=e.match_id where m.code='RACEA'")
+  charged=$($P -tA -c "select count(*) from transactions where type='landlords_entry' and ref=(select id::text from landlord_matches where code='RACEA')")
+  echo "RACE landlords join x10: seated=$n charged=$charged (want 6 / 6)"
+  [ "$n" = 6 ] && [ "$charged" = 6 ] || exit 1
+  # a double join by the same player, fired many times at once, charges once
+  w=$($P -tA -c "select user_id from landlord_entries where match_id=(select id from landlord_matches where code='RACEA') order by joined_at limit 1 offset 2")
+  for i in $(seq 1 20); do ( echo "set role service_role; select landlords_join('$w','RACEA');" | $P >/dev/null 2>&1 ) & done; wait
+  c2=$($P -tA -c "select count(*) from transactions where user_id='$w' and type='landlords_entry' and ref=(select id::text from landlord_matches where code='RACEA')")
+  echo "RACE landlords re-join x20: entry charges for that player=$c2 (want 1)"
+  [ "$c2" = 1 ] || exit 1
+  echo "set role service_role; select landlords_start('RACEA','$(uid 1)');" | $P >/dev/null
+  win=$(uid 1)
+  for i in $(seq 1 30); do ( echo "set role service_role; select landlords_finish('RACEA','$win');" | $P >/dev/null 2>&1 ) & done; wait
+  prizes=$($P -tA -c "select count(*) from transactions where type='landlords_prize' and ref=(select id::text from landlord_matches where code='RACEA')")
+  paid=$($P -tA -c "select coalesce(sum(amount),0) from transactions where type='landlords_prize' and ref=(select id::text from landlord_matches where code='RACEA')")
+  echo "RACE landlords finish x30: prize rows=$prizes paid=$paid (want 1 / 6000)"
+  [ "$prizes" = 1 ] && [ "$paid" = 6000 ] || exit 1
+  # a second match: finish and cancel race each other 20 against 20; exactly one of them takes effect
+  echo "set role service_role; select landlords_create('$(uid 1)','RACEB',500);" | $P >/dev/null
+  for i in 2 3 4; do echo "set role service_role; select landlords_join('$(uid $i)','RACEB');" | $P >/dev/null; done
+  echo "set role service_role; select landlords_start('RACEB','$(uid 1)');" | $P >/dev/null
+  for i in $(seq 1 20); do
+    ( echo "set role service_role; select landlords_finish('RACEB','$(uid 2)');" | $P >/dev/null 2>&1 ) &
+    ( echo "set role service_role; select landlords_cancel('RACEB','race');" | $P >/dev/null 2>&1 ) &
+  done; wait
+  st=$($P -tA -c "select status from landlord_matches where code='RACEB'")
+  pr=$($P -tA -c "select count(*) from transactions where type='landlords_prize' and ref=(select id::text from landlord_matches where code='RACEB')")
+  rf=$($P -tA -c "select count(*) from transactions where type='landlords_refund' and ref=(select id::text from landlord_matches where code='RACEB')")
+  echo "RACE landlords finish-vs-cancel: status=$st prize rows=$pr refund rows=$rf (want one of finished/1/0 or cancelled/0/4)"
+  { [ "$st" = finished ] && [ "$pr" = 1 ] && [ "$rf" = 0 ]; } || { [ "$st" = cancelled ] && [ "$pr" = 0 ] && [ "$rf" = 4 ]; } || exit 1
+  ok=$($P -tA -c "select count(*) from wallets w where w.user_id::text like '00000000-0000-0000-0000-0000000e%' and w.balance <> 20000 + (select coalesce(sum(amount),0) from transactions t where t.user_id = w.user_id and t.type <> 'welcome_bonus')")
+  echo "RACE landlords books: wallets not matching their ledger=$ok (want 0)"
+  [ "$ok" = 0 ] || exit 1
+fi

@@ -7,7 +7,10 @@ export async function keepAlive(env, { fetchFn } = {}) {
   const wallet = new SupabaseWallet({ url: env.SUPABASE_URL, secretKey: env.SUPABASE_SECRET_KEY, fetchFn });
   try {
     await wallet.rpc('round_gain_cap', { p_game: 'roulette' });
-    return { ok: true };
+    // Landlords matches nobody is running any more are cancelled and every entry fee refunded.
+    let swept = 0;
+    try { swept = Number(await wallet.landlordsSweep()) || 0; } catch {}
+    return { ok: true, swept };
   } catch (e) {
     return { ok: false, why: (e && e.code) || 'error' };
   }

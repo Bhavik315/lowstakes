@@ -35,6 +35,16 @@ export class SupabaseWallet {
   touch(userId, code) { return this.rpc('touch_table', { p_user: userId, p_code: code }).then(() => {}); }
   settle(items) { return this.rpc('settle_round', { p_items: items }); }
   async balance(userId) { return Number((await this.rpc('account_json', { p_user: userId })).balance); }
+
+  // Landlords: the entry fee is held in escrow and paid out (or refunded) by the database, each exactly once.
+  landlordsCreate(userId, code, fee) { return this.rpc('landlords_create', { p_user: userId, p_code: code, p_fee: fee }); }
+  landlordsJoin(userId, code) { return this.rpc('landlords_join', { p_user: userId, p_code: code }); }
+  landlordsLeave(userId, code) { return this.rpc('landlords_leave', { p_user: userId, p_code: code }); }
+  landlordsStart(code, hostId) { return this.rpc('landlords_start', { p_code: code, p_host: hostId }); }
+  landlordsFinish(code, winnerId) { return this.rpc('landlords_finish', { p_code: code, p_winner: winnerId }); }
+  landlordsCancel(code, reason) { return this.rpc('landlords_cancel', { p_code: code, p_reason: reason }); }
+  landlordsTouch(code) { return this.rpc('landlords_touch', { p_code: code }).then(() => {}); }
+  landlordsSweep() { return this.rpc('landlords_sweep', {}); }
 }
 
 // Checks a browser's sign-in token with Supabase and returns the verified user, or null.
