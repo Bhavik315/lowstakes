@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=59';
-import { Slots } from './adslots.js?v=59';
-import { Auth } from './auth.js?v=59';
-import { CONFIG } from './config.js?v=59';
-import * as AU from './ui/account-ui.js?v=59';
-import morphdom from '../vendor/morphdom-esm.js?v=59';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=59';
-import { landing, gate } from './ui/landing.js?v=59';
-import { lobby, inviteLink } from './ui/lobby.js?v=59';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=59';
-import * as HU from './ui/holdem-ui.js?v=59';
-import * as BU from './ui/blackjack-ui.js?v=59';
-import * as RU from './ui/roulette-ui.js?v=59';
-import * as CU from './ui/crash-ui.js?v=59';
-import { sound } from './ui/sound.js?v=59';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=59';
-import { WHEEL } from './games/roulette.js?v=59';
-import * as Motion from './ui/motion.js?v=59';
+import { Ads } from './ads.js?v=60';
+import { Slots } from './adslots.js?v=60';
+import { Auth } from './auth.js?v=60';
+import { CONFIG } from './config.js?v=60';
+import * as AU from './ui/account-ui.js?v=60';
+import morphdom from '../vendor/morphdom-esm.js?v=60';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=60';
+import { landing, gate } from './ui/landing.js?v=60';
+import { lobby, inviteLink } from './ui/lobby.js?v=60';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=60';
+import * as HU from './ui/holdem-ui.js?v=60';
+import * as BU from './ui/blackjack-ui.js?v=60';
+import * as RU from './ui/roulette-ui.js?v=60';
+import * as CU from './ui/crash-ui.js?v=60';
+import { sound } from './ui/sound.js?v=60';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=60';
+import { WHEEL } from './games/roulette.js?v=60';
+import * as Motion from './ui/motion.js?v=60';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -66,7 +66,12 @@ function route() {
     if (!Auth.ready()) {
       // A returning player's account is still loading at start-up: wait for it before deciding they are signed out.
       if (Auth.signedIn() && !S.authSettled) { showGate(code, { status: 'connecting' }); S.authReady.then(() => route()); return; }
-      showLanding('Sign in with Google to join this table.'); AU.openAuth('signin'); return;
+      // Not signed in, or signed in with Google but no username yet: remember the invite, and carry on to the table the moment
+      // the account is ready (so a friend who signs up through your link ends up at your table, not on the home page).
+      S.pendingJoin = `#/s/${code}`;
+      if (Auth.signedIn()) { showLanding('Pick a username and you will join the table.'); AU.openProfile(); }
+      else { showLanding('Sign in with Google to join this table.'); AU.openAuth('signin'); }
+      return;
     }
     return joinServerTable(code, false);
   }
@@ -1307,7 +1312,14 @@ window.addEventListener('hashchange', () => {
   }
   if (accountsOk()) route();
 });
-Auth.onChange(() => { AU.bindSlot(); });
+Auth.onChange(() => {
+  AU.bindSlot();
+  // The account just became ready (signed in, or finished picking a username) while an invite was waiting: go to that table.
+  if (S.pendingJoin && Auth.ready() && S.screen !== 'table') {
+    const h = S.pendingJoin; S.pendingJoin = '';
+    if (location.hash === h) route(); else location.hash = h;
+  }
+});
 AU.setToast(toast);
 // free coins claimed while sitting at a wallet table: ask the table to add them to the stack
 AU.setCoinsHook(() => { if (S.client && S.client.isServer) S.client.send({ t: 'refresh' }); });

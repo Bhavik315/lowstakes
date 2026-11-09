@@ -4,7 +4,7 @@ const SBURL = 'https://pupyykzrfbuimvuwohya.supabase.co';
 const BASE = 'http://localhost:8080/lowstakes/';
 const MOCKSB = `http://127.0.0.1:${process.env.SB_PORT || 54399}`;
 const WORKER = `ws://127.0.0.1:${process.env.WPORT || 8788}`;
-const A = '11111111-1111-1111-1111-111111111111', B = '22222222-2222-2222-2222-222222222222';
+const A = '11111111-1111-1111-1111-111111111111', B = '22222222-2222-2222-2222-222222222222', C = '33333333-3333-3333-3333-333333333333';
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const t = (name, ok, extra = '') => { ok ? pass++ : fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${ok ? '' : '  ' + extra}`); };
@@ -18,13 +18,16 @@ function pageMock() {
     m.profiles.set(id, { username: name, email, balance: 20000, changes: 0 });
     m.access.set(tok, id); m.refresh.set('rt-' + tok, id);
   }
+  // Carol has a Google account but has not picked a username yet (a brand-new friend following an invite link).
+  const cu = { id: C, email: 'carol@x.com', confirmed: true }; m.users.set('carol@x.com', cu); m.byId.set(C, cu);
+  m.access.set('tok-carol', C); m.refresh.set('rt-tok-carol', C);
   return m;
 }
 async function newCtx(b, mock, tok, { w = 1280, h = 800 } = {}) {
   const ctx = await b.newContext({ viewport: { width: w, height: h } });
   await ctx.addInitScript(({ tok }) => {
     localStorage.setItem('ls.age', '18'); localStorage.setItem('ls.adconsent', 'no');
-    if (tok) localStorage.setItem('ls.auth', JSON.stringify({ access_token: tok, refresh_token: 'rt-' + tok, expires_at: Date.now() + 3600e3, user: { id: tok === 'tok-alice' ? '11111111-1111-1111-1111-111111111111' : '22222222-2222-2222-2222-222222222222' } }));
+    if (tok) localStorage.setItem('ls.auth', JSON.stringify({ access_token: tok, refresh_token: 'rt-' + tok, expires_at: Date.now() + 3600e3, user: { id: ({ 'tok-alice': '11111111-1111-1111-1111-111111111111', 'tok-bob': '22222222-2222-2222-2222-222222222222', 'tok-carol': '33333333-3333-3333-3333-333333333333' })[tok] } }));
   }, { tok });
   await ctx.route(SBURL + '/**', async (route) => {
     const req = route.request();
@@ -78,6 +81,16 @@ const mine = (p) => p.evaluate(() => { const s = window.lowstakes.state; return 
   t('chat: a long message shows only a short bubble', (await pB.locator('#fx .bubble').last().innerText()).length <= 44 && /…$/.test(await pB.locator('#fx .bubble').last().innerText()));
   await wait(3800);
   t('chat: bubbles fade away but the messages stay in the chat box', await pA.locator('#fx .bubble').count() === 0 && /hello Bob/.test(await pA.locator('#chat-list').innerText()));
+
+  // ---- a brand-new friend (Google account, no username yet) opens the invite link: sign-up must end at the table
+  const ctxC2 = await newCtx(b, mock, 'tok-carol');
+  const pK = await ctxC2.newPage(); pK.on('pageerror', (e) => errs.push(e.message));
+  await pK.goto(BASE + '#/s/' + code); await wait(2500);
+  t('invite link, new friend: they are asked for a username (not sent to the home page)', await pK.locator('#a-user').count() === 1, (await pK.locator('body').innerText()).slice(0, 160));
+  await pK.fill('#a-user', 'Carol_3'); await wait(900); await pK.click('.acct-card button[type=submit]');
+  await pK.waitForSelector('.lobby', { timeout: 15000 });
+  t('invite link, new friend: after picking a username they land at the table they were invited to', (await pK.evaluate(() => location.hash)) === '#/s/' + code && (await pA.evaluate(() => window.lowstakes.state.room.players.length)) === 3, await pK.evaluate(() => location.hash));
+  await pK.close();
 
   // ---- Alice can't be at two tables
   const pA2 = await ctxA.newPage(); pA2.on('pageerror', (e) => errs.push(e.message));

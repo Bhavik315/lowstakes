@@ -33,7 +33,7 @@ export function startMock(port, users, tokens) {
 }
 
 if (process.argv[1] && process.argv[1].endsWith('mock-sb-http.mjs')) {
-  const A = '11111111-1111-1111-1111-111111111111', B = '22222222-2222-2222-2222-222222222222';
-  await startMock(Number(process.env.SB_PORT || 54399), [[A, 'Alice_1', 20000], [B, 'Bob_22', 20000]], { 'tok-alice': A, 'tok-bob': B });
+  const A = '11111111-1111-1111-1111-111111111111', B = '22222222-2222-2222-2222-222222222222', C = '33333333-3333-3333-3333-333333333333';
+  await startMock(Number(process.env.SB_PORT || 54399), [[A, 'Alice_1', 20000], [B, 'Bob_22', 20000], [C, 'Carol_3', 20000]], { 'tok-alice': A, 'tok-bob': B, 'tok-carol': C });
   console.log('mock supabase up');
 }
