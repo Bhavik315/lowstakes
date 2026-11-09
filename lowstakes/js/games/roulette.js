@@ -1,25 +1,34 @@
 // Single-zero roulette on a shared layout.
-import { Engine } from '../core/engine.js?v=49';
-import { randInt } from '../core/cards.js?v=49';
+import { Engine } from '../core/engine.js?v=50';
+import { randInt } from '../core/cards.js?v=50';
 
 export const WHEEL = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
 export const REDS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 export const colorOf = (n) => (n === 0 ? 'green' : REDS.has(n) ? 'red' : 'black');
 
-// Which numbers each spot covers, and what it pays (x to 1).
+// Which numbers each spot covers, and what it pays (x to 1). Anything that is not exactly one of the spots on the
+// layout returns null (so a made-up spot such as "col:0", which would cover 13 numbers, can never be bet on).
+const SIMPLE = new Set(['red', 'black', 'odd', 'even', 'low', 'high']);
 export function spotInfo(spot) {
-  const [kind, arg] = spot.split(':');
+  if (typeof spot !== 'string') return null;
   const nums = [];
   let pays = 1;
-  if (kind === 'n') { nums.push(Number(arg)); pays = 35; }
-  else if (kind === 'red' || kind === 'black') { for (let i = 1; i <= 36; i++) if (colorOf(i) === kind) nums.push(i); }
-  else if (kind === 'odd') { for (let i = 1; i <= 36; i += 2) nums.push(i); }
-  else if (kind === 'even') { for (let i = 2; i <= 36; i += 2) nums.push(i); }
-  else if (kind === 'low') { for (let i = 1; i <= 18; i++) nums.push(i); }
-  else if (kind === 'high') { for (let i = 19; i <= 36; i++) nums.push(i); }
-  else if (kind === 'dozen') { const d = Number(arg); for (let i = (d - 1) * 12 + 1; i <= d * 12; i++) nums.push(i); pays = 2; }
-  else if (kind === 'col') { const c = Number(arg); for (let i = c; i <= 36; i += 3) nums.push(i); pays = 2; }
-  else return null;
+  const m = /^(n|dozen|col):(0|[1-9]\d?)$/.exec(spot);
+  if (m) {
+    const v = Number(m[2]);
+    if (m[1] === 'n') { if (v > 36) return null; nums.push(v); pays = 35; }
+    else {
+      if (v < 1 || v > 3) return null;
+      pays = 2;
+      if (m[1] === 'dozen') for (let i = (v - 1) * 12 + 1; i <= v * 12; i++) nums.push(i);
+      else for (let i = v; i <= 36; i += 3) nums.push(i);
+    }
+  } else if (!SIMPLE.has(spot)) return null;
+  else if (spot === 'red' || spot === 'black') { for (let i = 1; i <= 36; i++) if (colorOf(i) === spot) nums.push(i); }
+  else if (spot === 'odd') { for (let i = 1; i <= 36; i += 2) nums.push(i); }
+  else if (spot === 'even') { for (let i = 2; i <= 36; i += 2) nums.push(i); }
+  else if (spot === 'low') { for (let i = 1; i <= 18; i++) nums.push(i); }
+  else for (let i = 19; i <= 36; i++) nums.push(i);
   return { nums, pays };
 }
 

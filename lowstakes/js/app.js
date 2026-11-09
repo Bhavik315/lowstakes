@@ -1,21 +1,21 @@
-import { Ads } from './ads.js?v=49';
-import { Slots } from './adslots.js?v=49';
-import { Auth } from './auth.js?v=49';
-import { CONFIG } from './config.js?v=49';
-import * as AU from './ui/account-ui.js?v=49';
-import morphdom from '../vendor/morphdom-esm.js?v=49';
-import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=49';
-import { landing, gate } from './ui/landing.js?v=49';
-import { lobby, inviteLink } from './ui/lobby.js?v=49';
-import { ServerClient, serverEnabled } from './net/server-client.js?v=49';
-import * as HU from './ui/holdem-ui.js?v=49';
-import * as BU from './ui/blackjack-ui.js?v=49';
-import * as RU from './ui/roulette-ui.js?v=49';
-import * as CU from './ui/crash-ui.js?v=49';
-import { sound } from './ui/sound.js?v=49';
-import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=49';
-import { WHEEL } from './games/roulette.js?v=49';
-import * as Motion from './ui/motion.js?v=49';
+import { Ads } from './ads.js?v=50';
+import { Slots } from './adslots.js?v=50';
+import { Auth } from './auth.js?v=50';
+import { CONFIG } from './config.js?v=50';
+import * as AU from './ui/account-ui.js?v=50';
+import morphdom from '../vendor/morphdom-esm.js?v=50';
+import { Host, Guest, cleanCode, newCode, COLORS, GAME_NAMES, REACTIONS } from './net/room.js?v=50';
+import { landing, gate } from './ui/landing.js?v=50';
+import { lobby, inviteLink } from './ui/lobby.js?v=50';
+import { ServerClient, serverEnabled } from './net/server-client.js?v=50';
+import * as HU from './ui/holdem-ui.js?v=50';
+import * as BU from './ui/blackjack-ui.js?v=50';
+import * as RU from './ui/roulette-ui.js?v=50';
+import * as CU from './ui/crash-ui.js?v=50';
+import { sound } from './ui/sound.js?v=50';
+import { esc, fmt, signed, avatar, chipStack } from './ui/parts.js?v=50';
+import { WHEEL } from './games/roulette.js?v=50';
+import * as Motion from './ui/motion.js?v=50';
 
 const UIS = { holdem: HU, blackjack: BU, roulette: RU, crash: CU };
 const REACT_LABEL = { nice: 'Nice hand', lol: 'Ha!', ouch: 'Ouch', gg: 'GG', bluff: 'Bluff!', wow: 'Wow' };
@@ -80,6 +80,7 @@ function route() {
     if (S.client) leave(false);
     const snap = hostSnapshot(code);
     if (snap) return startHost({ code, snapshot: snap });
+    if (S.closedHost === code) { S.closedHost = null; S.flash = 'That table has closed.'; location.hash = '#/'; return; }
     // Reloaded this tab while sitting at this table: go straight back in.
     let last = null;
     try { last = sessionStorage.getItem('ls.room'); } catch {}
@@ -281,6 +282,7 @@ function onServerStatus(c, st) {
 
 function leave(navigate = true) {
   const wasServer = !!(S.client && S.client.isServer);
+  if (S.client && S.client.isHost) S.closedHost = S.client.code; // a table this browser was running and has now closed
   if (S.client) S.client.close();
   // coins won or lost at a wallet table are saved by the server; pick up the new balance once it has had a moment
   if (wasServer && Auth.signedIn()) setTimeout(() => Auth.loadAccount().catch(() => {}), 900);

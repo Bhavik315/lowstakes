@@ -335,3 +335,17 @@ test('keep-alive: one harmless database call with the secret key, and it never t
   const unset = await keepAlive({});
   assert.deepEqual(unset, { ok: false, why: 'not configured' });
 });
+
+test('roulette: a forged spot like "col:0" (13 numbers, better than fair odds) is refused and costs nothing', async () => {
+  const s = setup();
+  await s.join('u1');
+  assert.equal(s.core.setGame('roulette').ok, true);
+  const before = s.core.player('u1').chips;
+  for (const spot of ['col:0', 'col:-3', 'dozen:0', 'n:99', 'red:1', 'RED', null, 5]) {
+    s.core.receive('u1', { t: 'act', a: { type: 'bet', spot, amount: 100 } });
+  }
+  assert.equal(s.core.player('u1').chips, before, 'no chips were staked');
+  assert.equal(s.core.engine.total('u1'), 0);
+  s.core.receive('u1', { t: 'act', a: { type: 'bet', spot: 'col:3', amount: 100 } });
+  assert.equal(s.core.engine.total('u1'), 100, 'a real spot still works');
+});

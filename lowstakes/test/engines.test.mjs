@@ -5,7 +5,7 @@ import { basicStrategy, handValue } from '../js/core/blackjack-rules.js';
 import { Holdem } from '../js/games/holdem.js';
 import { Blackjack } from '../js/games/blackjack.js';
 import { Crash, crashPoint, multAt, timeFor, GROWTH } from '../js/games/crash.js';
-import { Roulette } from '../js/games/roulette.js';
+import { Roulette, spotInfo } from '../js/games/roulette.js';
 import { Baccarat } from '../js/games/baccarat.js';
 import { Craps } from '../js/games/craps.js';
 
@@ -769,4 +769,31 @@ test('crash: a table with bots keeps cycling rounds', () => {
 test('crash: seats twelve and refuses a thirteenth', () => {
   assert.equal(GAME_LIMITS.crash, 12);
   assert.equal(limitFor('crash'), 12);
+});
+
+test('roulette ignores a bet on something that is not a spot name instead of throwing', () => {
+  const room = makeRoom(2, false);
+  const g = new Roulette(room, { min: 5, betTime: 5 });
+  const pid = room.players[0].id;
+  for (const spot of [null, undefined, 5, {}, [], true, 'x', 'n:99', 'n:-1', 'n:07', 'n:1.5', 'dozen:7', 'dozen:0', 'col:0', 'col:-3', 'col:4', 'col:1.5', 'red:x', 'RED', ' red']) {
+    assert.doesNotThrow(() => g.handle(pid, { type: 'bet', spot, amount: 25 }));
+    assert.equal(g.total(pid), 0, `no chips staked on ${JSON.stringify(spot)}`);
+  }
+  assert.equal(room.players[0].chips, 1000);
+  assert.equal(g.handle(pid, { type: 'bet', spot: 'red', amount: 25 }), true);
+  assert.equal(g.total(pid), 25);
+});
+
+test('roulette: every spot on the layout pays exactly right, and the house always has its edge', () => {
+  const spots = ['red', 'black', 'odd', 'even', 'low', 'high', 'dozen:1', 'dozen:2', 'dozen:3', 'col:1', 'col:2', 'col:3', ...Array.from({ length: 37 }, (_, n) => `n:${n}`)];
+  let ev = 0;
+  for (const sp of spots) {
+    const info = spotInfo(sp);
+    assert.ok(info, sp);
+    const want = sp.startsWith('n:') ? 1 : ['dozen', 'col'].some((k) => sp.startsWith(k)) ? 12 : 18;
+    assert.equal(info.nums.length, want, `${sp} covers ${want} numbers`);
+    assert.ok(new Set(info.nums).size === info.nums.length && info.nums.every((n) => Number.isInteger(n) && n >= 0 && n <= 36), sp);
+    ev = (info.nums.length * (info.pays + 1)) / 37 - 1;
+    assert.ok(Math.abs(ev - -1 / 37) < 1e-9, `${sp}: expected value ${ev} should be -1/37`);
+  }
 });

@@ -385,6 +385,15 @@ kbd {
 .code-pill em { font-style: normal; font-size: 12px; background: var(--ink); color: var(--cream); padding: 4px 9px; border-radius: 999px; }
 .code-pill:hover em { background: var(--vermilion); }
 .r-title { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.wordmark.sm { flex: none; }
+.code-pill { white-space: nowrap; flex: none; }
+@media (max-width: 1100px) {
+  /* Tablet and small laptop windows: keep the header on one line. */
+  .code-pill em { display: none; }
+  .code-pill { padding: 0 14px; }
+  .r-title span { display: none; }
+}
+@media (max-width: 900px) { .code-pill > span { display: none; } }
 .r-title span { font-weight: 500; color: var(--cream-dim); margin-left: 10px; font-size: 14px; }
 .r-tools { margin-left: auto; display: flex; align-items: center; gap: 4px; flex: none; }
 .my-stack { display: inline-flex; align-items: center; gap: 7px; margin-right: 8px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--mustard); }
@@ -1127,7 +1136,7 @@ input[type=range]::-moz-range-thumb {
 .menu-list .btn-quiet { border-color: rgba(16, 48, 42, .3); }
 .menu-players { list-style: none; margin: 0; padding: 0; }
 .menu-players li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(16, 48, 42, .1); }
-.menu-players span { flex: 1; font-weight: 600; }
+.menu-players li > span:not(.avatar) { flex: 1; font-weight: 600; }
 
 /* ------------------------------------------------------------ responsive */
 @media (max-width: 1180px) {
@@ -1428,8 +1437,14 @@ input[type=range]::-moz-range-thumb {
   .dock-note { font-size: 14px; }
   .dock-tip { display: none; }
   .tbl-wrap { padding: 6px 12px; }
+  /* Crash: the chart gives way instead of spilling over the player list. */
+  .cr-graph { min-height: 0; }
+  /* Menus: tighter buttons so the whole list (Leave table included) fits above the bottom edge. */
+  .pop { max-height: calc(100dvh - var(--header) - 10px); }
+  .more-list { gap: 5px; }
+  .more-list .btn { min-height: 38px; padding: 0 12px; }
   /* Betting docks (blackjack, roulette, crash): one slim row, not a tall stack, so the table keeps the space. */
-  .dock { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .dock { grid-template-columns: max-content minmax(0, 1fr) max-content; }
   .dock-hand { flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; }
   .dock-hand span { font-size: 11px; }
   .dock-mid { flex-wrap: nowrap; gap: 8px; }
@@ -1645,6 +1660,7 @@ input[type=range]::-moz-range-thumb {
 .ahint { min-height: 20px; margin: -6px 0 8px; font-size: 14px; color: var(--ink-soft); }
 .ahint.ok { color: #1b7a43; font-weight: 700; } .ahint.bad, .bad-t { color: #b3261e; font-weight: 700; }
 .anote { min-height: 22px; margin: 0 0 10px; font-size: 15px; }
+.anote:empty { min-height: 0; margin: 0; } /* no blank gap when there is no message */
 .anote.err { color: #b3261e; font-weight: 700; } .anote.ok { color: #1b7a43; font-weight: 700; }
 .acct-card form > .btn-primary { width: 100%; min-height: 50px; }
 .alinks { text-align: center; margin: 10px 0 0 !important; }
@@ -1758,3 +1774,25 @@ input[type=range]::-moz-range-thumb {
 }
 @keyframes rotate-hint { 0%, 25% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @media (prefers-reduced-motion: reduce) { .rotate-gate svg { animation: none; } }
+
+/* ------------------------------------------------------------ layout fixes (later in the file so they win) */
+@media (max-height: 520px) and (orientation: landscape) {
+  /* Crash on a short landscape screen: the chart shrinks to the space left instead of spilling over the player list. */
+  .cr-graph { min-height: 0; }
+  .cr { grid-template-rows: auto minmax(0, 1fr) auto; }
+  .cr-read { top: 6%; }
+  .cr-mult { font-size: clamp(34px, 16vh, 64px); }
+  .cr-sub { margin-top: 2px; font-size: 12px; }
+}
+@media (min-width: 701px) and (max-width: 900px) {
+  /* Tablets: smaller chips and a dock that can wrap, so the label and the controls never pile up. */
+  .chip.big { --chip: 42px; }
+  .dock-mid { min-width: 0; flex-wrap: wrap; row-gap: 6px; }
+  .bets { gap: 10px; }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  /* The dock's side note would be squeezed to a sliver beside wide controls: drop it, and let the label column be as wide as it needs. */
+  .dock { grid-template-columns: max-content minmax(0, 1fr) max-content; }
+  .dock-tip { display: none; }
+  .dock-hand span, .dock-hand small { white-space: nowrap; }
+}
