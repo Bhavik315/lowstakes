@@ -23,7 +23,7 @@ function pageMock() {
 async function newCtx(b, mock, tok, { w = 1280, h = 800 } = {}) {
   const ctx = await b.newContext({ viewport: { width: w, height: h } });
   await ctx.addInitScript(({ tok }) => {
-    localStorage.setItem('ls.age', '18');
+    localStorage.setItem('ls.age', '18'); localStorage.setItem('ls.adconsent', 'no');
     if (tok) localStorage.setItem('ls.auth', JSON.stringify({ access_token: tok, refresh_token: 'rt-' + tok, expires_at: Date.now() + 3600e3, user: { id: tok === 'tok-alice' ? '11111111-1111-1111-1111-111111111111' : '22222222-2222-2222-2222-222222222222' } }));
   }, { tok });
   await ctx.route(SBURL + '/**', async (route) => {

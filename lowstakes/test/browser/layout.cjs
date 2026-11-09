@@ -7,7 +7,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const errs = [];
 async function open(b, size, touch = false) {
   const ctx = await b.newContext({ viewport: size, hasTouch: touch, isMobile: touch && size.width < 700 });
-  await ctx.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); localStorage.setItem('ls.adconsent', 'no'); } catch {} });
   const p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   await p.goto(BASE); await wait(700);
   return { ctx, p };
@@ -229,7 +229,7 @@ const overlap = (a, b) => a && b && a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b 
   // phone poker: opponents' cards are visible, and the dealing animation still runs when the phone asks for reduced motion
   for (const reduced of [false, true]) {
     const ctx = await b.newContext({ viewport: { width: 840, height: 285 }, hasTouch: true, reducedMotion: reduced ? 'reduce' : 'no-preference' });
-    await ctx.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
+    await ctx.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); localStorage.setItem('ls.adconsent', 'no'); } catch {} });
     const p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
     await p.goto(BASE); await wait(600);
     await p.addStyleTag({ content: '#banner{display:none!important}' });

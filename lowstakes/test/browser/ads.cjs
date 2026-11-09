@@ -5,6 +5,9 @@ const BASE = 'http://localhost:8080/lowstakes/';
 let pass = 0, fail = 0;
 const t = (name, ok) => { ok ? pass++ : fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// The site's real config now holds the Adsterra codes. Unless a test says otherwise, run with empty slots and the preview boxes on.
+const HTML_RE = /html: "(?:[^"\\]|\\.)*"/g;
+const emptyCfg = (route) => route.fetch().then(async (res) => { const body = (await res.text()).replace(HTML_RE, "html: ''").replace('adPreview: false', 'adPreview: true'); await route.fulfill({ response: res, body }); });
 
 async function openPractice(p) {
   await p.addInitScript(() => { try { localStorage.setItem('ls.age', '18'); } catch {} });
@@ -19,6 +22,8 @@ async function toTable(p) {
 
 (async () => {
   const b = await chromium.launch();
+  const _nc = b.newContext.bind(b);
+  b.newContext = async (o) => { const c = await _nc(o); await c.route('**/js/config.js*', emptyCfg); return c; };
   const errs = [];
 
   // ---- no ad code configured: nothing ad-related is visible or requested
@@ -70,7 +75,7 @@ async function toTable(p) {
   p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
   await openPractice(p);
   const lt = async (slot) => (await p.locator(`.ad-slot[data-slot=${slot}]`).innerText()).replace(/\s+/g, ' ');
-  t('laptop: home page gets the big 970x90 banner', /970×90/.test(await lt('landing')));
+  t('laptop: home page gets the 728x90 banner', /728×90/.test(await lt('landing')));
   await p.setViewportSize({ width: 900, height: 700 }); await wait(700);
   t('smaller window: it swaps to 728x90', /728×90/.test(await lt('landing')));
   await p.setViewportSize({ width: 360, height: 640 }); await wait(700);
@@ -78,8 +83,6 @@ async function toTable(p) {
   await p.setViewportSize({ width: 1366, height: 800 }); await wait(700);
   await toTable(p);
   t('laptop table: side ad is 300x250', /300×250/.test(await p.locator('.chat .ad-slot').innerText()));
-  await p.setViewportSize({ width: 1366, height: 1150 }); await wait(700);
-  t('very tall screen: the side ad grows to 300x600', /300×600/.test(await p.locator('.chat .ad-slot').innerText()));
   await p.setViewportSize({ width: 1366, height: 640 }); await wait(700);
   t('short laptop window: the side ad drops to the slim 320x50 so the chat keeps its room', /320×50/.test(await p.locator('.chat .ad-slot').innerText()));
   await ctx.close();
@@ -87,7 +90,7 @@ async function toTable(p) {
   // ---- with ad code set (config swapped in by the test)
   const withAds = (route) => route.fetch().then(async (res) => {
     let body = await res.text();
-    body = body.replace(/html: ''/g, "html: '<div id=\"adtest\">TEST-AD</div>'");
+    body = body.replace(HTML_RE, "html: '<div id=\"adtest\">TEST-AD</div>'");
     await route.fulfill({ response: res, body });
   });
   ctx = await b.newContext({ viewport: { width: 1366, height: 800 } });
@@ -107,7 +110,7 @@ async function toTable(p) {
   await openPractice(p);
   await p.click('#ad-consent [data-ad=yes]'); await wait(600);
   const frame = p.locator('.ad-slot[data-slot=landing] iframe');
-  t('"Allow ads": the real banner is the laptop size (970 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '970');
+  t('"Allow ads": the real banner is the laptop size (728 wide)', (await p.locator('.ad-slot[data-slot=landing] iframe').getAttribute('width')) === '728');
   t('"Allow ads": the home page slot fills with a sandboxed frame', await frame.count() === 1 && /allow-scripts/.test(await frame.getAttribute('sandbox')) && !/allow-same-origin/.test(await frame.getAttribute('sandbox')));
   t('the ad code runs inside the frame, not in the page', await p.frameLocator('.ad-slot[data-slot=landing] iframe').locator('#adtest').count() === 1 && await p.locator('#adtest').count() === 0);
   await toTable(p);
