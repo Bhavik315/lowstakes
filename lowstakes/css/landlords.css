@@ -281,7 +281,7 @@ body.on-ll.ll-game #app { height: 100dvh; min-height: 0; }
 .aucquick { display: flex; gap: 8px; margin-bottom: 8px; }
 .aucquick .btn { flex: 1; padding: 0; }
 .aucamt { display: flex; align-items: center; gap: 10px; font-weight: 700; margin-bottom: 8px; }
-.aucform .btn-big { width: 100%; }
+.aucform .btn-big { width: 100%; position: sticky; bottom: 0; z-index: 1; }
 
 /* results */
 .res-top { position: relative; text-align: center; padding: 10px 6px 12px; overflow: hidden; }
@@ -337,6 +337,11 @@ body.on-ll.ll-game #app { height: 100dvh; min-height: 0; }
   .btn-big { min-height: 46px; font-size: 16px; }
   .llpl { min-height: 44px; padding: 3px 6px; }
   .llpl .tk { width: 24px; height: 24px; font-size: 12px; }
+  .aucbid { margin: 8px 0; padding: 6px; }
+  .aucbid b { font-size: 26px; }
+  .aucbar { margin: 2px 0 8px; }
+  .aucprop { gap: 8px; } .aucprop i { height: 32px; }
+  .lls-h h2, .lls > h2 { font-size: 19px; }
   .lls { max-height: 96dvh; }
   .lls.tall { height: 96dvh; }
   .ll-dock { padding-top: 2px; }
