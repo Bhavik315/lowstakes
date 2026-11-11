@@ -74,17 +74,20 @@ const HITS: Hit[] = [
   ...at("riser", 0.26, [T.compounding - 27, DURATION - 27]),
 ];
 
+// Headroom so voice + beat + effects never clip (mix lands near -14 LUFS).
+const MASTER = 0.8;
+
 export const Soundtrack: React.FC = () => (
   <>
-    <Audio name="Voiceover" src={staticFile("voiceover.wav")} />
-    <Audio name="Beat" src={staticFile("beat.wav")} volume={0.13} />
+    <Audio name="Voiceover" src={staticFile("voiceover.wav")} volume={MASTER} />
+    <Audio name="Beat" src={staticFile("beat.wav")} volume={0.13 * MASTER} />
     {HITS.map((hit, i) => (
       <Audio
         key={i}
         name={hit.sfx}
         from={Math.max(0, hit.frame)}
         src={staticFile(`sfx/${hit.sfx}.wav`)}
-        volume={hit.volume}
+        volume={hit.volume * MASTER}
       />
     ))}
   </>

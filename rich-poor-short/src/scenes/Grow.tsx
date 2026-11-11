@@ -118,9 +118,9 @@ export const Grow: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          left: 420,
+          left: 640,
           top: BASE - 24 * PX_PER_LAKH - 3,
-          width: 510 * linear(frame, L(T.grew) - 2, L(T.grew) + 8),
+          width: 290 * linear(frame, L(T.grew) - 2, L(T.grew) + 8),
           height: 0,
           borderTop: `6px dashed ${C.white}`,
           opacity: 0.85,
@@ -141,7 +141,7 @@ export const Grow: React.FC = () => {
         </Pill>
       </At>
 
-      <At x={540} y={1165} opacity={linear(frame, L(T.he), L(T.he) + 10) * 0.9}>
+      <At x={540} y={1183} opacity={linear(frame, L(T.he), L(T.he) + 10) * 0.9}>
         <div style={{ fontSize: 30, fontWeight: 600, color: C.muted, whiteSpace: "nowrap" }}>
           Illustration: ₹20,000 a month for 10 years at ~12% a year
         </div>
