@@ -22,18 +22,19 @@ import edge_tts
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
-VOICE = "en-IN-PrabhatNeural"
+VOICE = "en-US-ChristopherNeural"
 RATE = "+10%"
 
 # Spoken phrase -> what the caption shows. Longest phrases first.
 DISPLAY = [
-    ("fifty thousand rupees", "₹50,000"),
-    ("twenty thousand rupees", "₹20,000"),
-    ("thirty six percent", "36%"),
-    ("twenty four lakh", "₹24 lakh"),
-    ("forty six lakh", "₹46 lakh"),
-    ("ten lakh", "₹10 lakh"),
+    ("one hundred twenty thousand dollars", "$120,000"),
+    ("two hundred thirty thousand", "$230,000"),
+    ("five thousand dollars", "$5,000"),
+    ("one thousand dollars", "$1,000"),
+    ("fifty thousand dollars", "$50,000"),
+    ("twenty four percent", "24%"),
     ("sixteen months", "16 months"),
+    ("zero percent", "0%"),
     ("ten years", "10 years"),
     ("three years", "3 years"),
     ("three loans", "3 loans"),

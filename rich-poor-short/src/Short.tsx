@@ -43,22 +43,22 @@ export const Short: React.FC = () => {
         <Sequence name="Hook" {...SCENES.hook}>
           <Hook />
         </Sequence>
-        <Sequence name="Meet Rahul and Vikram" {...SCENES.meet}>
+        <Sequence name="Meet Jake and Marcus" {...SCENES.meet}>
           <Meet />
         </Sequence>
-        <Sequence name="Rahul spends first" {...SCENES.spend}>
+        <Sequence name="Jake spends first" {...SCENES.spend}>
           <Spend />
         </Sequence>
         <Sequence name="His money works for the bank" {...SCENES.bank}>
           <BankScene />
         </Sequence>
-        <Sequence name="Vikram invests first" {...SCENES.invest}>
+        <Sequence name="Marcus invests first" {...SCENES.invest}>
           <Invest />
         </Sequence>
         <Sequence name="10 years later" {...SCENES.later}>
           <Later />
         </Sequence>
-        <Sequence name="24 lakh grew to 46 lakh" {...SCENES.grow}>
+        <Sequence name="$120K grew to $230K" {...SCENES.grow}>
           <Grow />
         </Sequence>
         <Sequence name="Compounding" {...SCENES.compound}>

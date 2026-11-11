@@ -1,798 +1,834 @@
 {
- "voice": "en-IN-PrabhatNeural",
+ "voice": "en-US-ChristopherNeural",
  "rate": "+10%",
- "audioDurationMs": 51521,
+ "audioDurationMs": 48015,
  "words": [
   {
    "text": "Why",
    "startMs": 60,
-   "endMs": 310,
+   "endMs": 265,
    "sentenceEnd": false
   },
   {
    "text": "do",
-   "startMs": 322,
-   "endMs": 447,
+   "startMs": 276,
+   "endMs": 367,
    "sentenceEnd": false
   },
   {
    "text": "the",
-   "startMs": 481,
-   "endMs": 583,
+   "startMs": 379,
+   "endMs": 481,
    "sentenceEnd": false
   },
   {
    "text": "rich",
-   "startMs": 583,
-   "endMs": 833,
+   "startMs": 492,
+   "endMs": 742,
    "sentenceEnd": false
   },
   {
    "text": "get",
-   "startMs": 833,
-   "endMs": 1049,
+   "startMs": 754,
+   "endMs": 924,
    "sentenceEnd": false
   },
   {
    "text": "richer",
-   "startMs": 1049,
-   "endMs": 1470,
+   "startMs": 935,
+   "endMs": 1299,
    "sentenceEnd": false
   },
   {
    "text": "and",
-   "startMs": 1708,
-   "endMs": 1845,
+   "startMs": 1504,
+   "endMs": 1572,
    "sentenceEnd": false
   },
   {
    "text": "the",
-   "startMs": 1845,
-   "endMs": 1981,
+   "startMs": 1583,
+   "endMs": 1663,
    "sentenceEnd": false
   },
   {
    "text": "poor",
-   "startMs": 1981,
-   "endMs": 2299,
+   "startMs": 1674,
+   "endMs": 2004,
    "sentenceEnd": false
   },
   {
    "text": "get",
-   "startMs": 2299,
-   "endMs": 2526,
+   "startMs": 2015,
+   "endMs": 2174,
    "sentenceEnd": false
   },
   {
    "text": "poorer",
-   "startMs": 2526,
-   "endMs": 2924,
+   "startMs": 2185,
+   "endMs": 2617,
    "sentenceEnd": true
   },
   {
    "text": "Meet",
-   "startMs": 3275,
-   "endMs": 3536,
+   "startMs": 2857,
+   "endMs": 3130,
    "sentenceEnd": false
   },
   {
-   "text": "Rahul",
-   "startMs": 3570,
-   "endMs": 4014,
+   "text": "Jake",
+   "startMs": 3141,
+   "endMs": 3470,
    "sentenceEnd": false
   },
   {
    "text": "and",
-   "startMs": 4082,
-   "endMs": 4320,
+   "startMs": 3482,
+   "endMs": 3573,
    "sentenceEnd": false
   },
   {
-   "text": "Vikram",
-   "startMs": 4320,
-   "endMs": 4741,
+   "text": "Marcus",
+   "startMs": 3584,
+   "endMs": 4209,
    "sentenceEnd": true
   },
   {
    "text": "Both",
-   "startMs": 5065,
-   "endMs": 5360,
+   "startMs": 4493,
+   "endMs": 4766,
    "sentenceEnd": false
   },
   {
    "text": "earn",
-   "startMs": 5451,
-   "endMs": 5747,
+   "startMs": 4777,
+   "endMs": 5016,
    "sentenceEnd": false
   },
   {
-   "text": "fifty",
-   "startMs": 5747,
-   "endMs": 6145,
+   "text": "five",
+   "startMs": 5027,
+   "endMs": 5334,
    "sentenceEnd": false
   },
   {
    "text": "thousand",
-   "startMs": 6145,
-   "endMs": 6565,
+   "startMs": 5345,
+   "endMs": 5766,
    "sentenceEnd": false
   },
   {
-   "text": "rupees",
-   "startMs": 6565,
-   "endMs": 6974,
+   "text": "dollars",
+   "startMs": 5777,
+   "endMs": 6095,
    "sentenceEnd": false
   },
   {
    "text": "a",
-   "startMs": 7031,
-   "endMs": 7122,
+   "startMs": 6107,
+   "endMs": 6152,
    "sentenceEnd": false
   },
   {
    "text": "month",
-   "startMs": 7122,
-   "endMs": 7520,
+   "startMs": 6164,
+   "endMs": 6561,
    "sentenceEnd": true
   },
   {
-   "text": "Rahul",
-   "startMs": 7778,
-   "endMs": 8175,
+   "text": "Jake",
+   "startMs": 6805,
+   "endMs": 7090,
    "sentenceEnd": false
   },
   {
    "text": "spends",
-   "startMs": 8175,
-   "endMs": 8607,
+   "startMs": 7101,
+   "endMs": 7465,
    "sentenceEnd": false
   },
   {
    "text": "first",
-   "startMs": 8607,
-   "endMs": 9016,
+   "startMs": 7476,
+   "endMs": 7965,
    "sentenceEnd": true
   },
   {
    "text": "A",
-   "startMs": 9352,
-   "endMs": 9409,
+   "startMs": 8249,
+   "endMs": 8351,
    "sentenceEnd": false
   },
   {
    "text": "new",
-   "startMs": 9409,
-   "endMs": 9625,
+   "startMs": 8362,
+   "endMs": 8601,
    "sentenceEnd": false
   },
   {
    "text": "phone",
-   "startMs": 9659,
-   "endMs": 10011,
-   "sentenceEnd": false
-  },
-  {
-   "text": "on",
-   "startMs": 10079,
-   "endMs": 10284,
-   "sentenceEnd": false
-  },
-  {
-   "text": "EMI",
-   "startMs": 10363,
-   "endMs": 10829,
-   "sentenceEnd": true
-  },
-  {
-   "text": "A",
-   "startMs": 11133,
-   "endMs": 11167,
-   "sentenceEnd": false
-  },
-  {
-   "text": "credit",
-   "startMs": 11167,
-   "endMs": 11531,
-   "sentenceEnd": false
-  },
-  {
-   "text": "card",
-   "startMs": 11531,
-   "endMs": 11895,
+   "startMs": 8612,
+   "endMs": 8953,
    "sentenceEnd": false
   },
   {
    "text": "at",
-   "startMs": 11951,
-   "endMs": 12179,
-   "sentenceEnd": false
-  },
-  {
-   "text": "thirty",
-   "startMs": 12190,
-   "endMs": 12565,
-   "sentenceEnd": false
-  },
-  {
-   "text": "six",
-   "startMs": 12565,
-   "endMs": 12849,
-   "sentenceEnd": false
-  },
-  {
-   "text": "percent",
-   "startMs": 12849,
-   "endMs": 13292,
-   "sentenceEnd": false
-  },
-  {
-   "text": "interest",
-   "startMs": 13360,
-   "endMs": 13826,
-   "sentenceEnd": true
-  },
-  {
-   "text": "His",
-   "startMs": 14162,
-   "endMs": 14366,
-   "sentenceEnd": false
-  },
-  {
-   "text": "money",
-   "startMs": 14366,
-   "endMs": 14707,
-   "sentenceEnd": false
-  },
-  {
-   "text": "works",
-   "startMs": 14707,
-   "endMs": 15150,
-   "sentenceEnd": false
-  },
-  {
-   "text": "for",
-   "startMs": 15150,
-   "endMs": 15344,
-   "sentenceEnd": false
-  },
-  {
-   "text": "the",
-   "startMs": 15344,
-   "endMs": 15446,
-   "sentenceEnd": false
-  },
-  {
-   "text": "bank",
-   "startMs": 15446,
-   "endMs": 15844,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Vikram",
-   "startMs": 16102,
-   "endMs": 16488,
-   "sentenceEnd": false
-  },
-  {
-   "text": "invests",
-   "startMs": 16545,
-   "endMs": 17090,
-   "sentenceEnd": false
-  },
-  {
-   "text": "first",
-   "startMs": 17090,
-   "endMs": 17488,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Twenty",
-   "startMs": 17826,
-   "endMs": 18156,
-   "sentenceEnd": false
-  },
-  {
-   "text": "thousand",
-   "startMs": 18156,
-   "endMs": 18565,
-   "sentenceEnd": false
-  },
-  {
-   "text": "rupees",
-   "startMs": 18565,
-   "endMs": 19031,
-   "sentenceEnd": false
-  },
-  {
-   "text": "every",
-   "startMs": 19292,
-   "endMs": 19610,
-   "sentenceEnd": false
-  },
-  {
-   "text": "month",
-   "startMs": 19610,
-   "endMs": 19997,
-   "sentenceEnd": false
-  },
-  {
-   "text": "into",
-   "startMs": 20215,
-   "endMs": 20545,
-   "sentenceEnd": false
-  },
-  {
-   "text": "an",
-   "startMs": 20556,
-   "endMs": 20761,
-   "sentenceEnd": false
-  },
-  {
-   "text": "index",
-   "startMs": 20818,
-   "endMs": 21215,
-   "sentenceEnd": false
-  },
-  {
-   "text": "fund",
-   "startMs": 21215,
-   "endMs": 21579,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Ten",
-   "startMs": 21857,
-   "endMs": 22119,
-   "sentenceEnd": false
-  },
-  {
-   "text": "years",
-   "startMs": 22119,
-   "endMs": 22482,
-   "sentenceEnd": false
-  },
-  {
-   "text": "later",
-   "startMs": 22494,
-   "endMs": 22937,
-   "sentenceEnd": false
-  },
-  {
-   "text": "Rahul",
-   "startMs": 23198,
-   "endMs": 23595,
-   "sentenceEnd": false
-  },
-  {
-   "text": "has",
-   "startMs": 23595,
-   "endMs": 23914,
+   "startMs": 8965,
+   "endMs": 9078,
    "sentenceEnd": false
   },
   {
    "text": "zero",
-   "startMs": 23959,
-   "endMs": 24334,
+   "startMs": 9090,
+   "endMs": 9419,
    "sentenceEnd": false
   },
   {
-   "text": "savings",
-   "startMs": 24345,
-   "endMs": 24857,
-   "sentenceEnd": false
-  },
-  {
-   "text": "and",
-   "startMs": 24959,
-   "endMs": 25232,
-   "sentenceEnd": false
-  },
-  {
-   "text": "three",
-   "startMs": 25255,
-   "endMs": 25550,
-   "sentenceEnd": false
-  },
-  {
-   "text": "loans",
-   "startMs": 25595,
-   "endMs": 25993,
+   "text": "percent",
+   "startMs": 9430,
+   "endMs": 10021,
    "sentenceEnd": true
   },
   {
-   "text": "Vikram",
-   "startMs": 26369,
-   "endMs": 26778,
-   "sentenceEnd": true
-  },
-  {
-   "text": "He",
-   "startMs": 27150,
-   "endMs": 27275,
+   "text": "A",
+   "startMs": 10265,
+   "endMs": 10379,
    "sentenceEnd": false
   },
   {
-   "text": "put",
-   "startMs": 27321,
-   "endMs": 27560,
+   "text": "credit",
+   "startMs": 10390,
+   "endMs": 10697,
    "sentenceEnd": false
   },
   {
-   "text": "in",
-   "startMs": 27628,
-   "endMs": 27775,
+   "text": "card",
+   "startMs": 10709,
+   "endMs": 10993,
+   "sentenceEnd": false
+  },
+  {
+   "text": "at",
+   "startMs": 11004,
+   "endMs": 11095,
    "sentenceEnd": false
   },
   {
    "text": "twenty",
-   "startMs": 27787,
-   "endMs": 28139,
+   "startMs": 11106,
+   "endMs": 11368,
    "sentenceEnd": false
   },
   {
    "text": "four",
-   "startMs": 28139,
-   "endMs": 28412,
+   "startMs": 11379,
+   "endMs": 11595,
    "sentenceEnd": false
   },
   {
-   "text": "lakh",
-   "startMs": 28412,
-   "endMs": 28798,
-   "sentenceEnd": false
-  },
-  {
-   "text": "and",
-   "startMs": 28945,
-   "endMs": 29127,
-   "sentenceEnd": false
-  },
-  {
-   "text": "it",
-   "startMs": 29127,
-   "endMs": 29240,
-   "sentenceEnd": false
-  },
-  {
-   "text": "grew",
-   "startMs": 29263,
-   "endMs": 29513,
-   "sentenceEnd": false
-  },
-  {
-   "text": "to",
-   "startMs": 29525,
-   "endMs": 29615,
-   "sentenceEnd": false
-  },
-  {
-   "text": "forty",
-   "startMs": 29638,
-   "endMs": 30013,
-   "sentenceEnd": false
-  },
-  {
-   "text": "six",
-   "startMs": 30013,
-   "endMs": 30275,
-   "sentenceEnd": false
-  },
-  {
-   "text": "lakh",
-   "startMs": 30275,
-   "endMs": 30627,
-   "sentenceEnd": true
-  },
-  {
-   "text": "That",
-   "startMs": 30876,
-   "endMs": 31126,
-   "sentenceEnd": false
-  },
-  {
-   "text": "is",
-   "startMs": 31138,
-   "endMs": 31308,
-   "sentenceEnd": false
-  },
-  {
-   "text": "compounding",
-   "startMs": 31308,
-   "endMs": 31922,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Money",
-   "startMs": 32240,
-   "endMs": 32570,
-   "sentenceEnd": false
-  },
-  {
-   "text": "making",
-   "startMs": 32570,
-   "endMs": 32979,
-   "sentenceEnd": false
-  },
-  {
-   "text": "money",
-   "startMs": 32979,
-   "endMs": 33342,
-   "sentenceEnd": false
-  },
-  {
-   "text": "which",
-   "startMs": 33638,
-   "endMs": 33888,
-   "sentenceEnd": false
-  },
-  {
-   "text": "makes",
-   "startMs": 33899,
-   "endMs": 34274,
-   "sentenceEnd": false
-  },
-  {
-   "text": "even",
-   "startMs": 34331,
-   "endMs": 34604,
-   "sentenceEnd": false
-  },
-  {
-   "text": "more",
-   "startMs": 34604,
-   "endMs": 34899,
-   "sentenceEnd": false
-  },
-  {
-   "text": "money",
-   "startMs": 34910,
-   "endMs": 35251,
-   "sentenceEnd": true
-  },
-  {
-   "text": "And",
-   "startMs": 35612,
-   "endMs": 35828,
-   "sentenceEnd": false
-  },
-  {
-   "text": "it",
-   "startMs": 35828,
-   "endMs": 35942,
-   "sentenceEnd": false
-  },
-  {
-   "text": "keeps",
-   "startMs": 35965,
-   "endMs": 36317,
-   "sentenceEnd": false
-  },
-  {
-   "text": "getting",
-   "startMs": 36328,
-   "endMs": 36680,
-   "sentenceEnd": false
-  },
-  {
-   "text": "faster",
-   "startMs": 36680,
-   "endMs": 37180,
-   "sentenceEnd": true
-  },
-  {
-   "text": "His",
-   "startMs": 37559,
-   "endMs": 37775,
-   "sentenceEnd": false
-  },
-  {
-   "text": "first",
-   "startMs": 37775,
-   "endMs": 38115,
-   "sentenceEnd": false
-  },
-  {
-   "text": "ten",
-   "startMs": 38184,
-   "endMs": 38456,
-   "sentenceEnd": false
-  },
-  {
-   "text": "lakh",
-   "startMs": 38456,
-   "endMs": 38763,
-   "sentenceEnd": false
-  },
-  {
-   "text": "took",
-   "startMs": 38831,
-   "endMs": 39047,
-   "sentenceEnd": false
-  },
-  {
-   "text": "over",
-   "startMs": 39104,
-   "endMs": 39400,
-   "sentenceEnd": false
-  },
-  {
-   "text": "three",
-   "startMs": 39422,
-   "endMs": 39729,
-   "sentenceEnd": false
-  },
-  {
-   "text": "years",
-   "startMs": 39729,
-   "endMs": 40161,
-   "sentenceEnd": true
-  },
-  {
-   "text": "His",
-   "startMs": 40536,
-   "endMs": 40718,
-   "sentenceEnd": false
-  },
-  {
-   "text": "latest",
-   "startMs": 40718,
-   "endMs": 41173,
-   "sentenceEnd": false
-  },
-  {
-   "text": "ten",
-   "startMs": 41230,
-   "endMs": 41468,
-   "sentenceEnd": false
-  },
-  {
-   "text": "lakh",
-   "startMs": 41468,
-   "endMs": 41843,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Just",
-   "startMs": 42093,
-   "endMs": 42411,
-   "sentenceEnd": false
-  },
-  {
-   "text": "sixteen",
-   "startMs": 42468,
-   "endMs": 43002,
-   "sentenceEnd": false
-  },
-  {
-   "text": "months",
-   "startMs": 43002,
-   "endMs": 43490,
-   "sentenceEnd": true
-  },
-  {
-   "text": "So",
-   "startMs": 43857,
-   "endMs": 44050,
-   "sentenceEnd": false
-  },
-  {
-   "text": "the",
-   "startMs": 44096,
-   "endMs": 44198,
-   "sentenceEnd": false
-  },
-  {
-   "text": "poor",
-   "startMs": 44198,
-   "endMs": 44505,
-   "sentenceEnd": false
-  },
-  {
-   "text": "pay",
-   "startMs": 44505,
-   "endMs": 44732,
+   "text": "percent",
+   "startMs": 11606,
+   "endMs": 11959,
    "sentenceEnd": false
   },
   {
    "text": "interest",
-   "startMs": 44812,
-   "endMs": 45266,
+   "startMs": 11970,
+   "endMs": 12538,
    "sentenceEnd": true
   },
   {
-   "text": "The",
-   "startMs": 45605,
-   "endMs": 45695,
+   "text": "His",
+   "startMs": 12782,
+   "endMs": 12987,
    "sentenceEnd": false
   },
   {
-   "text": "rich",
-   "startMs": 45695,
-   "endMs": 45945,
+   "text": "money",
+   "startMs": 12998,
+   "endMs": 13248,
    "sentenceEnd": false
   },
   {
-   "text": "collect",
-   "startMs": 45957,
-   "endMs": 46309,
+   "text": "works",
+   "startMs": 13260,
+   "endMs": 13555,
    "sentenceEnd": false
   },
   {
-   "text": "it",
-   "startMs": 46332,
-   "endMs": 46514,
-   "sentenceEnd": true
-  },
-  {
-   "text": "Start",
-   "startMs": 46780,
-   "endMs": 47121,
-   "sentenceEnd": false
-  },
-  {
-   "text": "small",
-   "startMs": 47121,
-   "endMs": 47621,
-   "sentenceEnd": false
-  },
-  {
-   "text": "but",
-   "startMs": 47701,
-   "endMs": 47928,
-   "sentenceEnd": false
-  },
-  {
-   "text": "start",
-   "startMs": 47928,
-   "endMs": 48303,
-   "sentenceEnd": false
-  },
-  {
-   "text": "today",
-   "startMs": 48349,
-   "endMs": 48701,
-   "sentenceEnd": true
-  },
-  {
-   "text": "And",
-   "startMs": 49079,
-   "endMs": 49306,
+   "text": "for",
+   "startMs": 13566,
+   "endMs": 13657,
    "sentenceEnd": false
   },
   {
    "text": "the",
-   "startMs": 49306,
-   "endMs": 49454,
+   "startMs": 13669,
+   "endMs": 13748,
+   "sentenceEnd": false
+  },
+  {
+   "text": "bank",
+   "startMs": 13760,
+   "endMs": 14180,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Marcus",
+   "startMs": 14424,
+   "endMs": 14856,
+   "sentenceEnd": false
+  },
+  {
+   "text": "invests",
+   "startMs": 14867,
+   "endMs": 15356,
+   "sentenceEnd": false
+  },
+  {
+   "text": "first",
+   "startMs": 15367,
+   "endMs": 15845,
+   "sentenceEnd": true
+  },
+  {
+   "text": "One",
+   "startMs": 16129,
+   "endMs": 16401,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thousand",
+   "startMs": 16413,
+   "endMs": 16822,
+   "sentenceEnd": false
+  },
+  {
+   "text": "dollars",
+   "startMs": 16833,
+   "endMs": 17288,
+   "sentenceEnd": false
+  },
+  {
+   "text": "every",
+   "startMs": 17458,
+   "endMs": 17708,
+   "sentenceEnd": false
+  },
+  {
+   "text": "month",
+   "startMs": 17720,
+   "endMs": 18060,
+   "sentenceEnd": false
+  },
+  {
+   "text": "into",
+   "startMs": 18239,
+   "endMs": 18512,
+   "sentenceEnd": false
+  },
+  {
+   "text": "an",
+   "startMs": 18523,
+   "endMs": 18614,
+   "sentenceEnd": false
+  },
+  {
+   "text": "index",
+   "startMs": 18625,
+   "endMs": 19035,
+   "sentenceEnd": false
+  },
+  {
+   "text": "fund",
+   "startMs": 19046,
+   "endMs": 19455,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Ten",
+   "startMs": 19699,
+   "endMs": 19938,
+   "sentenceEnd": false
+  },
+  {
+   "text": "years",
+   "startMs": 19949,
+   "endMs": 20210,
+   "sentenceEnd": false
+  },
+  {
+   "text": "later",
+   "startMs": 20222,
+   "endMs": 20551,
+   "sentenceEnd": false
+  },
+  {
+   "text": "Jake",
+   "startMs": 20779,
+   "endMs": 21029,
+   "sentenceEnd": false
+  },
+  {
+   "text": "has",
+   "startMs": 21040,
+   "endMs": 21222,
+   "sentenceEnd": false
+  },
+  {
+   "text": "zero",
+   "startMs": 21233,
+   "endMs": 21529,
+   "sentenceEnd": false
+  },
+  {
+   "text": "savings",
+   "startMs": 21540,
+   "endMs": 22029,
+   "sentenceEnd": false
+  },
+  {
+   "text": "and",
+   "startMs": 22040,
+   "endMs": 22188,
+   "sentenceEnd": false
+  },
+  {
+   "text": "three",
+   "startMs": 22199,
+   "endMs": 22449,
+   "sentenceEnd": false
+  },
+  {
+   "text": "loans",
+   "startMs": 22460,
+   "endMs": 23017,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Marcus",
+   "startMs": 23321,
+   "endMs": 23980,
+   "sentenceEnd": true
+  },
+  {
+   "text": "He",
+   "startMs": 24273,
+   "endMs": 24421,
+   "sentenceEnd": false
+  },
+  {
+   "text": "put",
+   "startMs": 24432,
+   "endMs": 24625,
+   "sentenceEnd": false
+  },
+  {
+   "text": "in",
+   "startMs": 24637,
+   "endMs": 24739,
+   "sentenceEnd": false
+  },
+  {
+   "text": "one",
+   "startMs": 24750,
+   "endMs": 24898,
+   "sentenceEnd": false
+  },
+  {
+   "text": "hundred",
+   "startMs": 24910,
+   "endMs": 25194,
+   "sentenceEnd": false
+  },
+  {
+   "text": "twenty",
+   "startMs": 25205,
+   "endMs": 25478,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thousand",
+   "startMs": 25489,
+   "endMs": 25887,
+   "sentenceEnd": false
+  },
+  {
+   "text": "dollars",
+   "startMs": 25898,
+   "endMs": 26330,
+   "sentenceEnd": false
+  },
+  {
+   "text": "and",
+   "startMs": 26546,
+   "endMs": 26671,
+   "sentenceEnd": false
+  },
+  {
+   "text": "it",
+   "startMs": 26682,
+   "endMs": 26750,
+   "sentenceEnd": false
+  },
+  {
+   "text": "grew",
+   "startMs": 26762,
+   "endMs": 27012,
+   "sentenceEnd": false
+  },
+  {
+   "text": "to",
+   "startMs": 27023,
+   "endMs": 27091,
+   "sentenceEnd": false
+  },
+  {
+   "text": "two",
+   "startMs": 27103,
+   "endMs": 27307,
+   "sentenceEnd": false
+  },
+  {
+   "text": "hundred",
+   "startMs": 27319,
+   "endMs": 27591,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thirty",
+   "startMs": 27603,
+   "endMs": 27853,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thousand",
+   "startMs": 27864,
+   "endMs": 28421,
+   "sentenceEnd": true
+  },
+  {
+   "text": "That",
+   "startMs": 28665,
+   "endMs": 28904,
+   "sentenceEnd": false
+  },
+  {
+   "text": "is",
+   "startMs": 28915,
+   "endMs": 29040,
+   "sentenceEnd": false
+  },
+  {
+   "text": "compounding",
+   "startMs": 29051,
+   "endMs": 29756,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Money",
+   "startMs": 30040,
+   "endMs": 30347,
+   "sentenceEnd": false
+  },
+  {
+   "text": "making",
+   "startMs": 30358,
+   "endMs": 30688,
+   "sentenceEnd": false
+  },
+  {
+   "text": "money",
+   "startMs": 30699,
+   "endMs": 30960,
+   "sentenceEnd": false
+  },
+  {
+   "text": "which",
+   "startMs": 31131,
+   "endMs": 31301,
+   "sentenceEnd": false
+  },
+  {
+   "text": "makes",
+   "startMs": 31313,
+   "endMs": 31551,
+   "sentenceEnd": false
+  },
+  {
+   "text": "even",
+   "startMs": 31563,
+   "endMs": 31767,
+   "sentenceEnd": false
+  },
+  {
+   "text": "more",
+   "startMs": 31779,
+   "endMs": 31972,
+   "sentenceEnd": false
+  },
+  {
+   "text": "money",
+   "startMs": 31983,
+   "endMs": 32370,
+   "sentenceEnd": true
+  },
+  {
+   "text": "And",
+   "startMs": 32634,
+   "endMs": 32770,
+   "sentenceEnd": false
+  },
+  {
+   "text": "it",
+   "startMs": 32781,
+   "endMs": 32884,
+   "sentenceEnd": false
+  },
+  {
+   "text": "keeps",
+   "startMs": 32895,
+   "endMs": 33179,
+   "sentenceEnd": false
+  },
+  {
+   "text": "getting",
+   "startMs": 33190,
+   "endMs": 33429,
+   "sentenceEnd": false
+  },
+  {
+   "text": "faster",
+   "startMs": 33440,
+   "endMs": 33997,
+   "sentenceEnd": true
+  },
+  {
+   "text": "His",
+   "startMs": 34241,
+   "endMs": 34469,
+   "sentenceEnd": false
+  },
+  {
+   "text": "first",
+   "startMs": 34480,
+   "endMs": 34787,
+   "sentenceEnd": false
+  },
+  {
+   "text": "fifty",
+   "startMs": 34798,
+   "endMs": 35060,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thousand",
+   "startMs": 35071,
+   "endMs": 35480,
+   "sentenceEnd": false
+  },
+  {
+   "text": "dollars",
+   "startMs": 35491,
+   "endMs": 35844,
+   "sentenceEnd": false
+  },
+  {
+   "text": "took",
+   "startMs": 35855,
+   "endMs": 36048,
+   "sentenceEnd": false
+  },
+  {
+   "text": "over",
+   "startMs": 36060,
+   "endMs": 36264,
+   "sentenceEnd": false
+  },
+  {
+   "text": "three",
+   "startMs": 36275,
+   "endMs": 36537,
+   "sentenceEnd": false
+  },
+  {
+   "text": "years",
+   "startMs": 36548,
+   "endMs": 37037,
+   "sentenceEnd": true
+  },
+  {
+   "text": "His",
+   "startMs": 37321,
+   "endMs": 37537,
+   "sentenceEnd": false
+  },
+  {
+   "text": "latest",
+   "startMs": 37548,
+   "endMs": 37912,
+   "sentenceEnd": false
+  },
+  {
+   "text": "fifty",
+   "startMs": 37923,
+   "endMs": 38185,
+   "sentenceEnd": false
+  },
+  {
+   "text": "thousand",
+   "startMs": 38196,
+   "endMs": 38594,
+   "sentenceEnd": false
+  },
+  {
+   "text": "dollars",
+   "startMs": 38605,
+   "endMs": 39094,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Just",
+   "startMs": 39378,
+   "endMs": 39639,
+   "sentenceEnd": false
+  },
+  {
+   "text": "sixteen",
+   "startMs": 39650,
+   "endMs": 40139,
+   "sentenceEnd": false
+  },
+  {
+   "text": "months",
+   "startMs": 40150,
+   "endMs": 40605,
+   "sentenceEnd": true
+  },
+  {
+   "text": "So",
+   "startMs": 40889,
+   "endMs": 41128,
+   "sentenceEnd": false
+  },
+  {
+   "text": "the",
+   "startMs": 41139,
+   "endMs": 41253,
+   "sentenceEnd": false
+  },
+  {
+   "text": "poor",
+   "startMs": 41264,
+   "endMs": 41571,
+   "sentenceEnd": false
+  },
+  {
+   "text": "pay",
+   "startMs": 41582,
+   "endMs": 41821,
+   "sentenceEnd": false
+  },
+  {
+   "text": "interest",
+   "startMs": 41832,
+   "endMs": 42423,
+   "sentenceEnd": true
+  },
+  {
+   "text": "The",
+   "startMs": 42667,
+   "endMs": 42792,
+   "sentenceEnd": false
+  },
+  {
+   "text": "rich",
+   "startMs": 42804,
+   "endMs": 43054,
+   "sentenceEnd": false
+  },
+  {
+   "text": "collect",
+   "startMs": 43065,
+   "endMs": 43440,
+   "sentenceEnd": false
+  },
+  {
+   "text": "it",
+   "startMs": 43451,
+   "endMs": 43645,
+   "sentenceEnd": true
+  },
+  {
+   "text": "Start",
+   "startMs": 43889,
+   "endMs": 44286,
+   "sentenceEnd": false
+  },
+  {
+   "text": "small",
+   "startMs": 44298,
+   "endMs": 44741,
+   "sentenceEnd": false
+  },
+  {
+   "text": "but",
+   "startMs": 44911,
+   "endMs": 45048,
+   "sentenceEnd": false
+  },
+  {
+   "text": "start",
+   "startMs": 45059,
+   "endMs": 45366,
+   "sentenceEnd": false
+  },
+  {
+   "text": "today",
+   "startMs": 45377,
+   "endMs": 45798,
+   "sentenceEnd": true
+  },
+  {
+   "text": "And",
+   "startMs": 46062,
+   "endMs": 46187,
+   "sentenceEnd": false
+  },
+  {
+   "text": "the",
+   "startMs": 46198,
+   "endMs": 46255,
    "sentenceEnd": false
   },
   {
    "text": "next",
-   "startMs": 49454,
-   "endMs": 49784,
+   "startMs": 46266,
+   "endMs": 46516,
    "sentenceEnd": false
   },
   {
    "text": "time",
-   "startMs": 49840,
-   "endMs": 50136,
+   "startMs": 46528,
+   "endMs": 46778,
    "sentenceEnd": false
   },
   {
    "text": "someone",
-   "startMs": 50136,
-   "endMs": 50579,
+   "startMs": 46789,
+   "endMs": 47119,
    "sentenceEnd": false
   },
   {
    "text": "asks",
-   "startMs": 50647,
-   "endMs": 51056,
+   "startMs": 47130,
+   "endMs": 47471,
    "sentenceEnd": false
   },
   {
    "text": "you",
-   "startMs": 51056,
-   "endMs": 51261,
+   "startMs": 47482,
+   "endMs": 47755,
    "sentenceEnd": true
   }
  ]

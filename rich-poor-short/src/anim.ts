@@ -40,4 +40,4 @@ export const jolt = (frame: number, at: number, amount = 14) => {
   return { x: Math.sin(dt * 2.6) * a, y: Math.cos(dt * 3.3) * a * 0.7 };
 };
 
-export const inr = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
+export const usd = (n: number) => "$" + Math.round(n).toLocaleString("en-US");

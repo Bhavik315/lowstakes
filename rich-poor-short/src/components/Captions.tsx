@@ -15,7 +15,7 @@ import { DURATION, SCENES } from "../timing";
 const captions: Caption[] = captionData;
 
 // These get the extra zoom + shake when spoken.
-const KEY_WORDS = /^(₹10 lakh|compounding|36%|₹46 lakh|16 months)/i;
+const KEY_WORDS = /^(\$50,000|compounding|24%|\$230,000|16 months)/i;
 
 const outline = (px: number, color: string) =>
   Array.from({ length: 16 }, (_, i) => {

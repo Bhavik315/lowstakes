@@ -21,7 +21,7 @@ export const Coin: React.FC<IconProps & { spin?: number }> = ({
         fontWeight={900}
         fill="#7a4f00"
       >
-        ₹
+        $
       </text>
     </g>
   </svg>

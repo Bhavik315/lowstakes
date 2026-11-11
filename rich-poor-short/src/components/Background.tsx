@@ -3,7 +3,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { C } from "../theme";
 import { SCENES, SceneName } from "../timing";
 
-// How strongly each scene leans red (Rahul) or green (Vikram).
+// How strongly each scene leans red (Jake) or green (Marcus).
 const TINT: Record<SceneName, [red: number, green: number]> = {
   hook: [0.7, 0.7],
   meet: [0.6, 0.6],

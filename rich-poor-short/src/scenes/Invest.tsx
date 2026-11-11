@@ -1,6 +1,6 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
-import { inr, linear, pop } from "../anim";
+import { usd, linear, pop } from "../anim";
 import { At, Big, SceneShell, Stamp } from "../components/Bits";
 import { Character } from "../components/Character";
 import { C } from "../theme";
@@ -18,8 +18,8 @@ const LENGTH = 880;
 
 export const Invest: React.FC = () => {
   const frame = useCurrentFrame();
-  const count = linear(frame, L(T.twentyK), L(T.twentyK) + 18);
-  const amount = pop(frame, L(T.twentyK));
+  const count = linear(frame, L(T.oneK), L(T.oneK) + 18);
+  const amount = pop(frame, L(T.oneK));
   const draw = linear(frame, L(T.into), L(T.into) + 34);
   const panel = pop(frame, L(T.into) - 3, 0.6);
 
@@ -27,18 +27,18 @@ export const Invest: React.FC = () => {
     <SceneShell durationInFrames={SCENES.invest.durationInFrames} from="right">
       <At x={290} y={500}>
         <Character
-          who="vikram"
+          who="marcus"
           frame={frame}
           width={400}
-          mood={frame >= L(T.twentyK) ? "happy" : "neutral"}
+          mood={frame >= L(T.oneK) ? "happy" : "neutral"}
         />
       </At>
 
       <Stamp lines={["Invests", "first"]} color={C.green} at={L(T.invests)} x={770} y={360} rotate={6} />
 
-      <At x={770} y={600} scale={amount * (1 + 0.1 * (1 - pop(frame, L(T.twentyK) + 18, 1.3)))}>
+      <At x={770} y={600} scale={amount * (1 + 0.1 * (1 - pop(frame, L(T.oneK) + 18, 1.3)))}>
         <Big size={108} color={C.green} style={{ textShadow: `0 0 60px ${C.green}66` }}>
-          {inr(20000 * count)}
+          {usd(1000 * count)}
         </Big>
       </At>
       <At x={770} y={700} scale={pop(frame, L(T.every))}>

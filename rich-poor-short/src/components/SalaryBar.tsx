@@ -1,10 +1,10 @@
 import React from "react";
 import { interpolateColors } from "remotion";
-import { inr } from "../anim";
+import { usd } from "../anim";
 import { C } from "../theme";
 import { Big } from "./Bits";
 
-/** Rahul's salary draining away. `level` is 1 (full) to 0 (empty). */
+/** Jake's salary draining away. `level` is 1 (full) to 0 (empty). */
 export const SalaryBar: React.FC<{ level: number; scale?: number }> = ({
   level,
   scale = 1,
@@ -22,10 +22,10 @@ export const SalaryBar: React.FC<{ level: number; scale?: number }> = ({
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
         <Big size={42} color={C.muted} style={{ letterSpacing: 2 }}>
-          Rahul&apos;s salary
+          Jake&apos;s salary
         </Big>
         <Big size={70} color={color}>
-          {inr(50000 * level)}
+          {usd(5000 * level)}
         </Big>
       </div>
       <div

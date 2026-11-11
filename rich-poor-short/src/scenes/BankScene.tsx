@@ -27,7 +27,7 @@ export const BankScene: React.FC = () => {
       <SalaryBar level={level} />
 
       <At x={250} y={640}>
-        <Character who="rahul" frame={frame} width={350} mood="sad" />
+        <Character who="jake" frame={frame} width={350} mood="sad" />
       </At>
       <At x={250} y={900} scale={pop(frame, L(T.hisMoney))}>
         <Big size={60} color={C.red}>

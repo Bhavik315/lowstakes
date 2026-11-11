@@ -4,14 +4,14 @@ import { C } from "../theme";
 export type Mood = "neutral" | "happy" | "sad" | "shock";
 
 const LOOKS = {
-  rahul: {
+  jake: {
     skin: "#e2a679",
     skinShade: "#c98958",
     hair: "#1d1a22",
     top: C.red,
     topShade: C.redDeep,
   },
-  vikram: {
+  marcus: {
     skin: "#d9996b",
     skinShade: "#bd7d4e",
     hair: "#16151c",
@@ -25,14 +25,14 @@ const LOOKS = {
  * character is never frozen on screen.
  */
 export const Character: React.FC<{
-  who: "rahul" | "vikram";
+  who: "jake" | "marcus";
   mood?: Mood;
   frame: number;
   width?: number;
   style?: React.CSSProperties;
 }> = ({ who, mood = "neutral", frame, width = 360, style }) => {
   const look = LOOKS[who];
-  const phase = who === "rahul" ? 0 : 40;
+  const phase = who === "jake" ? 0 : 40;
   const breathe = Math.sin((frame + phase) / 9) * 3;
   const tilt = Math.sin((frame + phase) / 17) * (mood === "sad" ? 1.2 : 2.2);
   const blink = (frame + phase) % 75 < 4 ? 0.12 : 1;
@@ -52,7 +52,7 @@ export const Character: React.FC<{
           d="M34 372 L34 306 Q34 238 108 226 L192 226 Q266 238 266 306 L266 372 Z"
           fill={look.top}
         />
-        {who === "rahul" ? (
+        {who === "jake" ? (
           <>
             <path
               d="M112 225 Q150 262 188 225"
@@ -83,7 +83,7 @@ export const Character: React.FC<{
         <circle cx={229} cy={130} r={17} fill={look.skinShade} />
         <ellipse cx={150} cy={120} rx={80} ry={88} fill={look.skin} />
 
-        {who === "rahul" ? (
+        {who === "jake" ? (
           <path
             d="M68 118 Q60 24 150 24 Q240 24 232 118 Q222 78 196 66 Q186 90 160 68 Q140 92 118 66 Q84 76 68 118 Z"
             fill={look.hair}
@@ -127,7 +127,7 @@ export const Character: React.FC<{
           <circle cx={184} cy={121} r={3} fill={C.white} />
         </g>
 
-        {who === "vikram" ? (
+        {who === "marcus" ? (
           <g fill="none" stroke={C.white} strokeWidth={6}>
             <rect x={92} y={102} width={52} height={44} rx={14} />
             <rect x={156} y={102} width={52} height={44} rx={14} />
@@ -147,7 +147,7 @@ export const Character: React.FC<{
         )}
 
         {/* worry drop */}
-        {who === "rahul" && (mood === "sad" || mood === "shock") ? (
+        {who === "jake" && (mood === "sad" || mood === "shock") ? (
           <path
             d="M236 62 Q250 84 236 92 Q222 84 236 62 Z"
             fill="#6ecbff"

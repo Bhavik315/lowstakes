@@ -20,23 +20,23 @@ const HITS: Hit[] = [
   ),
   // pops when things appear
   ...at("pop", 0.36, [
-    T.rahul,
-    T.vikram,
+    T.jake,
+    T.marcus,
     T.both + 4,
     T.spends,
     T.phone,
-    T.emi,
+    T.zeroPercent,
     T.credit,
     T.invests,
     T.every,
     T.every + 9,
     T.every + 18,
     T.into - 3,
-    T.rahulHas,
+    T.jakeHas,
     T.threeLoans,
     T.threeLoans + 6,
     T.threeLoans + 12,
-    T.vikramQ,
+    T.marcusQ,
     T.faster,
     T.hisFirst,
     T.threeYears,
@@ -46,8 +46,8 @@ const HITS: Hit[] = [
     T.nextTime,
     T.asks,
   ]),
-  // ticking run under the rupee counters
-  ...at("count", 0.26, [T.fifty, T.twentyK, T.tenYears, T.he + 4, T.grew, T.took]),
+  // ticking run under the dollar counters
+  ...at("count", 0.26, [T.five, T.oneK, T.tenYears, T.he + 4, T.grew, T.took]),
   // thud on the key numbers (same frames as the camera punch)
   ...IMPACTS.map((i) => ({
     sfx: "impact" as const,
@@ -68,7 +68,7 @@ const HITS: Hit[] = [
     T.startToday,
     T.startToday + 8,
   ]),
-  // bad news for Rahul
+  // bad news for Jake
   ...at("down", 0.3, [T.interest + 6, T.threeLoans + 20]),
   // build-up into "compounding" and into the loop point
   ...at("riser", 0.26, [T.compounding - 27, DURATION - 27]),

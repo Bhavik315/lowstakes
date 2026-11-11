@@ -9,7 +9,7 @@ import { SCENES, T, local } from "../timing";
 
 const L = (f: number) => local("later", f);
 const LOANS: { label: string; x: number; y: number; rotate: number }[] = [
-  { label: "PHONE EMI", x: 300, y: 965, rotate: -5 },
+  { label: "PHONE LOAN", x: 300, y: 965, rotate: -5 },
   { label: "CREDIT CARD", x: 760, y: 950, rotate: 4 },
   { label: "PERSONAL LOAN", x: 540, y: 1090, rotate: -2 },
 ];
@@ -17,9 +17,9 @@ const LOANS: { label: string; x: number; y: number; rotate: number }[] = [
 export const Later: React.FC = () => {
   const frame = useCurrentFrame();
   const years = Math.round(linear(frame, 1, 17) * 10);
-  // the "10 years later" title shrinks into a header once Rahul shows up
-  const tuck = glide(frame, L(T.rahulHas) - 5, 14);
-  const rahul = pop(frame, L(T.rahulHas));
+  // the "10 years later" title shrinks into a header once Jake shows up
+  const tuck = glide(frame, L(T.jakeHas) - 5, 14);
+  const jake = pop(frame, L(T.jakeHas));
   const zero = pop(frame, L(T.zero), 0.8);
   const shake = jolt(frame, L(T.zero), 18);
   const ring = linear(frame, 1, 19);
@@ -69,8 +69,8 @@ export const Later: React.FC = () => {
         </Big>
       </At>
 
-      <At x={280 - (1 - rahul) * 200} y={640} scale={rahul} opacity={Math.min(1, rahul * 3)}>
-        <Character who="rahul" frame={frame} width={390} mood="sad" />
+      <At x={280 - (1 - jake) * 200} y={640} scale={jake} opacity={Math.min(1, jake * 3)}>
+        <Character who="jake" frame={frame} width={390} mood="sad" />
       </At>
 
       <At
@@ -80,7 +80,7 @@ export const Later: React.FC = () => {
         opacity={Math.min(1, zero * 4)}
       >
         <Big size={300} color={C.red} style={{ textShadow: `0 0 80px ${C.red}88` }}>
-          ₹0
+          $0
         </Big>
       </At>
       <At x={770} y={780} scale={pop(frame, L(T.zero) + 7)}>

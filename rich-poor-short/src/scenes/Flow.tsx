@@ -23,7 +23,7 @@ export const Flow: React.FC = () => {
         </Pill>
       </At>
       <At x={230} y={580}>
-        <Character who="rahul" frame={frame} width={330} mood="sad" />
+        <Character who="jake" frame={frame} width={330} mood="sad" />
       </At>
       <At x={850} y={300} scale={pop(frame, 3)}>
         <Pill color={C.green} size={50}>
@@ -31,7 +31,7 @@ export const Flow: React.FC = () => {
         </Pill>
       </At>
       <At x={850} y={580} scale={1 + (collected ? 0.06 * Math.abs(Math.sin(frame / 3)) : 0)}>
-        <Character who="vikram" frame={frame} width={330} mood="happy" />
+        <Character who="marcus" frame={frame} width={330} mood="happy" />
       </At>
 
       {coins.map((start, i) => {

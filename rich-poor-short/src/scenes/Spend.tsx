@@ -14,20 +14,20 @@ export const Spend: React.FC = () => {
   const frame = useCurrentFrame();
   const phone = pop(frame, L(T.phone));
   const card = pop(frame, L(T.credit));
-  const rate = pop(frame, L(T.thirtySix), 0.8);
-  const shake = jolt(frame, L(T.thirtySix), 18);
+  const rate = pop(frame, L(T.pctRate), 0.8);
+  const shake = jolt(frame, L(T.pctRate), 18);
   // salary: full -> 60% after the phone -> 28% after the card
   const level =
     1 - 0.4 * glide(frame, L(T.phone), 20) - 0.32 * glide(frame, L(T.credit), 20);
   const mood =
-    frame >= L(T.thirtySix) ? "shock" : frame >= L(T.phone) ? "happy" : "neutral";
+    frame >= L(T.pctRate) ? "shock" : frame >= L(T.phone) ? "happy" : "neutral";
 
   return (
     <SceneShell durationInFrames={SCENES.spend.durationInFrames} from="left">
       <SalaryBar level={level} scale={pop(frame, 2, 0.6)} />
 
       <At x={290} y={680}>
-        <Character who="rahul" frame={frame} width={400} mood={mood} />
+        <Character who="jake" frame={frame} width={400} mood={mood} />
       </At>
 
       <Stamp lines={["Spends", "first"]} color={C.red} at={L(T.spends)} x={770} y={480} rotate={-7} />
@@ -35,9 +35,9 @@ export const Spend: React.FC = () => {
       <At x={770} y={770} scale={phone} rotate={Math.sin(frame / 7) * 5 - (1 - phone) * 40}>
         <Phone size={270} />
       </At>
-      <At x={890} y={650} scale={pop(frame, L(T.emi))} rotate={12}>
-        <Pill color={C.red} textColor={C.white} size={58}>
-          EMI
+      <At x={890} y={650} scale={pop(frame, L(T.zeroPercent))} rotate={12}>
+        <Pill color={C.red} textColor={C.white} size={48}>
+          0% APR
         </Pill>
       </At>
 
@@ -52,7 +52,7 @@ export const Spend: React.FC = () => {
         opacity={Math.min(1, rate * 4)}
       >
         <Big size={200} color={C.red} style={{ textShadow: `0 0 70px ${C.red}88` }}>
-          36%
+          24%
         </Big>
       </At>
       <At x={760} y={1118} scale={pop(frame, L(T.interest))}>

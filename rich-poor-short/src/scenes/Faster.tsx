@@ -8,7 +8,7 @@ import { SCENES, T, local } from "../timing";
 
 const L = (f: number) => local("faster", f);
 const TRACK = { left: 90, width: 900 };
-// first ₹10 lakh: ~40 months, latest ₹10 lakh: ~16 months
+// first $50,000: ~40 months, latest $50,000: ~16 months
 const SHARE_LATEST = 16.3 / 40.4;
 
 const Row: React.FC<{
@@ -143,22 +143,22 @@ export const Faster: React.FC = () => {
 
       <Row
         y={520}
-        title="First ₹10 lakh"
+        title="First $50,000"
         result="3+ years"
         color={C.white}
         enter={rows}
-        pulseAt={L(T.tenLakh1)}
+        pulseAt={L(T.fiftyK1)}
         fill={fill1}
         resultAt={L(T.threeYears)}
         resultSize={54}
       />
       <Row
         y={770}
-        title="Latest ₹10 lakh"
+        title="Latest $50,000"
         result="16 months"
         color={C.green}
         enter={glide(frame, L(T.hisLatest) - 3, 10)}
-        pulseAt={L(T.tenLakh2)}
+        pulseAt={L(T.fiftyK2)}
         fill={fill2}
         resultAt={L(T.sixteen)}
         resultSize={66}
