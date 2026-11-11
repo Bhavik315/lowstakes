@@ -1,0 +1,930 @@
+[
+ {
+  "text": "Why",
+  "startMs": 60,
+  "endMs": 310,
+  "timestampMs": 185,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " do",
+  "startMs": 322,
+  "endMs": 447,
+  "timestampMs": 384,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " the",
+  "startMs": 481,
+  "endMs": 583,
+  "timestampMs": 532,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "rich",
+  "startMs": 583,
+  "endMs": 833,
+  "timestampMs": 708,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " get",
+  "startMs": 833,
+  "endMs": 1049,
+  "timestampMs": 941,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " richer,",
+  "startMs": 1049,
+  "endMs": 1470,
+  "timestampMs": 1259,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "and",
+  "startMs": 1708,
+  "endMs": 1845,
+  "timestampMs": 1776,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " the",
+  "startMs": 1845,
+  "endMs": 1981,
+  "timestampMs": 1913,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " poor",
+  "startMs": 1981,
+  "endMs": 2299,
+  "timestampMs": 2140,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "get",
+  "startMs": 2299,
+  "endMs": 2526,
+  "timestampMs": 2412,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " poorer?",
+  "startMs": 2526,
+  "endMs": 2924,
+  "timestampMs": 2725,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Meet",
+  "startMs": 3275,
+  "endMs": 3536,
+  "timestampMs": 3405,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " Rahul",
+  "startMs": 3570,
+  "endMs": 4014,
+  "timestampMs": 3792,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " and",
+  "startMs": 4082,
+  "endMs": 4320,
+  "timestampMs": 4201,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Vikram.",
+  "startMs": 4320,
+  "endMs": 4741,
+  "timestampMs": 4530,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Both",
+  "startMs": 5065,
+  "endMs": 5360,
+  "timestampMs": 5212,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " earn",
+  "startMs": 5451,
+  "endMs": 5747,
+  "timestampMs": 5599,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "₹50,000",
+  "startMs": 5747,
+  "endMs": 6974,
+  "timestampMs": 6360,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " a",
+  "startMs": 7031,
+  "endMs": 7122,
+  "timestampMs": 7076,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " month.",
+  "startMs": 7122,
+  "endMs": 7520,
+  "timestampMs": 7321,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Rahul",
+  "startMs": 7778,
+  "endMs": 8175,
+  "timestampMs": 7976,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " spends",
+  "startMs": 8175,
+  "endMs": 8607,
+  "timestampMs": 8391,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "first.",
+  "startMs": 8607,
+  "endMs": 9016,
+  "timestampMs": 8811,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "A",
+  "startMs": 9352,
+  "endMs": 9409,
+  "timestampMs": 9380,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " new",
+  "startMs": 9409,
+  "endMs": 9625,
+  "timestampMs": 9517,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " phone",
+  "startMs": 9659,
+  "endMs": 10011,
+  "timestampMs": 9835,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "on",
+  "startMs": 10079,
+  "endMs": 10284,
+  "timestampMs": 10181,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " EMI.",
+  "startMs": 10363,
+  "endMs": 10829,
+  "timestampMs": 10596,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "A",
+  "startMs": 11133,
+  "endMs": 11167,
+  "timestampMs": 11150,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " credit",
+  "startMs": 11167,
+  "endMs": 11531,
+  "timestampMs": 11349,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " card",
+  "startMs": 11531,
+  "endMs": 11895,
+  "timestampMs": 11713,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "at",
+  "startMs": 11951,
+  "endMs": 12179,
+  "timestampMs": 12065,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " 36%",
+  "startMs": 12190,
+  "endMs": 13292,
+  "timestampMs": 12741,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " interest.",
+  "startMs": 13360,
+  "endMs": 13826,
+  "timestampMs": 13593,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "His",
+  "startMs": 14162,
+  "endMs": 14366,
+  "timestampMs": 14264,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " money",
+  "startMs": 14366,
+  "endMs": 14707,
+  "timestampMs": 14536,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " works",
+  "startMs": 14707,
+  "endMs": 15150,
+  "timestampMs": 14928,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "for",
+  "startMs": 15150,
+  "endMs": 15344,
+  "timestampMs": 15247,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " the",
+  "startMs": 15344,
+  "endMs": 15446,
+  "timestampMs": 15395,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " bank.",
+  "startMs": 15446,
+  "endMs": 15844,
+  "timestampMs": 15645,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Vikram",
+  "startMs": 16102,
+  "endMs": 16488,
+  "timestampMs": 16295,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " invests",
+  "startMs": 16545,
+  "endMs": 17090,
+  "timestampMs": 16817,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "first.",
+  "startMs": 17090,
+  "endMs": 17488,
+  "timestampMs": 17289,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "₹20,000,",
+  "startMs": 17826,
+  "endMs": 19031,
+  "timestampMs": 18428,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "every",
+  "startMs": 19292,
+  "endMs": 19610,
+  "timestampMs": 19451,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " month,",
+  "startMs": 19610,
+  "endMs": 19997,
+  "timestampMs": 19803,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "into",
+  "startMs": 20215,
+  "endMs": 20545,
+  "timestampMs": 20380,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " an",
+  "startMs": 20556,
+  "endMs": 20761,
+  "timestampMs": 20658,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " index",
+  "startMs": 20818,
+  "endMs": 21215,
+  "timestampMs": 21016,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "fund.",
+  "startMs": 21215,
+  "endMs": 21579,
+  "timestampMs": 21397,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "10 years",
+  "startMs": 21857,
+  "endMs": 22482,
+  "timestampMs": 22169,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " later,",
+  "startMs": 22494,
+  "endMs": 22937,
+  "timestampMs": 22715,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Rahul",
+  "startMs": 23198,
+  "endMs": 23595,
+  "timestampMs": 23396,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " has",
+  "startMs": 23595,
+  "endMs": 23914,
+  "timestampMs": 23754,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " zero",
+  "startMs": 23959,
+  "endMs": 24334,
+  "timestampMs": 24146,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "savings",
+  "startMs": 24345,
+  "endMs": 24857,
+  "timestampMs": 24601,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " and",
+  "startMs": 24959,
+  "endMs": 25232,
+  "timestampMs": 25095,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "3 loans.",
+  "startMs": 25255,
+  "endMs": 25993,
+  "timestampMs": 25624,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Vikram?",
+  "startMs": 26369,
+  "endMs": 26778,
+  "timestampMs": 26573,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "He",
+  "startMs": 27150,
+  "endMs": 27275,
+  "timestampMs": 27212,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " put",
+  "startMs": 27321,
+  "endMs": 27560,
+  "timestampMs": 27440,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " in",
+  "startMs": 27628,
+  "endMs": 27775,
+  "timestampMs": 27701,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "₹24 lakh,",
+  "startMs": 27787,
+  "endMs": 28798,
+  "timestampMs": 28292,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "and",
+  "startMs": 28945,
+  "endMs": 29127,
+  "timestampMs": 29036,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " it",
+  "startMs": 29127,
+  "endMs": 29240,
+  "timestampMs": 29183,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " grew",
+  "startMs": 29263,
+  "endMs": 29513,
+  "timestampMs": 29388,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "to",
+  "startMs": 29525,
+  "endMs": 29615,
+  "timestampMs": 29570,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " ₹46 lakh.",
+  "startMs": 29638,
+  "endMs": 30627,
+  "timestampMs": 30132,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "That",
+  "startMs": 30876,
+  "endMs": 31126,
+  "timestampMs": 31001,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " is",
+  "startMs": 31138,
+  "endMs": 31308,
+  "timestampMs": 31223,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "compounding.",
+  "startMs": 31308,
+  "endMs": 31922,
+  "timestampMs": 31615,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Money",
+  "startMs": 32240,
+  "endMs": 32570,
+  "timestampMs": 32405,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " making",
+  "startMs": 32570,
+  "endMs": 32979,
+  "timestampMs": 32774,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "money,",
+  "startMs": 32979,
+  "endMs": 33342,
+  "timestampMs": 33160,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "which",
+  "startMs": 33638,
+  "endMs": 33888,
+  "timestampMs": 33763,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " makes",
+  "startMs": 33899,
+  "endMs": 34274,
+  "timestampMs": 34086,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " even",
+  "startMs": 34331,
+  "endMs": 34604,
+  "timestampMs": 34467,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "more",
+  "startMs": 34604,
+  "endMs": 34899,
+  "timestampMs": 34751,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " money.",
+  "startMs": 34910,
+  "endMs": 35251,
+  "timestampMs": 35080,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "And",
+  "startMs": 35612,
+  "endMs": 35828,
+  "timestampMs": 35720,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " it",
+  "startMs": 35828,
+  "endMs": 35942,
+  "timestampMs": 35885,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " keeps",
+  "startMs": 35965,
+  "endMs": 36317,
+  "timestampMs": 36141,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "getting",
+  "startMs": 36328,
+  "endMs": 36680,
+  "timestampMs": 36504,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " faster.",
+  "startMs": 36680,
+  "endMs": 37180,
+  "timestampMs": 36930,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "His",
+  "startMs": 37559,
+  "endMs": 37775,
+  "timestampMs": 37667,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " first",
+  "startMs": 37775,
+  "endMs": 38115,
+  "timestampMs": 37945,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "₹10 lakh",
+  "startMs": 38184,
+  "endMs": 38763,
+  "timestampMs": 38473,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " took",
+  "startMs": 38831,
+  "endMs": 39047,
+  "timestampMs": 38939,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "over",
+  "startMs": 39104,
+  "endMs": 39400,
+  "timestampMs": 39252,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " 3 years.",
+  "startMs": 39422,
+  "endMs": 40161,
+  "timestampMs": 39791,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "His",
+  "startMs": 40536,
+  "endMs": 40718,
+  "timestampMs": 40627,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " latest",
+  "startMs": 40718,
+  "endMs": 41173,
+  "timestampMs": 40945,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "₹10 lakh?",
+  "startMs": 41230,
+  "endMs": 41843,
+  "timestampMs": 41536,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Just",
+  "startMs": 42093,
+  "endMs": 42411,
+  "timestampMs": 42252,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " 16 months.",
+  "startMs": 42468,
+  "endMs": 43490,
+  "timestampMs": 42979,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "So",
+  "startMs": 43857,
+  "endMs": 44050,
+  "timestampMs": 43953,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " the",
+  "startMs": 44096,
+  "endMs": 44198,
+  "timestampMs": 44147,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " poor",
+  "startMs": 44198,
+  "endMs": 44505,
+  "timestampMs": 44351,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "pay",
+  "startMs": 44505,
+  "endMs": 44732,
+  "timestampMs": 44618,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " interest.",
+  "startMs": 44812,
+  "endMs": 45266,
+  "timestampMs": 45039,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "The",
+  "startMs": 45605,
+  "endMs": 45695,
+  "timestampMs": 45650,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " rich",
+  "startMs": 45695,
+  "endMs": 45945,
+  "timestampMs": 45820,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " collect",
+  "startMs": 45957,
+  "endMs": 46309,
+  "timestampMs": 46133,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "it.",
+  "startMs": 46332,
+  "endMs": 46514,
+  "timestampMs": 46423,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "Start",
+  "startMs": 46780,
+  "endMs": 47121,
+  "timestampMs": 46950,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " small,",
+  "startMs": 47121,
+  "endMs": 47621,
+  "timestampMs": 47371,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "but",
+  "startMs": 47701,
+  "endMs": 47928,
+  "timestampMs": 47814,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " start",
+  "startMs": 47928,
+  "endMs": 48303,
+  "timestampMs": 48115,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " today.",
+  "startMs": 48349,
+  "endMs": 48701,
+  "timestampMs": 48525,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "And",
+  "startMs": 49079,
+  "endMs": 49306,
+  "timestampMs": 49192,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " the",
+  "startMs": 49306,
+  "endMs": 49454,
+  "timestampMs": 49380,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " next",
+  "startMs": 49454,
+  "endMs": 49784,
+  "timestampMs": 49619,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "time",
+  "startMs": 49840,
+  "endMs": 50136,
+  "timestampMs": 49988,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " someone",
+  "startMs": 50136,
+  "endMs": 50579,
+  "timestampMs": 50357,
+  "confidence": null,
+  "pageBreakAfter": true
+ },
+ {
+  "text": "asks",
+  "startMs": 50647,
+  "endMs": 51056,
+  "timestampMs": 50851,
+  "confidence": null,
+  "pageBreakAfter": false
+ },
+ {
+  "text": " you...",
+  "startMs": 51056,
+  "endMs": 51261,
+  "timestampMs": 51158,
+  "confidence": null,
+  "pageBreakAfter": true
+ }
+]
