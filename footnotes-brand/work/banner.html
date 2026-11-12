@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  html, body { width: 2560px; height: 1440px; overflow: hidden; }
+  body {
+    position: relative;
+    background: var(--cream);
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(30,26,22,0.035), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(30,26,22,0.035), transparent 45%);
+  }
+  /* paper grain */
+  svg.grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.05; }
+
+  .safe-area {
+    position: absolute;
+    left: 507px; top: 508px; width: 1546px; height: 423px;
+    padding: 0 30px;
+  }
+
+  .content {
+    position: absolute;
+    top: 50%; left: 0; transform: translateY(-50%);
+    display: flex; align-items: center; gap: 48px;
+    width: 100%;
+  }
+  .icon {
+    width: 280px; height: 280px; border-radius: 50%;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 0 rgba(30,26,22,0.12);
+  }
+  .icon svg { width: 72%; height: 72%; }
+
+  .text-block { display: flex; flex-direction: column; justify-content: center; }
+  .wordmark {
+    font-family: 'Fraunces Brand';
+    font-weight: 900;
+    font-variation-settings: 'wght' 900, 'opsz' 144;
+    font-size: 150px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .tagline {
+    font-family: 'Fraunces Brand';
+    font-style: italic;
+    font-weight: 500;
+    font-variation-settings: 'wght' 500, 'opsz' 40;
+    font-size: 40px;
+    color: #4a4339;
+    margin-top: 14px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 26px;
+    background: var(--mustard);
+    color: var(--ink);
+    font-family: 'Inter Brand';
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 0.08em;
+    padding: 12px 26px;
+    border-radius: 999px;
+    width: fit-content;
+  }
+
+  /* decorative marks outside the safe zone only */
+  .deco { position: absolute; color: var(--ink); font-family: 'Fraunces Brand'; opacity: 0.16; }
+  .deco.rule { background: var(--ink); opacity: 0.14; height: 2px; }
+  .note {
+    position: absolute;
+    font-family: 'Fraunces Brand';
+    font-style: italic;
+    font-weight: 500;
+    font-variation-settings: 'wght' 500, 'opsz' 20;
+    color: #4a4339;
+    opacity: 0.4;
+  }
+</style>
+</head>
+<body>
+  <svg class="grain">
+    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter>
+    <rect width="100%" height="100%" filter="url(#n)"/>
+  </svg>
+
+  <!-- decorative: top margin -->
+  <div class="deco" style="top:70px; left:140px; font-size:120px; transform: rotate(-8deg);">*</div>
+  <div class="deco" style="top:90px; left:2320px; font-size:100px; transform: rotate(10deg);">&dagger;</div>
+  <div class="deco rule" style="top:150px; left:90px; width:260px;"></div>
+  <div class="deco rule" style="top:150px; left:2230px; width:240px;"></div>
+  <div class="note" style="top:195px; left:95px; font-size:26px; transform: rotate(-2deg);">est. in the margins</div>
+  <div class="note" style="top:1255px; right:120px; font-size:26px; transform: rotate(2deg); text-align:right;">¹ sources at the end</div>
+
+  <!-- decorative: bottom margin -->
+  <div class="deco" style="bottom:60px; left:260px; font-size:90px; transform: rotate(6deg);">&sup2;</div>
+  <div class="deco" style="bottom:40px; left:2260px; font-size:140px; transform: rotate(-6deg);">*</div>
+  <div class="deco rule" style="bottom:170px; left:150px; width:300px;"></div>
+  <div class="deco rule" style="bottom:170px; left:2150px; width:280px;"></div>
+
+  <!-- decorative: side margins -->
+  <div class="deco" style="top:650px; left:60px; font-size:70px;">&sup1;</div>
+  <div class="deco" style="top:640px; left:2430px; font-size:70px;">&dagger;</div>
+
+  <div class="safe-area">
+    <div class="content">
+      <div class="icon">
+        <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+          <text x="320" y="545" text-anchor="middle" font-size="480" font-weight="900" font-family="'Fraunces Brand'" font-variation-settings="'wght' 900, 'opsz' 144" fill="#F6EEDC">F</text>
+          <text x="548" y="300" text-anchor="middle" font-size="205" font-weight="800" font-family="'Fraunces Brand'" font-variation-settings="'wght' 800, 'opsz' 72" fill="#F2B33D">1</text>
+        </svg>
+      </div>
+      <div class="text-block">
+        <div class="wordmark">Footnotes</div>
+        <div class="tagline">The stories history left out.</div>
+        <div class="pill">NEW SHORTS EVERY WEEK</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
