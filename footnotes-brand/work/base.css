@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'Fraunces Brand';
+  src: url('../fonts/Fraunces-Variable.ttf');
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+}
+@font-face {
+  font-family: 'Inter Brand';
+  src: url('../fonts/Inter-Variable.ttf');
+  font-weight: 100 900;
+}
+:root {
+  --cream: #F6EEDC;
+  --ink: #1E1A16;
+  --mustard: #F2B33D;
+  --brick: #C8452C;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter Brand', sans-serif; }

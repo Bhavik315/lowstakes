@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#1E1A16"/>
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#F6EEDC" stroke-width="34"/>
+  <circle cx="400" cy="400" r="252" fill="none" stroke="#F6EEDC" stroke-width="10"/>
+  <!-- asterisk footnote mark -->
+  <g stroke="#F6EEDC" stroke-linecap="round">
+    <line x1="250" y1="400" x2="550" y2="400" stroke-width="56"/>
+    <line x1="325" y1="270.0961894323342" x2="475" y2="529.9038105676658" stroke-width="56"/>
+    <line x1="475" y1="270.0961894323342" x2="325" y2="529.9038105676658" stroke-width="56"/>
+  </g>
+  <circle cx="400" cy="400" r="40" fill="#F2B33D"/>
+</svg>
